@@ -1,14 +1,24 @@
 {
   "name": "TRAQULA",
+  "packageManager": "yarn@1.22.22",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "clean": "git clean -dfx",
+    "lint": "eslint . --cache",
+    "lint-fix": "eslint . --fix",
+    "build & run": "tsc && node src/index.js"
   },
   "private": true,
   "dependencies": {
     "chevrotain": "^11.0.3"
+  },
+  "devDependencies": {
+    "@rubensworks/eslint-config": "^3.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
   }
 }

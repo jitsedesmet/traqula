@@ -1,0 +1,29 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es2021",
+    "lib": [
+      "es2021",
+    ],
+    "module": "ES2020",
+    "moduleResolution": "node",
+
+
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": false,
+    "noImplicitOverride": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "inlineSources": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "**/node_modules"
+  ]
+}
