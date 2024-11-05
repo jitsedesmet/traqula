@@ -95,14 +95,14 @@ function baseAggregateFunc<T extends string>(func: TokenType & { name: T }): Rul
   };
 }
 
-const queryUnit: RuleDef & { name: 'queryUnit' } = {
+export const queryUnit: RuleDef & { name: 'queryUnit' } = {
   name: 'queryUnit',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(query);
   },
 };
 
-const query: RuleDef & { name: 'query' } = {
+export const query: RuleDef & { name: 'query' } = {
   name: 'query',
   impl: ({ SUBRULE, OR }) => () => {
     SUBRULE(prologue);
@@ -116,14 +116,14 @@ const query: RuleDef & { name: 'query' } = {
   },
 };
 
-const updateUnit: RuleDef & { name: 'updateUnit' } = {
+export const updateUnit: RuleDef & { name: 'updateUnit' } = {
   name: 'updateUnit',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(update);
   },
 };
 
-const prologue: RuleDef & { name: 'prologue' } = {
+export const prologue: RuleDef & { name: 'prologue' } = {
   name: 'prologue',
   impl: ({ SUBRULE, MANY, OR }) => () => {
     MANY(() => {
@@ -135,7 +135,7 @@ const prologue: RuleDef & { name: 'prologue' } = {
   },
 };
 
-const baseDecl: RuleDef & { name: 'baseDecl' } = {
+export const baseDecl: RuleDef & { name: 'baseDecl' } = {
   name: 'baseDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.baseDecl);
@@ -143,7 +143,7 @@ const baseDecl: RuleDef & { name: 'baseDecl' } = {
   },
 };
 
-const prefixDecl: RuleDef & { name: 'prefixDecl' } = {
+export const prefixDecl: RuleDef & { name: 'prefixDecl' } = {
   name: 'prefixDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.prefixDecl);
@@ -152,7 +152,7 @@ const prefixDecl: RuleDef & { name: 'prefixDecl' } = {
   },
 };
 
-const selectQuery: RuleDef & { name: 'selectQuery' } = {
+export const selectQuery: RuleDef & { name: 'selectQuery' } = {
   name: 'selectQuery',
   impl: ({ SUBRULE, MANY }) => () => {
     SUBRULE(selectClause);
@@ -162,7 +162,7 @@ const selectQuery: RuleDef & { name: 'selectQuery' } = {
   },
 };
 
-const subSelect: RuleDef & { name: 'subSelect' } = {
+export const subSelect: RuleDef & { name: 'subSelect' } = {
   name: 'subSelect',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(selectClause);
@@ -172,7 +172,7 @@ const subSelect: RuleDef & { name: 'subSelect' } = {
   },
 };
 
-const selectClause: RuleDef & { name: 'selectClause' } = {
+export const selectClause: RuleDef & { name: 'selectClause' } = {
   name: 'selectClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
     CONSUME(l.select);
@@ -202,7 +202,7 @@ const selectClause: RuleDef & { name: 'selectClause' } = {
   },
 };
 
-const constructQuery: RuleDef & { name: 'constructQuery' } = {
+export const constructQuery: RuleDef & { name: 'constructQuery' } = {
   name: 'constructQuery',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
@@ -231,7 +231,7 @@ const constructQuery: RuleDef & { name: 'constructQuery' } = {
   },
 };
 
-const describeQuery: RuleDef & { name: 'describeQuery' } = {
+export const describeQuery: RuleDef & { name: 'describeQuery' } = {
   name: 'describeQuery',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, MANY, OPTION, OR }) => () => {
     CONSUME(l.describe);
@@ -249,7 +249,7 @@ const describeQuery: RuleDef & { name: 'describeQuery' } = {
   },
 };
 
-const askQuery: RuleDef & { name: 'askQuery' } = {
+export const askQuery: RuleDef & { name: 'askQuery' } = {
   name: 'askQuery',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
     CONSUME(l.ask);
@@ -261,7 +261,7 @@ const askQuery: RuleDef & { name: 'askQuery' } = {
   },
 };
 
-const datasetClause: RuleDef & { name: 'datasetClause' } = {
+export const datasetClause: RuleDef & { name: 'datasetClause' } = {
   name: 'datasetClause',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.from);
@@ -272,14 +272,14 @@ const datasetClause: RuleDef & { name: 'datasetClause' } = {
   },
 };
 
-const defaultGraphClause: RuleDef & { name: 'defaultGraphClause' } = {
+export const defaultGraphClause: RuleDef & { name: 'defaultGraphClause' } = {
   name: 'defaultGraphClause',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(sourceSelector);
   },
 };
 
-const namedGraphClause: RuleDef & { name: 'namedGraphClause' } = {
+export const namedGraphClause: RuleDef & { name: 'namedGraphClause' } = {
   name: 'namedGraphClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.named);
@@ -287,14 +287,14 @@ const namedGraphClause: RuleDef & { name: 'namedGraphClause' } = {
   },
 };
 
-const sourceSelector: RuleDef & { name: 'sourceSelector' } = {
+export const sourceSelector: RuleDef & { name: 'sourceSelector' } = {
   name: 'sourceSelector',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(iri);
   },
 };
 
-const whereClause: RuleDef & { name: 'whereClause' } = {
+export const whereClause: RuleDef & { name: 'whereClause' } = {
   name: 'whereClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
@@ -304,7 +304,7 @@ const whereClause: RuleDef & { name: 'whereClause' } = {
   },
 };
 
-const solutionModifier: RuleDef & { name: 'solutionModifier' } = {
+export const solutionModifier: RuleDef & { name: 'solutionModifier' } = {
   name: 'solutionModifier',
   impl: ({ SUBRULE, OPTION1, OPTION2, OPTION3, OPTION4 }) => () => {
     OPTION1(() => {
@@ -322,7 +322,7 @@ const solutionModifier: RuleDef & { name: 'solutionModifier' } = {
   },
 };
 
-const groupClause: RuleDef & { name: 'groupClause' } = {
+export const groupClause: RuleDef & { name: 'groupClause' } = {
   name: 'groupClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.groupBy);
@@ -332,7 +332,7 @@ const groupClause: RuleDef & { name: 'groupClause' } = {
   },
 };
 
-const groupCondition: RuleDef & { name: 'groupCondition' } = {
+export const groupCondition: RuleDef & { name: 'groupCondition' } = {
   name: 'groupCondition',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
@@ -352,7 +352,7 @@ const groupCondition: RuleDef & { name: 'groupCondition' } = {
   },
 };
 
-const havingClause: RuleDef & { name: 'havingClause' } = {
+export const havingClause: RuleDef & { name: 'havingClause' } = {
   name: 'havingClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.having);
@@ -362,14 +362,14 @@ const havingClause: RuleDef & { name: 'havingClause' } = {
   },
 };
 
-const havingCondition: RuleDef & { name: 'havingCondition' } = {
+export const havingCondition: RuleDef & { name: 'havingCondition' } = {
   name: 'havingCondition',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(constraint);
   },
 };
 
-const orderClause: RuleDef & { name: 'orderClause' } = {
+export const orderClause: RuleDef & { name: 'orderClause' } = {
   name: 'orderClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.order);
@@ -379,7 +379,7 @@ const orderClause: RuleDef & { name: 'orderClause' } = {
   },
 };
 
-const orderCondition: RuleDef & { name: 'orderCondition' } = {
+export const orderCondition: RuleDef & { name: 'orderCondition' } = {
   name: 'orderCondition',
   impl: ({ SUBRULE, CONSUME, OR1, OR2 }) => () => {
     OR1([
@@ -396,7 +396,7 @@ const orderCondition: RuleDef & { name: 'orderCondition' } = {
   },
 };
 
-const limitOffsetClauses: RuleDef & { name: 'limitOffsetClauses' } = {
+export const limitOffsetClauses: RuleDef & { name: 'limitOffsetClauses' } = {
   name: 'limitOffsetClauses',
   impl: ({ SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
     OR([
@@ -416,7 +416,7 @@ const limitOffsetClauses: RuleDef & { name: 'limitOffsetClauses' } = {
   },
 };
 
-const limitClause: RuleDef & { name: 'limitClause' } = {
+export const limitClause: RuleDef & { name: 'limitClause' } = {
   name: 'limitClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.limit);
@@ -424,7 +424,7 @@ const limitClause: RuleDef & { name: 'limitClause' } = {
   },
 };
 
-const offsetClause: RuleDef & { name: 'offsetClause' } = {
+export const offsetClause: RuleDef & { name: 'offsetClause' } = {
   name: 'offsetClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.offset);
@@ -432,7 +432,7 @@ const offsetClause: RuleDef & { name: 'offsetClause' } = {
   },
 };
 
-const valuesClause: RuleDef & { name: 'valuesClause' } = {
+export const valuesClause: RuleDef & { name: 'valuesClause' } = {
   name: 'valuesClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
@@ -442,7 +442,7 @@ const valuesClause: RuleDef & { name: 'valuesClause' } = {
   },
 };
 
-const update: RuleDef & { name: 'update' } = {
+export const update: RuleDef & { name: 'update' } = {
   name: 'update',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(prologue);
@@ -456,7 +456,7 @@ const update: RuleDef & { name: 'update' } = {
   },
 };
 
-const update1: RuleDef & { name: 'update1' } = {
+export const update1: RuleDef & { name: 'update1' } = {
   name: 'update1',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -475,7 +475,7 @@ const update1: RuleDef & { name: 'update1' } = {
   },
 };
 
-const load: RuleDef & { name: 'load' } = {
+export const load: RuleDef & { name: 'load' } = {
   name: 'load',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     CONSUME(l.load);
@@ -488,7 +488,7 @@ const load: RuleDef & { name: 'load' } = {
   },
 };
 
-const clear: RuleDef & { name: 'clear' } = {
+export const clear: RuleDef & { name: 'clear' } = {
   name: 'clear',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.clear);
@@ -497,7 +497,7 @@ const clear: RuleDef & { name: 'clear' } = {
   },
 };
 
-const drop: RuleDef & { name: 'drop' } = {
+export const drop: RuleDef & { name: 'drop' } = {
   name: 'drop',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.drop);
@@ -506,7 +506,7 @@ const drop: RuleDef & { name: 'drop' } = {
   },
 };
 
-const create: RuleDef & { name: 'create' } = {
+export const create: RuleDef & { name: 'create' } = {
   name: 'create',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.create);
@@ -515,7 +515,7 @@ const create: RuleDef & { name: 'create' } = {
   },
 };
 
-const add: RuleDef & { name: 'add' } = {
+export const add: RuleDef & { name: 'add' } = {
   name: 'add',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.add);
@@ -526,7 +526,7 @@ const add: RuleDef & { name: 'add' } = {
   },
 };
 
-const move: RuleDef & { name: 'move' } = {
+export const move: RuleDef & { name: 'move' } = {
   name: 'move',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.move);
@@ -537,7 +537,7 @@ const move: RuleDef & { name: 'move' } = {
   },
 };
 
-const copy: RuleDef & { name: 'copy' } = {
+export const copy: RuleDef & { name: 'copy' } = {
   name: 'copy',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.copy);
@@ -548,7 +548,7 @@ const copy: RuleDef & { name: 'copy' } = {
   },
 };
 
-const insertData: RuleDef & { name: 'insertData' } = {
+export const insertData: RuleDef & { name: 'insertData' } = {
   name: 'insertData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.insertData);
@@ -556,7 +556,7 @@ const insertData: RuleDef & { name: 'insertData' } = {
   },
 };
 
-const deleteData: RuleDef & { name: 'deleteData' } = {
+export const deleteData: RuleDef & { name: 'deleteData' } = {
   name: 'deleteData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteData);
@@ -564,7 +564,7 @@ const deleteData: RuleDef & { name: 'deleteData' } = {
   },
 };
 
-const deleteWhere: RuleDef & { name: 'deleteWhere' } = {
+export const deleteWhere: RuleDef & { name: 'deleteWhere' } = {
   name: 'deleteWhere',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteWhere);
@@ -572,7 +572,7 @@ const deleteWhere: RuleDef & { name: 'deleteWhere' } = {
   },
 };
 
-const modify: RuleDef & { name: 'modify' } = {
+export const modify: RuleDef & { name: 'modify' } = {
   name: 'modify',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
     OPTION1(() => {
@@ -592,7 +592,7 @@ const modify: RuleDef & { name: 'modify' } = {
   },
 };
 
-const deleteClause: RuleDef & { name: 'deleteClause' } = {
+export const deleteClause: RuleDef & { name: 'deleteClause' } = {
   name: 'deleteClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteClause);
@@ -600,7 +600,7 @@ const deleteClause: RuleDef & { name: 'deleteClause' } = {
   },
 };
 
-const insertClause: RuleDef & { name: 'insertClause' } = {
+export const insertClause: RuleDef & { name: 'insertClause' } = {
   name: 'insertClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.insertClause);
@@ -608,7 +608,7 @@ const insertClause: RuleDef & { name: 'insertClause' } = {
   },
 };
 
-const usingClause: RuleDef & { name: 'usingClause' } = {
+export const usingClause: RuleDef & { name: 'usingClause' } = {
   name: 'usingClause',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OR }) => () => {
     CONSUME(l.usingClause);
@@ -622,7 +622,7 @@ const usingClause: RuleDef & { name: 'usingClause' } = {
   },
 };
 
-const graphOrDefault: RuleDef & { name: 'graphOrDefault' } = {
+export const graphOrDefault: RuleDef & { name: 'graphOrDefault' } = {
   name: 'graphOrDefault',
   impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
     OR([
@@ -635,7 +635,7 @@ const graphOrDefault: RuleDef & { name: 'graphOrDefault' } = {
   },
 };
 
-const graphRef: RuleDef & { name: 'graphRef' } = {
+export const graphRef: RuleDef & { name: 'graphRef' } = {
   name: 'graphRef',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
@@ -643,7 +643,7 @@ const graphRef: RuleDef & { name: 'graphRef' } = {
   },
 };
 
-const graphRefAll: RuleDef & { name: 'graphRefAll' } = {
+export const graphRefAll: RuleDef & { name: 'graphRefAll' } = {
   name: 'graphRefAll',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -655,7 +655,7 @@ const graphRefAll: RuleDef & { name: 'graphRefAll' } = {
   },
 };
 
-const quadPattern: RuleDef & { name: 'quadPattern' } = {
+export const quadPattern: RuleDef & { name: 'quadPattern' } = {
   name: 'quadPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -664,7 +664,7 @@ const quadPattern: RuleDef & { name: 'quadPattern' } = {
   },
 };
 
-const quadData: RuleDef & { name: 'quadData' } = {
+export const quadData: RuleDef & { name: 'quadData' } = {
   name: 'quadData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -673,7 +673,7 @@ const quadData: RuleDef & { name: 'quadData' } = {
   },
 };
 
-const quads: RuleDef & { name: 'quads' } = {
+export const quads: RuleDef & { name: 'quads' } = {
   name: 'quads',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     OPTION1(() => {
@@ -691,7 +691,7 @@ const quads: RuleDef & { name: 'quads' } = {
   },
 };
 
-const quadsNotTriples: RuleDef & { name: 'quadsNotTriples' } = {
+export const quadsNotTriples: RuleDef & { name: 'quadsNotTriples' } = {
   name: 'quadsNotTriples',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.graph.graph);
@@ -704,7 +704,7 @@ const quadsNotTriples: RuleDef & { name: 'quadsNotTriples' } = {
   },
 };
 
-const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
+export const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
   name: 'triplesTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubject);
@@ -717,7 +717,7 @@ const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
   },
 };
 
-const groupGraphPattern: RuleDef & { name: 'groupGraphPattern' } = {
+export const groupGraphPattern: RuleDef & { name: 'groupGraphPattern' } = {
   name: 'groupGraphPattern',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -729,7 +729,7 @@ const groupGraphPattern: RuleDef & { name: 'groupGraphPattern' } = {
   },
 };
 
-const groupGraphPatternSub: RuleDef & { name: 'groupGraphPatternSub' } = {
+export const groupGraphPatternSub: RuleDef & { name: 'groupGraphPatternSub' } = {
   name: 'groupGraphPatternSub',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     OPTION1(() => {
@@ -747,7 +747,7 @@ const groupGraphPatternSub: RuleDef & { name: 'groupGraphPatternSub' } = {
   },
 };
 
-const triplesBlock: RuleDef & { name: 'triplesBlock' } = {
+export const triplesBlock: RuleDef & { name: 'triplesBlock' } = {
   name: 'triplesBlock',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubjectPath);
@@ -760,7 +760,7 @@ const triplesBlock: RuleDef & { name: 'triplesBlock' } = {
   },
 };
 
-const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' } = {
+export const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' } = {
   name: 'graphPatternNotTriples',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -776,7 +776,7 @@ const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' } = {
   },
 };
 
-const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = {
+export const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = {
   name: 'optionalGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.optional);
@@ -784,7 +784,7 @@ const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = {
   },
 };
 
-const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
+export const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
   name: 'graphGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
@@ -793,7 +793,7 @@ const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
   },
 };
 
-const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
+export const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
   name: 'serviceGraphPattern',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.service);
@@ -805,7 +805,7 @@ const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
   },
 };
 
-const bind: RuleDef & { name: 'bind' } = {
+export const bind: RuleDef & { name: 'bind' } = {
   name: 'bind',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.bind);
@@ -817,7 +817,7 @@ const bind: RuleDef & { name: 'bind' } = {
   },
 };
 
-const inlineData: RuleDef & { name: 'inlineData' } = {
+export const inlineData: RuleDef & { name: 'inlineData' } = {
   name: 'inlineData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.values);
@@ -825,7 +825,7 @@ const inlineData: RuleDef & { name: 'inlineData' } = {
   },
 };
 
-const dataBlock: RuleDef & { name: 'dataBlock' } = {
+export const dataBlock: RuleDef & { name: 'dataBlock' } = {
   name: 'dataBlock',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -839,7 +839,7 @@ const dataBlock: RuleDef & { name: 'dataBlock' } = {
   },
 };
 
-const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
+export const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
   name: 'inlineDataOneVar',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
     SUBRULE(var_);
@@ -851,7 +851,7 @@ const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
   },
 };
 
-const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
+export const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
   name: 'inlineDataFull',
   impl: ({ SUBRULE, CONSUME, MANY1, MANY2, OR1, OR2, CONSUME1, MANY3, CONSUME2 }) => () => {
     OR1([
@@ -885,7 +885,7 @@ const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
   },
 };
 
-const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
+export const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
   name: 'dataBlockValue',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -908,7 +908,7 @@ const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
   },
 };
 
-const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
+export const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
   name: 'minusGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.minus);
@@ -916,7 +916,7 @@ const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
   },
 };
 
-const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPattern' } = {
+export const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPattern' } = {
   name: 'groupOrUnionGraphPattern',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(groupGraphPattern);
@@ -927,7 +927,7 @@ const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPattern' } =
   },
 };
 
-const filter: RuleDef & { name: 'filter' } = {
+export const filter: RuleDef & { name: 'filter' } = {
   name: 'filter',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.filter);
@@ -935,7 +935,7 @@ const filter: RuleDef & { name: 'filter' } = {
   },
 };
 
-const constraint: RuleDef & { name: 'constraint' } = {
+export const constraint: RuleDef & { name: 'constraint' } = {
   name: 'constraint',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -946,7 +946,7 @@ const constraint: RuleDef & { name: 'constraint' } = {
   },
 };
 
-const functionCall: RuleDef & { name: 'functionCall' } = {
+export const functionCall: RuleDef & { name: 'functionCall' } = {
   name: 'functionCall',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(iri);
@@ -954,7 +954,7 @@ const functionCall: RuleDef & { name: 'functionCall' } = {
   },
 };
 
-const argList: RuleDef & { name: 'argList' } = {
+export const argList: RuleDef & { name: 'argList' } = {
   name: 'argList',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
@@ -975,7 +975,7 @@ const argList: RuleDef & { name: 'argList' } = {
   },
 };
 
-const expressionList: RuleDef & { name: 'expressionList' } = {
+export const expressionList: RuleDef & { name: 'expressionList' } = {
   name: 'expressionList',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OR }) => () => {
     OR([
@@ -993,7 +993,7 @@ const expressionList: RuleDef & { name: 'expressionList' } = {
   },
 };
 
-const constructTemplate: RuleDef & { name: 'constructTemplate' } = {
+export const constructTemplate: RuleDef & { name: 'constructTemplate' } = {
   name: 'constructTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -1004,7 +1004,7 @@ const constructTemplate: RuleDef & { name: 'constructTemplate' } = {
   },
 };
 
-const constructTriples: RuleDef & { name: 'constructTriples' } = {
+export const constructTriples: RuleDef & { name: 'constructTriples' } = {
   name: 'constructTriples',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubject);
@@ -1017,7 +1017,7 @@ const constructTriples: RuleDef & { name: 'constructTriples' } = {
   },
 };
 
-const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
+export const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
   name: 'triplesSameSubject',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1033,7 +1033,7 @@ const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
   },
 };
 
-const propertyList: RuleDef & { name: 'propertyList' } = {
+export const propertyList: RuleDef & { name: 'propertyList' } = {
   name: 'propertyList',
   impl: ({ SUBRULE, OPTION }) => () => {
     OPTION(() => {
@@ -1042,7 +1042,7 @@ const propertyList: RuleDef & { name: 'propertyList' } = {
   },
 };
 
-const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = {
+export const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = {
   name: 'propertyListNotEmpty',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION }) => () => {
     SUBRULE1(verb);
@@ -1057,7 +1057,7 @@ const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = {
   },
 };
 
-const verb: RuleDef & { name: 'verb' } = {
+export const verb: RuleDef & { name: 'verb' } = {
   name: 'verb',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -1067,7 +1067,7 @@ const verb: RuleDef & { name: 'verb' } = {
   },
 };
 
-const objectList: RuleDef & { name: 'objectList' } = {
+export const objectList: RuleDef & { name: 'objectList' } = {
   name: 'objectList',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(object);
@@ -1078,14 +1078,14 @@ const objectList: RuleDef & { name: 'objectList' } = {
   },
 };
 
-const object: RuleDef & { name: 'object' } = {
+export const object: RuleDef & { name: 'object' } = {
   name: 'object',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(graphNode);
   },
 };
 
-const triplesSameSubjectPath: RuleDef & { name: 'triplesSameSubjectPath' } = {
+export const triplesSameSubjectPath: RuleDef & { name: 'triplesSameSubjectPath' } = {
   name: 'triplesSameSubjectPath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1101,7 +1101,7 @@ const triplesSameSubjectPath: RuleDef & { name: 'triplesSameSubjectPath' } = {
   },
 };
 
-const propertyListPath: RuleDef & { name: 'propertyListPath' } = {
+export const propertyListPath: RuleDef & { name: 'propertyListPath' } = {
   name: 'propertyListPath',
   impl: ({ SUBRULE, OPTION }) => () => {
     OPTION(() => {
@@ -1110,7 +1110,7 @@ const propertyListPath: RuleDef & { name: 'propertyListPath' } = {
   },
 };
 
-const propertyListPathNotEmpty: RuleDef & { name: 'propertyListPathNotEmpty' } = {
+export const propertyListPathNotEmpty: RuleDef & { name: 'propertyListPathNotEmpty' } = {
   name: 'propertyListPathNotEmpty',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => () => {
     OR1([
@@ -1135,21 +1135,21 @@ const propertyListPathNotEmpty: RuleDef & { name: 'propertyListPathNotEmpty' } =
   },
 };
 
-const verbPath: RuleDef & { name: 'verbPath' } = {
+export const verbPath: RuleDef & { name: 'verbPath' } = {
   name: 'verbPath',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(path);
   },
 };
 
-const verbSimple: RuleDef & { name: 'verbSimple' } = {
+export const verbSimple: RuleDef & { name: 'verbSimple' } = {
   name: 'verbSimple',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(var_);
   },
 };
 
-const objectListPath: RuleDef & { name: 'objectListPath' } = {
+export const objectListPath: RuleDef & { name: 'objectListPath' } = {
   name: 'objectListPath',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(objectPath);
@@ -1160,21 +1160,21 @@ const objectListPath: RuleDef & { name: 'objectListPath' } = {
   },
 };
 
-const objectPath: RuleDef & { name: 'objectPath' } = {
+export const objectPath: RuleDef & { name: 'objectPath' } = {
   name: 'objectPath',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(graphNodePath);
   },
 };
 
-const path: RuleDef & { name: 'path' } = {
+export const path: RuleDef & { name: 'path' } = {
   name: 'path',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(pathAlternative);
   },
 };
 
-const pathAlternative: RuleDef & { name: 'pathAlternative' } = {
+export const pathAlternative: RuleDef & { name: 'pathAlternative' } = {
   name: 'pathAlternative',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(pathSequence);
@@ -1185,7 +1185,7 @@ const pathAlternative: RuleDef & { name: 'pathAlternative' } = {
   },
 };
 
-const pathSequence: RuleDef & { name: 'pathSequence' } = {
+export const pathSequence: RuleDef & { name: 'pathSequence' } = {
   name: 'pathSequence',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(pathEltOrInverse);
@@ -1196,7 +1196,7 @@ const pathSequence: RuleDef & { name: 'pathSequence' } = {
   },
 };
 
-const pathElt: RuleDef & { name: 'pathElt' } = {
+export const pathElt: RuleDef & { name: 'pathElt' } = {
   name: 'pathElt',
   impl: ({ SUBRULE, OPTION }) => () => {
     SUBRULE(pathPrimary);
@@ -1206,7 +1206,7 @@ const pathElt: RuleDef & { name: 'pathElt' } = {
   },
 };
 
-const pathEltOrInverse: RuleDef & { name: 'pathEltOrInverse' } = {
+export const pathEltOrInverse: RuleDef & { name: 'pathEltOrInverse' } = {
   name: 'pathEltOrInverse',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OR }) => () => {
     OR([
@@ -1221,7 +1221,7 @@ const pathEltOrInverse: RuleDef & { name: 'pathEltOrInverse' } = {
   },
 };
 
-const pathMod: RuleDef & { name: 'pathMod' } = {
+export const pathMod: RuleDef & { name: 'pathMod' } = {
   name: 'pathMod',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1232,7 +1232,7 @@ const pathMod: RuleDef & { name: 'pathMod' } = {
   },
 };
 
-const pathPrimary: RuleDef & { name: 'pathPrimary' } = {
+export const pathPrimary: RuleDef & { name: 'pathPrimary' } = {
   name: 'pathPrimary',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -1251,7 +1251,7 @@ const pathPrimary: RuleDef & { name: 'pathPrimary' } = {
   },
 };
 
-const pathNegatedPropertySet: RuleDef & { name: 'pathNegatedPropertySet' } = {
+export const pathNegatedPropertySet: RuleDef & { name: 'pathNegatedPropertySet' } = {
   name: 'pathNegatedPropertySet',
   impl: ({ SUBRULE3, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
@@ -1273,7 +1273,7 @@ const pathNegatedPropertySet: RuleDef & { name: 'pathNegatedPropertySet' } = {
   },
 };
 
-const pathOneInPropertySet: RuleDef & { name: 'pathOneInPropertySet' } = {
+export const pathOneInPropertySet: RuleDef & { name: 'pathOneInPropertySet' } = {
   name: 'pathOneInPropertySet',
   impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2 }) => () => {
     OR1([
@@ -1290,14 +1290,14 @@ const pathOneInPropertySet: RuleDef & { name: 'pathOneInPropertySet' } = {
   },
 };
 
-const integer: RuleDef & { name: 'integer' } = {
+export const integer: RuleDef & { name: 'integer' } = {
   name: 'integer',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.terminals.integer);
   },
 };
 
-const triplesNode: RuleDef & { name: 'triplesNode' } = {
+export const triplesNode: RuleDef & { name: 'triplesNode' } = {
   name: 'triplesNode',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1307,7 +1307,7 @@ const triplesNode: RuleDef & { name: 'triplesNode' } = {
   },
 };
 
-const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } = {
+export const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } = {
   name: 'blankNodePropertyList',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LSquare);
@@ -1316,7 +1316,7 @@ const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } = {
   },
 };
 
-const triplesNodePath: RuleDef & { name: 'triplesNodePath' } = {
+export const triplesNodePath: RuleDef & { name: 'triplesNodePath' } = {
   name: 'triplesNodePath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1326,7 +1326,7 @@ const triplesNodePath: RuleDef & { name: 'triplesNodePath' } = {
   },
 };
 
-const blankNodePropertyListPath: RuleDef & { name: 'blankNodePropertyListPath' } = {
+export const blankNodePropertyListPath: RuleDef & { name: 'blankNodePropertyListPath' } = {
   name: 'blankNodePropertyListPath',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LSquare);
@@ -1335,7 +1335,7 @@ const blankNodePropertyListPath: RuleDef & { name: 'blankNodePropertyListPath' }
   },
 };
 
-const collection: RuleDef & { name: 'collection' } = {
+export const collection: RuleDef & { name: 'collection' } = {
   name: 'collection',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -1346,7 +1346,7 @@ const collection: RuleDef & { name: 'collection' } = {
   },
 };
 
-const collectionPath: RuleDef & { name: 'collectionPath' } = {
+export const collectionPath: RuleDef & { name: 'collectionPath' } = {
   name: 'collectionPath',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -1357,7 +1357,7 @@ const collectionPath: RuleDef & { name: 'collectionPath' } = {
   },
 };
 
-const graphNode: RuleDef & { name: 'graphNode' } = {
+export const graphNode: RuleDef & { name: 'graphNode' } = {
   name: 'graphNode',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1367,7 +1367,7 @@ const graphNode: RuleDef & { name: 'graphNode' } = {
   },
 };
 
-const graphNodePath: RuleDef & { name: 'graphNodePath' } = {
+export const graphNodePath: RuleDef & { name: 'graphNodePath' } = {
   name: 'graphNodePath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1377,7 +1377,7 @@ const graphNodePath: RuleDef & { name: 'graphNodePath' } = {
   },
 };
 
-const varOrTerm: RuleDef & { name: 'varOrTerm' } = {
+export const varOrTerm: RuleDef & { name: 'varOrTerm' } = {
   name: 'varOrTerm',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1387,7 +1387,7 @@ const varOrTerm: RuleDef & { name: 'varOrTerm' } = {
   },
 };
 
-const varOrIri: RuleDef & { name: 'varOrIri' } = {
+export const varOrIri: RuleDef & { name: 'varOrIri' } = {
   name: 'varOrIri',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1397,7 +1397,7 @@ const varOrIri: RuleDef & { name: 'varOrIri' } = {
   },
 };
 
-const var_: RuleDef & { name: 'var' } = {
+export const var_: RuleDef & { name: 'var' } = {
   name: 'var',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1407,7 +1407,7 @@ const var_: RuleDef & { name: 'var' } = {
   },
 };
 
-const graphTerm: RuleDef & { name: 'graphTerm' } = {
+export const graphTerm: RuleDef & { name: 'graphTerm' } = {
   name: 'graphTerm',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -1421,14 +1421,14 @@ const graphTerm: RuleDef & { name: 'graphTerm' } = {
   },
 };
 
-const expression: RuleDef & { name: 'expression' } = {
+export const expression: RuleDef & { name: 'expression' } = {
   name: 'expression',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(conditionalOrExpression);
   },
 };
 
-const conditionalOrExpression: RuleDef & { name: 'conditionalOrExpression' } = {
+export const conditionalOrExpression: RuleDef & { name: 'conditionalOrExpression' } = {
   name: 'conditionalOrExpression',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(conditionalAndExpression);
@@ -1439,7 +1439,7 @@ const conditionalOrExpression: RuleDef & { name: 'conditionalOrExpression' } = {
   },
 };
 
-const conditionalAndExpression: RuleDef & { name: 'conditionalAndExpression' } = {
+export const conditionalAndExpression: RuleDef & { name: 'conditionalAndExpression' } = {
   name: 'conditionalAndExpression',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(valueLogical);
@@ -1450,14 +1450,14 @@ const conditionalAndExpression: RuleDef & { name: 'conditionalAndExpression' } =
   },
 };
 
-const valueLogical: RuleDef & { name: 'valueLogical' } = {
+export const valueLogical: RuleDef & { name: 'valueLogical' } = {
   name: 'valueLogical',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(relationalExpression);
   },
 };
 
-const relationalExpression: RuleDef & { name: 'relationalExpression' } = {
+export const relationalExpression: RuleDef & { name: 'relationalExpression' } = {
   name: 'relationalExpression',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION, OR, SUBRULE3, SUBRULE4, SUBRULE5, SUBRULE6, SUBRULE7 }) => () => {
     SUBRULE1(numericExpression);
@@ -1500,14 +1500,14 @@ const relationalExpression: RuleDef & { name: 'relationalExpression' } = {
   },
 };
 
-const numericExpression: RuleDef & { name: 'numericExpression' } = {
+export const numericExpression: RuleDef & { name: 'numericExpression' } = {
   name: 'numericExpression',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(additiveExpression);
   },
 };
 
-const additiveExpression: RuleDef & { name: 'additiveExpression' } = {
+export const additiveExpression: RuleDef & { name: 'additiveExpression' } = {
   name: 'additiveExpression',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, MANY1, MANY2, OR1, OR2, OR3 }) => () => {
     SUBRULE1(multiplicativeExpression);
@@ -1544,7 +1544,7 @@ const additiveExpression: RuleDef & { name: 'additiveExpression' } = {
   },
 };
 
-const multiplicativeExpression: RuleDef & { name: 'multiplicativeExpression' } = {
+export const multiplicativeExpression: RuleDef & { name: 'multiplicativeExpression' } = {
   name: 'multiplicativeExpression',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, SUBRULE3, OR }) => () => {
     SUBRULE1(unaryExpression);
@@ -1563,7 +1563,7 @@ const multiplicativeExpression: RuleDef & { name: 'multiplicativeExpression' } =
   },
 };
 
-const unaryExpression: RuleDef & { name: 'unaryExpression' } = {
+export const unaryExpression: RuleDef & { name: 'unaryExpression' } = {
   name: 'unaryExpression',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, SUBRULE4, OR }) => () => {
     OR([
@@ -1584,7 +1584,7 @@ const unaryExpression: RuleDef & { name: 'unaryExpression' } = {
   },
 };
 
-const primaryExpression: RuleDef & { name: 'primaryExpression' } = {
+export const primaryExpression: RuleDef & { name: 'primaryExpression' } = {
   name: 'primaryExpression',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1599,7 +1599,7 @@ const primaryExpression: RuleDef & { name: 'primaryExpression' } = {
   },
 };
 
-const brackettedExpression: RuleDef & { name: 'brackettedExpression' } = {
+export const brackettedExpression: RuleDef & { name: 'brackettedExpression' } = {
   name: 'brackettedExpression',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -1608,57 +1608,57 @@ const brackettedExpression: RuleDef & { name: 'brackettedExpression' } = {
   },
 };
 
-const buildInStr = exprFunc1(l.buildIn.str);
-const buildInLang = exprFunc1(l.buildIn.lang);
-const buildInLangmatches = exprFunc2(l.buildIn.langmatches);
-const buildInDatatype = exprFunc1(l.buildIn.datatype);
-const buildInBound = varFunc1(l.buildIn.bound);
-const buildInIri = exprFunc1(l.buildIn.iri);
-const buildInUri = exprFunc1(l.buildIn.uri);
-const buildInBnode = exprOrNilFunc1(l.buildIn.bnode);
-const buildInRand = nilFunc1(l.buildIn.rand);
-const buildInAbs = exprFunc1(l.buildIn.abs);
-const buildInCeil = exprFunc1(l.buildIn.ceil);
-const buildInFloor = exprFunc1(l.buildIn.floor);
-const buildInRound = exprFunc1(l.buildIn.round);
-const buildInConcat = exprListFunc1(l.buildIn.concat);
-const buildInStrlen = exprFunc1(l.buildIn.strlen);
-const buildInUcase = exprFunc1(l.buildIn.ucase);
-const buildInLcase = exprFunc1(l.buildIn.lcase);
-const buildInEncode_for_uri = exprFunc1(l.buildIn.encode_for_uri);
-const buildInContains = exprFunc2(l.buildIn.contains);
-const buildInStrstarts = exprFunc2(l.buildIn.strstarts);
-const buildInStrends = exprFunc2(l.buildIn.strends);
-const buildInStrbefore = exprFunc2(l.buildIn.strbefore);
-const buildInStrafter = exprFunc2(l.buildIn.strafter);
-const buildInYear = exprFunc1(l.buildIn.year);
-const buildInMonth = exprFunc1(l.buildIn.month);
-const buildInDay = exprFunc1(l.buildIn.day);
-const buildInHours = exprFunc1(l.buildIn.hours);
-const buildInMinutes = exprFunc1(l.buildIn.minutes);
-const buildInSeconds = exprFunc1(l.buildIn.seconds);
-const buildInTimezone = exprFunc1(l.buildIn.timezone);
-const buildInTz = exprFunc1(l.buildIn.tz);
-const buildInNow = nilFunc1(l.buildIn.now);
-const buildInUuid = nilFunc1(l.buildIn.uuid);
-const buildInStruuid = nilFunc1(l.buildIn.struuid);
-const buildInMd5 = exprFunc1(l.buildIn.md5);
-const buildInSha1 = exprFunc1(l.buildIn.sha1);
-const buildInSha256 = exprFunc1(l.buildIn.sha256);
-const buildInSha384 = exprFunc1(l.buildIn.sha384);
-const buildInSha512 = exprFunc1(l.buildIn.sha512);
-const buildInCoalesce = exprListFunc1(l.buildIn.coalesce);
-const buildInIf = exprFunc2(l.buildIn.if_);
-const buildInStrlang = exprFunc2(l.buildIn.strlang);
-const buildInStrdt = exprFunc2(l.buildIn.strdt);
-const buildInSameterm = exprFunc2(l.buildIn.sameterm);
-const buildInIsiri = exprFunc1(l.buildIn.isiri);
-const buildInIsuri = exprFunc1(l.buildIn.isuri);
-const buildInIsblank = exprFunc1(l.buildIn.isblank);
-const buildInIsliteral = exprFunc1(l.buildIn.isliteral);
-const buildInIsnumeric = exprFunc1(l.buildIn.isnumeric);
+export const buildInStr = exprFunc1(l.buildIn.str);
+export const buildInLang = exprFunc1(l.buildIn.lang);
+export const buildInLangmatches = exprFunc2(l.buildIn.langmatches);
+export const buildInDatatype = exprFunc1(l.buildIn.datatype);
+export const buildInBound = varFunc1(l.buildIn.bound);
+export const buildInIri = exprFunc1(l.buildIn.iri);
+export const buildInUri = exprFunc1(l.buildIn.uri);
+export const buildInBnode = exprOrNilFunc1(l.buildIn.bnode);
+export const buildInRand = nilFunc1(l.buildIn.rand);
+export const buildInAbs = exprFunc1(l.buildIn.abs);
+export const buildInCeil = exprFunc1(l.buildIn.ceil);
+export const buildInFloor = exprFunc1(l.buildIn.floor);
+export const buildInRound = exprFunc1(l.buildIn.round);
+export const buildInConcat = exprListFunc1(l.buildIn.concat);
+export const buildInStrlen = exprFunc1(l.buildIn.strlen);
+export const buildInUcase = exprFunc1(l.buildIn.ucase);
+export const buildInLcase = exprFunc1(l.buildIn.lcase);
+export const buildInEncode_for_uri = exprFunc1(l.buildIn.encode_for_uri);
+export const buildInContains = exprFunc2(l.buildIn.contains);
+export const buildInStrstarts = exprFunc2(l.buildIn.strstarts);
+export const buildInStrends = exprFunc2(l.buildIn.strends);
+export const buildInStrbefore = exprFunc2(l.buildIn.strbefore);
+export const buildInStrafter = exprFunc2(l.buildIn.strafter);
+export const buildInYear = exprFunc1(l.buildIn.year);
+export const buildInMonth = exprFunc1(l.buildIn.month);
+export const buildInDay = exprFunc1(l.buildIn.day);
+export const buildInHours = exprFunc1(l.buildIn.hours);
+export const buildInMinutes = exprFunc1(l.buildIn.minutes);
+export const buildInSeconds = exprFunc1(l.buildIn.seconds);
+export const buildInTimezone = exprFunc1(l.buildIn.timezone);
+export const buildInTz = exprFunc1(l.buildIn.tz);
+export const buildInNow = nilFunc1(l.buildIn.now);
+export const buildInUuid = nilFunc1(l.buildIn.uuid);
+export const buildInStruuid = nilFunc1(l.buildIn.struuid);
+export const buildInMd5 = exprFunc1(l.buildIn.md5);
+export const buildInSha1 = exprFunc1(l.buildIn.sha1);
+export const buildInSha256 = exprFunc1(l.buildIn.sha256);
+export const buildInSha384 = exprFunc1(l.buildIn.sha384);
+export const buildInSha512 = exprFunc1(l.buildIn.sha512);
+export const buildInCoalesce = exprListFunc1(l.buildIn.coalesce);
+export const buildInIf = exprFunc2(l.buildIn.if_);
+export const buildInStrlang = exprFunc2(l.buildIn.strlang);
+export const buildInStrdt = exprFunc2(l.buildIn.strdt);
+export const buildInSameterm = exprFunc2(l.buildIn.sameterm);
+export const buildInIsiri = exprFunc1(l.buildIn.isiri);
+export const buildInIsuri = exprFunc1(l.buildIn.isuri);
+export const buildInIsblank = exprFunc1(l.buildIn.isblank);
+export const buildInIsliteral = exprFunc1(l.buildIn.isliteral);
+export const buildInIsnumeric = exprFunc1(l.buildIn.isnumeric);
 
-const buildInCall: RuleDef & { name: 'buildInCall' } = {
+export const buildInCall: RuleDef & { name: 'buildInCall' } = {
   name: 'buildInCall',
   impl: ({ OR, SUBRULE }) => () => {
     OR([
@@ -1721,7 +1721,7 @@ const buildInCall: RuleDef & { name: 'buildInCall' } = {
   },
 };
 
-const regexExpression: RuleDef & { name: 'regexExpression' } = {
+export const regexExpression: RuleDef & { name: 'regexExpression' } = {
   name: 'regexExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.buildIn.regex);
@@ -1737,7 +1737,7 @@ const regexExpression: RuleDef & { name: 'regexExpression' } = {
   },
 };
 
-const substringExpression: RuleDef & { name: 'substringExpression' } = {
+export const substringExpression: RuleDef & { name: 'substringExpression' } = {
   name: 'substringExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.buildIn.substr);
@@ -1753,7 +1753,7 @@ const substringExpression: RuleDef & { name: 'substringExpression' } = {
   },
 };
 
-const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = {
+export const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = {
   name: 'strReplaceExpression',
   impl: ({ CONSUME1, CONSUME2, CONSUME3, SUBRULE3, SUBRULE4, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.buildIn.replace);
@@ -1771,7 +1771,7 @@ const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = {
   },
 };
 
-const existsFunc: RuleDef & { name: 'existsFunc' } = {
+export const existsFunc: RuleDef & { name: 'existsFunc' } = {
   name: 'existsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.buildIn.exists);
@@ -1779,7 +1779,7 @@ const existsFunc: RuleDef & { name: 'existsFunc' } = {
   },
 };
 
-const notExistsFunc: RuleDef & { name: 'notExistsFunc' } = {
+export const notExistsFunc: RuleDef & { name: 'notExistsFunc' } = {
   name: 'notExistsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.buildIn.notexists);
@@ -1787,13 +1787,13 @@ const notExistsFunc: RuleDef & { name: 'notExistsFunc' } = {
   },
 };
 
-const aggregateCount = baseAggregateFunc(l.buildIn.count);
-const aggregateSum = baseAggregateFunc(l.buildIn.sum);
-const aggregateMin = baseAggregateFunc(l.buildIn.min);
-const aggregateMax = baseAggregateFunc(l.buildIn.max);
-const aggregateAvg = baseAggregateFunc(l.buildIn.avg);
-const aggregateSample = baseAggregateFunc(l.buildIn.sample);
-const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buildIn.groupConcat.name> } = {
+export const aggregateCount = baseAggregateFunc(l.buildIn.count);
+export const aggregateSum = baseAggregateFunc(l.buildIn.sum);
+export const aggregateMin = baseAggregateFunc(l.buildIn.min);
+export const aggregateMax = baseAggregateFunc(l.buildIn.max);
+export const aggregateAvg = baseAggregateFunc(l.buildIn.avg);
+export const aggregateSample = baseAggregateFunc(l.buildIn.sample);
+export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buildIn.groupConcat.name> } = {
   name: unCapitalize(l.buildIn.groupConcat.name),
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
     CONSUME(l.buildIn.groupConcat);
@@ -1812,7 +1812,7 @@ const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buildIn.gro
   },
 };
 
-const aggregate: RuleDef & { name: 'aggregate' } = {
+export const aggregate: RuleDef & { name: 'aggregate' } = {
   name: 'aggregate',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1827,7 +1827,7 @@ const aggregate: RuleDef & { name: 'aggregate' } = {
   },
 };
 
-const iriOrFunction: RuleDef & { name: 'iriOrFunction' } = {
+export const iriOrFunction: RuleDef & { name: 'iriOrFunction' } = {
   name: 'iriOrFunction',
   impl: ({ SUBRULE, OPTION }) => () => {
     SUBRULE(iri);
@@ -1837,7 +1837,7 @@ const iriOrFunction: RuleDef & { name: 'iriOrFunction' } = {
   },
 };
 
-const rdfLiteral: RuleDef & { name: 'rdfLiteral' } = {
+export const rdfLiteral: RuleDef & { name: 'rdfLiteral' } = {
   name: 'rdfLiteral',
   impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
     SUBRULE(string);
@@ -1853,7 +1853,7 @@ const rdfLiteral: RuleDef & { name: 'rdfLiteral' } = {
   },
 };
 
-const numericLiteral: RuleDef & { name: 'numericLiteral' } = {
+export const numericLiteral: RuleDef & { name: 'numericLiteral' } = {
   name: 'numericLiteral',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -1864,7 +1864,7 @@ const numericLiteral: RuleDef & { name: 'numericLiteral' } = {
   },
 };
 
-const numericLiteralUnsigned: RuleDef & { name: 'numericLiteralUnsigned' } = {
+export const numericLiteralUnsigned: RuleDef & { name: 'numericLiteralUnsigned' } = {
   name: 'numericLiteralUnsigned',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1875,7 +1875,7 @@ const numericLiteralUnsigned: RuleDef & { name: 'numericLiteralUnsigned' } = {
   },
 };
 
-const numericLiteralPositive: RuleDef & { name: 'numericLiteralPositive' } = {
+export const numericLiteralPositive: RuleDef & { name: 'numericLiteralPositive' } = {
   name: 'numericLiteralPositive',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1886,7 +1886,7 @@ const numericLiteralPositive: RuleDef & { name: 'numericLiteralPositive' } = {
   },
 };
 
-const numericLiteralNegative: RuleDef & { name: 'numericLiteralNegative' } = {
+export const numericLiteralNegative: RuleDef & { name: 'numericLiteralNegative' } = {
   name: 'numericLiteralNegative',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1897,7 +1897,7 @@ const numericLiteralNegative: RuleDef & { name: 'numericLiteralNegative' } = {
   },
 };
 
-const booleanLiteral: RuleDef & { name: 'booleanLiteral' } = {
+export const booleanLiteral: RuleDef & { name: 'booleanLiteral' } = {
   name: 'booleanLiteral',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1907,7 +1907,7 @@ const booleanLiteral: RuleDef & { name: 'booleanLiteral' } = {
   },
 };
 
-const string: RuleDef & { name: 'string' } = {
+export const string: RuleDef & { name: 'string' } = {
   name: 'string',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1919,7 +1919,7 @@ const string: RuleDef & { name: 'string' } = {
   },
 };
 
-const iri: RuleDef & { name: 'iri' } = {
+export const iri: RuleDef & { name: 'iri' } = {
   name: 'iri',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -1929,7 +1929,7 @@ const iri: RuleDef & { name: 'iri' } = {
   },
 };
 
-const prefixedName: RuleDef & { name: 'prefixedName' } = {
+export const prefixedName: RuleDef & { name: 'prefixedName' } = {
   name: 'prefixedName',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1949,7 +1949,7 @@ export const blankNode: RuleDef & { name: 'blankNode' } = {
   },
 };
 
-const builder = Builder.createBuilder()
+export const sparql12Builder = Builder.createBuilder()
   .addRule(queryUnit)
   .addRule(query)
   .addRule(updateUnit)
@@ -2145,10 +2145,14 @@ const builder = Builder.createBuilder()
   .addRule(prefixedName)
   .addRule(blankNode);
 
-export function build(): void {
+export function trySparql12(): void {
   const lexer = ChevSparqlLexer;
-  const parser = builder.consume(allTokens);
+  const parser = sparql12Builder.consume(allTokens);
 
-  const lexResult = lexer.tokenize('SELECT * WHERE { ?s ?p ?o }');
+  // Const lexResult = lexer.tokenize('SELECT * WHERE { ?s ?p ?o }');
+  const lexResult = lexer.tokenize('SELECT (LANGMATCHES(?S, ?P) AS ?adjusted) WHERE { ?s ?p ?o }');
+
   parser.input = lexResult.tokens;
+  parser.query();
+  console.log(parser.errors.join('\n'));
 }

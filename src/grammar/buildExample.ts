@@ -378,7 +378,7 @@ export type RuleDef = {
   impl: (def: CstDef) => () => void;
 };
 
-export class Builder<T extends string> {
+export class Builder<T extends string > {
   public static createBuilder(): Builder<''> {
     return new Builder<''>();
   }
@@ -392,6 +392,35 @@ export class Builder<T extends string> {
   public addRule<U extends string>(rule: RuleDef & { name: U }): Builder<T | U> {
     this.rules.push(rule);
     return <Builder<T | U>> this;
+  }
+
+  public merge<U extends string>(builder: Builder<U>, overridingRules: RuleDef[] = []): Builder<T | U> {
+    const existingRules: Set<string> = new Set(this.rules.map(rule => rule.name));
+    const res = Builder.createBuilder();
+
+    for (const rule of builder.rules) {
+      if (existingRules.has(rule.name)) {
+        const overridingRule = overridingRules.find(overridingRule => overridingRule.name === rule.name);
+        if (overridingRule) {
+          res.rules.push(overridingRule);
+          existingRules.delete(rule.name);
+        } else {
+          // Need to be explicit about overriding since the name of a rule is the key,
+          // but you don't necessarily know the keys used in the grammar you are extending
+          throw new Error(`Rule ${rule.name} already exists, if this was intended, provide the rule to overridingRules`);
+        }
+      } else {
+        res.rules.push(rule);
+      }
+    }
+
+    for (const rule of this.rules) {
+      if (existingRules.has(rule.name)) {
+        res.rules.push(rule);
+      }
+    }
+
+    return <Builder<T | U>> res;
   }
 
   public consume(tokenVocabulary: TokenVocabulary): CstParser & Record<T, ParserMethod<unknown[], CstNode>> {

@@ -1,6 +1,8 @@
-import { build } from './grammar/gramTest';
+import { trySparqlAdjust } from './grammar/adjustGrammar';
+import { trySparql12 } from './grammar/gramTest';
 
-build();
+trySparql12();
+trySparqlAdjust();
 
 // Import * as fs from 'node:fs';
 // import { createSyntaxDiagramsCode } from 'chevrotain';
