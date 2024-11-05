@@ -1,23 +1,8 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../lexer';
-import { ChevSparqlLexer } from '../lexer';
+import { allTokens, ChevSparqlLexer } from '../lexer';
 import { Builder } from './buildExample';
 import type { RuleDef } from './buildExample';
-
-// Const aggregate: RuleDef = {
-//     name: 'aggregate',
-//     impl: ({SUBRULE, OR}) => () => {
-//         OR([
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Count])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Sum])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Min])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Max])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Avg])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Sample])},
-//             {ALT: () => SUBRULE([l.buildIn.BuiltInCalls.Group_concat])},
-//         ]);
-//     }
-// };
 
 function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
@@ -37,12 +22,12 @@ function exprFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & {
 function exprFunc2<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
   return {
     name: unCapitalize(func.name),
-    impl: ({ SUBRULE, CONSUME }) => () => {
+    impl: ({ SUBRULE1, SUBRULE2, CONSUME }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      SUBRULE(expression);
+      SUBRULE1(expression);
       CONSUME(l.symbols.comma);
-      SUBRULE(expression);
+      SUBRULE2(expression);
       CONSUME(l.symbols.RParen);
     },
   };
@@ -110,6 +95,13 @@ function baseAggregateFunc<T extends string>(func: TokenType & { name: T }): Rul
   };
 }
 
+const queryUnit: RuleDef & { name: 'queryUnit' } = {
+  name: 'queryUnit',
+  impl: ({ SUBRULE }) => () => {
+    SUBRULE(query);
+  },
+};
+
 const query: RuleDef & { name: 'query' } = {
   name: 'query',
   impl: ({ SUBRULE, OR }) => () => {
@@ -121,6 +113,13 @@ const query: RuleDef & { name: 'query' } = {
       { ALT: () => SUBRULE(askQuery) },
     ]);
     SUBRULE(valuesClause);
+  },
+};
+
+const updateUnit: RuleDef & { name: 'updateUnit' } = {
+  name: 'updateUnit',
+  impl: ({ SUBRULE }) => () => {
+    SUBRULE(update);
   },
 };
 
@@ -1566,7 +1565,7 @@ const multiplicativeExpression: RuleDef & { name: 'multiplicativeExpression' } =
 
 const unaryExpression: RuleDef & { name: 'unaryExpression' } = {
   name: 'unaryExpression',
-  impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, OR }) => () => {
+  impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, SUBRULE4, OR }) => () => {
     OR([
       { ALT: () => {
         CONSUME(l.symbols.exclamation);
@@ -1580,7 +1579,7 @@ const unaryExpression: RuleDef & { name: 'unaryExpression' } = {
         CONSUME(l.symbols.minus_);
         SUBRULE3(primaryExpression);
       } },
-      { ALT: () => primaryExpression },
+      { ALT: () => SUBRULE4(primaryExpression) },
     ]);
   },
 };
@@ -1623,9 +1622,7 @@ const buildInCeil = exprFunc1(l.buildIn.ceil);
 const buildInFloor = exprFunc1(l.buildIn.floor);
 const buildInRound = exprFunc1(l.buildIn.round);
 const buildInConcat = exprListFunc1(l.buildIn.concat);
-
 const buildInStrlen = exprFunc1(l.buildIn.strlen);
-
 const buildInUcase = exprFunc1(l.buildIn.ucase);
 const buildInLcase = exprFunc1(l.buildIn.lcase);
 const buildInEncode_for_uri = exprFunc1(l.buildIn.encode_for_uri);
@@ -1942,7 +1939,7 @@ const prefixedName: RuleDef & { name: 'prefixedName' } = {
   },
 };
 
-const blankNode: RuleDef & { name: 'blankNode' } = {
+export const blankNode: RuleDef & { name: 'blankNode' } = {
   name: 'blankNode',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -1953,149 +1950,204 @@ const blankNode: RuleDef & { name: 'blankNode' } = {
 };
 
 const builder = Builder.createBuilder()
-// .addRule(queryUnit)
-// .addRule(query)
-// .addRule(updateUnit)
-// .addRule(prologue)
-// .addRule(baseDecl)
-// .addRule(prefixDecl)
-// .addRule(selectQuery)
-// .addRule(subSelect)
-// .addRule(selectClause)
-// .addRule(constructQuery)
-// .addRule(describeQuery)
-// .addRule(askQuery)
-// .addRule(datasetClause)
-// .addRule(defaultGraphClause)
-// .addRule(namedGraphClause)
-// .addRule(sourceSelector)
-// .addRule(whereClause)
-// .addRule(solutionModifier)
-// .addRule(groupClause)
-// .addRule(groupCondition)
-// .addRule(havingClause)
-// .addRule(havingCondition)
-// .addRule(orderClause)
-// .addRule(orderCondition)
-// .addRule(limitOffsetClauses)
-// .addRule(limitClause)
-// .addRule(offsetClause)
-// .addRule(valuesClause)
-// .addRule(update)
-// .addRule(update1)
-// .addRule(load)
-// .addRule(clear)
-// .addRule(drop)
-// .addRule(create)
-// .addRule(add)
-// .addRule(move)
-// .addRule(copy)
-// .addRule(insertData)
-// .addRule(deleteData)
-// .addRule(deleteWhere)
-// .addRule(modify)
-// .addRule(deleteClause)
-// .addRule(insertClause)
-// .addRule(usingClause)
-// .addRule(graphOrDefault)
-// .addRule(graphRef)
-// .addRule(graphRefAll)
-// .addRule(quadPattern)
-// .addRule(quadData)
-// .addRule(quads)
-// .addRule(quadsNotTriples)
-// .addRule(triplesTemplate)
-// .addRule(groupGraphPattern)
-// .addRule(groupGraphPatternSub)
-// .addRule(triplesBlock)
-// .addRule(graphPatternNotTriples)
-// .addRule(optionalGraphPattern)
-// .addRule(graphGraphPattern)
-// .addRule(serviceGraphPattern)
-// .addRule(bind)
-// .addRule(inlineData)
-// .addRule(dataBlock)
-// .addRule(inlineDataOneVar)
-// .addRule(inlineDataFull)
-// .addRule(dataBlockValue)
-// .addRule(minusGraphPattern)
-// .addRule(groupOrUnionGraphPattern)
-// .addRule(filter)
-// .addRule(constraint)
-// .addRule(functionCall)
-// .addRule(argList)
-// .addRule(expressionList)
-// .addRule(constructTemplate)
-// .addRule(constructTriples)
-// .addRule(triplesSameSubject)
-// .addRule(propertyList)
-// .addRule(propertyListNotEmpty)
-// .addRule(verb)
-// .addRule(objectList)
-// .addRule(object)
-// .addRule(triplesSameSubjectPath)
-// .addRule(propertyListPath)
-// .addRule(propertyListPathNotEmpty)
-// .addRule(verbPath)
-// .addRule(verbSimple)
-// .addRule(objectListPath)
-// .addRule(objectPath)
-// .addRule(path)
-// .addRule(pathAlternative)
-// .addRule(pathSequence)
-// .addRule(pathElt)
-// .addRule(pathEltOrInverse)
-// .addRule(pathMod)
-// .addRule(pathPrimary)
-// .addRule(pathNegatedPropertySet)
-// .addRule(pathOneInPropertySet)
-// .addRule(integer)
-// .addRule(triplesNode)
-// .addRule(blankNodePropertyList)
-// .addRule(triplesNodePath)
-// .addRule(blankNodePropertyListPath)
-// .addRule(collection)
-// .addRule(collectionPath)
-// .addRule(graphNode)
-// .addRule(graphNodePath)
-// .addRule(varOrTerm)
-// .addRule(varOrIri)
-// .addRule(var_)
-// .addRule(graphTerm)
-// .addRule(expression)
-// .addRule(conditionalOrExpression)
-// .addRule(conditionalAndExpression)
-// .addRule(valueLogical)
-// .addRule(relationalExpression)
-// .addRule(numericExpression)
-// .addRule(additiveExpression)
-// .addRule(multiplicativeExpression)
-// .addRule(unaryExpression)
-// .addRule(primaryExpression)
-// .addRule(brackettedExpression)
-// .addRule(buildInCall)
-// .addRule(regexExpression)
-// .addRule(substringExpression)
-// .addRule(strReplaceExpression)
-// .addRule(existsFunc)
-// .addRule(notExistsFunc)
-// .addRule(aggregateGroup_concat)
-// .addRule(aggregate)
-// .addRule(iriOrFunction)
-// .addRule(rdfLiteral)
-// .addRule(numericLiteral)
-// .addRule(numericLiteralUnsigned)
-// .addRule(numericLiteralPositive)
-// .addRule(numericLiteralNegative)
-// .addRule(booleanLiteral)
-// .addRule(string)
-// .addRule(iri)
-// .addRule(prefixedName)
+  .addRule(queryUnit)
+  .addRule(query)
+  .addRule(updateUnit)
+  .addRule(prologue)
+  .addRule(baseDecl)
+  .addRule(prefixDecl)
+  .addRule(selectQuery)
+  .addRule(subSelect)
+  .addRule(selectClause)
+  .addRule(constructQuery)
+  .addRule(describeQuery)
+  .addRule(askQuery)
+  .addRule(datasetClause)
+  .addRule(defaultGraphClause)
+  .addRule(namedGraphClause)
+  .addRule(sourceSelector)
+  .addRule(whereClause)
+  .addRule(solutionModifier)
+  .addRule(groupClause)
+  .addRule(groupCondition)
+  .addRule(havingClause)
+  .addRule(havingCondition)
+  .addRule(orderClause)
+  .addRule(orderCondition)
+  .addRule(limitOffsetClauses)
+  .addRule(limitClause)
+  .addRule(offsetClause)
+  .addRule(valuesClause)
+  .addRule(update)
+  .addRule(update1)
+  .addRule(load)
+  .addRule(clear)
+  .addRule(drop)
+  .addRule(create)
+  .addRule(add)
+  .addRule(move)
+  .addRule(copy)
+  .addRule(insertData)
+  .addRule(deleteData)
+  .addRule(deleteWhere)
+  .addRule(modify)
+  .addRule(deleteClause)
+  .addRule(insertClause)
+  .addRule(usingClause)
+  .addRule(graphOrDefault)
+  .addRule(graphRef)
+  .addRule(graphRefAll)
+  .addRule(quadPattern)
+  .addRule(quadData)
+  .addRule(quads)
+  .addRule(quadsNotTriples)
+  .addRule(triplesTemplate)
+  .addRule(groupGraphPattern)
+  .addRule(groupGraphPatternSub)
+  .addRule(triplesBlock)
+  .addRule(graphPatternNotTriples)
+  .addRule(optionalGraphPattern)
+  .addRule(graphGraphPattern)
+  .addRule(serviceGraphPattern)
+  .addRule(bind)
+  .addRule(inlineData)
+  .addRule(dataBlock)
+  .addRule(inlineDataOneVar)
+  .addRule(inlineDataFull)
+  .addRule(dataBlockValue)
+  .addRule(minusGraphPattern)
+  .addRule(groupOrUnionGraphPattern)
+  .addRule(filter)
+  .addRule(constraint)
+  .addRule(functionCall)
+  .addRule(argList)
+  .addRule(expressionList)
+  .addRule(constructTemplate)
+  .addRule(constructTriples)
+  .addRule(triplesSameSubject)
+  .addRule(propertyList)
+  .addRule(propertyListNotEmpty)
+  .addRule(verb)
+  .addRule(objectList)
+  .addRule(object)
+  .addRule(triplesSameSubjectPath)
+  .addRule(propertyListPath)
+  .addRule(propertyListPathNotEmpty)
+  .addRule(verbPath)
+  .addRule(verbSimple)
+  .addRule(objectListPath)
+  .addRule(objectPath)
+  .addRule(path)
+  .addRule(pathAlternative)
+  .addRule(pathSequence)
+  .addRule(pathElt)
+  .addRule(pathEltOrInverse)
+  .addRule(pathMod)
+  .addRule(pathPrimary)
+  .addRule(pathNegatedPropertySet)
+  .addRule(pathOneInPropertySet)
+  .addRule(integer)
+  .addRule(triplesNode)
+  .addRule(blankNodePropertyList)
+  .addRule(triplesNodePath)
+  .addRule(blankNodePropertyListPath)
+  .addRule(collection)
+  .addRule(collectionPath)
+  .addRule(graphNode)
+  .addRule(graphNodePath)
+  .addRule(varOrTerm)
+  .addRule(varOrIri)
+  .addRule(var_)
+  .addRule(graphTerm)
+  .addRule(expression)
+  .addRule(conditionalOrExpression)
+  .addRule(conditionalAndExpression)
+  .addRule(valueLogical)
+  .addRule(relationalExpression)
+  .addRule(numericExpression)
+  .addRule(additiveExpression)
+  .addRule(multiplicativeExpression)
+  .addRule(unaryExpression)
+  .addRule(primaryExpression)
+  .addRule(brackettedExpression)
+  .addRule(buildInCall)
+  .addRule(buildInStr)
+  .addRule(buildInLang)
+  .addRule(buildInLangmatches)
+  .addRule(buildInDatatype)
+  .addRule(buildInBound)
+  .addRule(buildInIri)
+  .addRule(buildInUri)
+  .addRule(buildInBnode)
+  .addRule(buildInRand)
+  .addRule(buildInAbs)
+  .addRule(buildInCeil)
+  .addRule(buildInFloor)
+  .addRule(buildInRound)
+  .addRule(buildInConcat)
+  .addRule(buildInStrlen)
+  .addRule(buildInUcase)
+  .addRule(buildInLcase)
+  .addRule(buildInEncode_for_uri)
+  .addRule(buildInContains)
+  .addRule(buildInStrstarts)
+  .addRule(buildInStrends)
+  .addRule(buildInStrbefore)
+  .addRule(buildInStrafter)
+  .addRule(buildInYear)
+  .addRule(buildInMonth)
+  .addRule(buildInDay)
+  .addRule(buildInHours)
+  .addRule(buildInMinutes)
+  .addRule(buildInSeconds)
+  .addRule(buildInTimezone)
+  .addRule(buildInTz)
+  .addRule(buildInNow)
+  .addRule(buildInUuid)
+  .addRule(buildInStruuid)
+  .addRule(buildInMd5)
+  .addRule(buildInSha1)
+  .addRule(buildInSha256)
+  .addRule(buildInSha384)
+  .addRule(buildInSha512)
+  .addRule(buildInCoalesce)
+  .addRule(buildInIf)
+  .addRule(buildInStrlang)
+  .addRule(buildInStrdt)
+  .addRule(buildInSameterm)
+  .addRule(buildInIsiri)
+  .addRule(buildInIsuri)
+  .addRule(buildInIsblank)
+  .addRule(buildInIsliteral)
+  .addRule(buildInIsnumeric)
+  .addRule(regexExpression)
+  .addRule(substringExpression)
+  .addRule(strReplaceExpression)
+  .addRule(existsFunc)
+  .addRule(notExistsFunc)
+  .addRule(aggregateCount)
+  .addRule(aggregateSum)
+  .addRule(aggregateMin)
+  .addRule(aggregateMax)
+  .addRule(aggregateAvg)
+  .addRule(aggregateSample)
+  .addRule(aggregateGroup_concat)
+  .addRule(aggregate)
+  .addRule(iriOrFunction)
+  .addRule(rdfLiteral)
+  .addRule(numericLiteral)
+  .addRule(numericLiteralUnsigned)
+  .addRule(numericLiteralPositive)
+  .addRule(numericLiteralNegative)
+  .addRule(booleanLiteral)
+  .addRule(string)
+  .addRule(iri)
+  .addRule(prefixedName)
   .addRule(blankNode);
 
 export function build(): void {
   const lexer = ChevSparqlLexer;
-  const parser = builder.consume([ l.terminals.blankNodeLabel, l.terminals.anon ]);
+  const parser = builder.consume(allTokens);
 
   const lexResult = lexer.tokenize('SELECT * WHERE { ?s ?p ?o }');
   parser.input = lexResult.tokens;

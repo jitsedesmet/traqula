@@ -25,6 +25,10 @@ export class OpenParser extends CstParser {
     return super.RULE(name, implementation, config);
   }
 
+  public override performSelfAnalysis(): void {
+    return super.performSelfAnalysis();
+  }
+
   /**
    *
    * A Parsing DSL method use to consume a single Token.

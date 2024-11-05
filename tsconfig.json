@@ -4,11 +4,12 @@
     "target": "es2021",
     "lib": [
       "es2021",
+      "dom"
     ],
     "module": "ES2020",
-    "moduleResolution": "node",
-
-
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
     "strict": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
@@ -21,9 +22,9 @@
     "sourceMap": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*.ts",
   ],
   "exclude": [
-    "**/node_modules"
+    "node_modules"
   ]
 }

@@ -395,95 +395,167 @@ export class Builder<T extends string> {
   }
 
   public consume(tokenVocabulary: TokenVocabulary): CstParser & Record<T, ParserMethod<unknown[], CstNode>> {
-    const parser = new OpenParser(tokenVocabulary);
-    const populatedParser = <OpenParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> parser;
+    const notParser = new OpenParser(tokenVocabulary);
+    const parser = <OpenParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> notParser;
     const selfRef: CstDef = {
-      CONSUME: parser.CONSUME.bind(parser),
-      CONSUME1: parser.CONSUME1.bind(parser),
-      CONSUME2: parser.CONSUME2.bind(parser),
-      CONSUME3: parser.CONSUME3.bind(parser),
-      CONSUME4: parser.CONSUME4.bind(parser),
-      CONSUME5: parser.CONSUME5.bind(parser),
-      CONSUME6: parser.CONSUME6.bind(parser),
-      CONSUME7: parser.CONSUME7.bind(parser),
-      CONSUME8: parser.CONSUME8.bind(parser),
-      CONSUME9: parser.CONSUME9.bind(parser),
-      OPTION: parser.OPTION.bind(parser),
-      OPTION1: parser.OPTION1.bind(parser),
-      OPTION2: parser.OPTION2.bind(parser),
-      OPTION3: parser.OPTION3.bind(parser),
-      OPTION4: parser.OPTION4.bind(parser),
-      OPTION5: parser.OPTION5.bind(parser),
-      OPTION6: parser.OPTION6.bind(parser),
-      OPTION7: parser.OPTION7.bind(parser),
-      OPTION8: parser.OPTION8.bind(parser),
-      OPTION9: parser.OPTION9.bind(parser),
-      OR: parser.OR.bind(parser),
-      OR1: parser.OR1.bind(parser),
-      OR2: parser.OR2.bind(parser),
-      OR3: parser.OR3.bind(parser),
-      OR4: parser.OR4.bind(parser),
-      OR5: parser.OR5.bind(parser),
-      OR6: parser.OR6.bind(parser),
-      OR7: parser.OR7.bind(parser),
-      OR8: parser.OR8.bind(parser),
-      OR9: parser.OR9.bind(parser),
-      MANY: parser.MANY.bind(parser),
-      MANY1: parser.MANY1.bind(parser),
-      MANY2: parser.MANY2.bind(parser),
-      MANY3: parser.MANY3.bind(parser),
-      MANY4: parser.MANY4.bind(parser),
-      MANY5: parser.MANY5.bind(parser),
-      MANY6: parser.MANY6.bind(parser),
-      MANY7: parser.MANY7.bind(parser),
-      MANY8: parser.MANY8.bind(parser),
-      MANY9: parser.MANY9.bind(parser),
-      MANY_SEP: parser.MANY_SEP.bind(parser),
-      MANY_SEP1: parser.MANY_SEP1.bind(parser),
-      MANY_SEP2: parser.MANY_SEP2.bind(parser),
-      MANY_SEP3: parser.MANY_SEP3.bind(parser),
-      MANY_SEP4: parser.MANY_SEP4.bind(parser),
-      MANY_SEP5: parser.MANY_SEP5.bind(parser),
-      MANY_SEP6: parser.MANY_SEP6.bind(parser),
-      MANY_SEP7: parser.MANY_SEP7.bind(parser),
-      MANY_SEP8: parser.MANY_SEP8.bind(parser),
-      MANY_SEP9: parser.MANY_SEP9.bind(parser),
-      AT_LEAST_ONE: parser.AT_LEAST_ONE.bind(parser),
-      AT_LEAST_ONE1: parser.AT_LEAST_ONE1.bind(parser),
-      AT_LEAST_ONE2: parser.AT_LEAST_ONE2.bind(parser),
-      AT_LEAST_ONE3: parser.AT_LEAST_ONE3.bind(parser),
-      AT_LEAST_ONE4: parser.AT_LEAST_ONE4.bind(parser),
-      AT_LEAST_ONE5: parser.AT_LEAST_ONE5.bind(parser),
-      AT_LEAST_ONE6: parser.AT_LEAST_ONE6.bind(parser),
-      AT_LEAST_ONE7: parser.AT_LEAST_ONE7.bind(parser),
-      AT_LEAST_ONE8: parser.AT_LEAST_ONE8.bind(parser),
-      AT_LEAST_ONE9: parser.AT_LEAST_ONE9.bind(parser),
-      AT_LEAST_ONE_SEP: parser.AT_LEAST_ONE_SEP.bind(parser),
-      AT_LEAST_ONE_SEP1: parser.AT_LEAST_ONE_SEP1.bind(parser),
-      AT_LEAST_ONE_SEP2: parser.AT_LEAST_ONE_SEP2.bind(parser),
-      AT_LEAST_ONE_SEP3: parser.AT_LEAST_ONE_SEP3.bind(parser),
-      AT_LEAST_ONE_SEP4: parser.AT_LEAST_ONE_SEP4.bind(parser),
-      AT_LEAST_ONE_SEP5: parser.AT_LEAST_ONE_SEP5.bind(parser),
-      AT_LEAST_ONE_SEP6: parser.AT_LEAST_ONE_SEP6.bind(parser),
-      AT_LEAST_ONE_SEP7: parser.AT_LEAST_ONE_SEP7.bind(parser),
-      AT_LEAST_ONE_SEP8: parser.AT_LEAST_ONE_SEP8.bind(parser),
-      AT_LEAST_ONE_SEP9: parser.AT_LEAST_ONE_SEP9.bind(parser),
-      SUBRULE: (cstDef: RuleDef) => parser.SUBRULE.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE1: (cstDef: RuleDef) => parser.SUBRULE1.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE2: (cstDef: RuleDef) => parser.SUBRULE2.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE3: (cstDef: RuleDef) => parser.SUBRULE3.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE4: (cstDef: RuleDef) => parser.SUBRULE4.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE5: (cstDef: RuleDef) => parser.SUBRULE5.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE6: (cstDef: RuleDef) => parser.SUBRULE6.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE7: (cstDef: RuleDef) => parser.SUBRULE7.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE8: (cstDef: RuleDef) => parser.SUBRULE8.bind(parser)(populatedParser[cstDef.name]),
-      SUBRULE9: (cstDef: RuleDef) => parser.SUBRULE9.bind(parser)(populatedParser[cstDef.name]),
+      CONSUME: (tokenType, option) => parser.CONSUME(tokenType, option),
+      CONSUME1: (tokenType, option) => parser.CONSUME1(tokenType, option),
+      CONSUME2: (tokenType, option) => parser.CONSUME2(tokenType, option),
+      CONSUME3: (tokenType, option) => parser.CONSUME3(tokenType, option),
+      CONSUME4: (tokenType, option) => parser.CONSUME4(tokenType, option),
+      CONSUME5: (tokenType, option) => parser.CONSUME5(tokenType, option),
+      CONSUME6: (tokenType, option) => parser.CONSUME6(tokenType, option),
+      CONSUME7: (tokenType, option) => parser.CONSUME7(tokenType, option),
+      CONSUME8: (tokenType, option) => parser.CONSUME8(tokenType, option),
+      CONSUME9: (tokenType, option) => parser.CONSUME9(tokenType, option),
+      OPTION: actionORMethodDef => parser.OPTION(actionORMethodDef),
+      OPTION1: actionORMethodDef => parser.OPTION1(actionORMethodDef),
+      OPTION2: actionORMethodDef => parser.OPTION2(actionORMethodDef),
+      OPTION3: actionORMethodDef => parser.OPTION3(actionORMethodDef),
+      OPTION4: actionORMethodDef => parser.OPTION4(actionORMethodDef),
+      OPTION5: actionORMethodDef => parser.OPTION5(actionORMethodDef),
+      OPTION6: actionORMethodDef => parser.OPTION6(actionORMethodDef),
+      OPTION7: actionORMethodDef => parser.OPTION7(actionORMethodDef),
+      OPTION8: actionORMethodDef => parser.OPTION8(actionORMethodDef),
+      OPTION9: actionORMethodDef => parser.OPTION9(actionORMethodDef),
+      OR: altsOrOpts => parser.OR(altsOrOpts),
+      OR1: altsOrOpts => parser.OR1(altsOrOpts),
+      OR2: altsOrOpts => parser.OR2(altsOrOpts),
+      OR3: altsOrOpts => parser.OR3(altsOrOpts),
+      OR4: altsOrOpts => parser.OR4(altsOrOpts),
+      OR5: altsOrOpts => parser.OR5(altsOrOpts),
+      OR6: altsOrOpts => parser.OR6(altsOrOpts),
+      OR7: altsOrOpts => parser.OR7(altsOrOpts),
+      OR8: altsOrOpts => parser.OR8(altsOrOpts),
+      OR9: altsOrOpts => parser.OR9(altsOrOpts),
+      MANY: actionORMethodDef => parser.MANY(actionORMethodDef),
+      MANY1: actionORMethodDef => parser.MANY1(actionORMethodDef),
+      MANY2: actionORMethodDef => parser.MANY2(actionORMethodDef),
+      MANY3: actionORMethodDef => parser.MANY3(actionORMethodDef),
+      MANY4: actionORMethodDef => parser.MANY4(actionORMethodDef),
+      MANY5: actionORMethodDef => parser.MANY5(actionORMethodDef),
+      MANY6: actionORMethodDef => parser.MANY6(actionORMethodDef),
+      MANY7: actionORMethodDef => parser.MANY7(actionORMethodDef),
+      MANY8: actionORMethodDef => parser.MANY8(actionORMethodDef),
+      MANY9: actionORMethodDef => parser.MANY9(actionORMethodDef),
+      MANY_SEP: options => parser.MANY_SEP(options),
+      MANY_SEP1: options => parser.MANY_SEP1(options),
+      MANY_SEP2: options => parser.MANY_SEP2(options),
+      MANY_SEP3: options => parser.MANY_SEP3(options),
+      MANY_SEP4: options => parser.MANY_SEP4(options),
+      MANY_SEP5: options => parser.MANY_SEP5(options),
+      MANY_SEP6: options => parser.MANY_SEP6(options),
+      MANY_SEP7: options => parser.MANY_SEP7(options),
+      MANY_SEP8: options => parser.MANY_SEP8(options),
+      MANY_SEP9: options => parser.MANY_SEP9(options),
+      AT_LEAST_ONE: actionORMethodDef => parser.AT_LEAST_ONE(actionORMethodDef),
+      AT_LEAST_ONE1: actionORMethodDef => parser.AT_LEAST_ONE1(actionORMethodDef),
+      AT_LEAST_ONE2: actionORMethodDef => parser.AT_LEAST_ONE2(actionORMethodDef),
+      AT_LEAST_ONE3: actionORMethodDef => parser.AT_LEAST_ONE3(actionORMethodDef),
+      AT_LEAST_ONE4: actionORMethodDef => parser.AT_LEAST_ONE4(actionORMethodDef),
+      AT_LEAST_ONE5: actionORMethodDef => parser.AT_LEAST_ONE5(actionORMethodDef),
+      AT_LEAST_ONE6: actionORMethodDef => parser.AT_LEAST_ONE6(actionORMethodDef),
+      AT_LEAST_ONE7: actionORMethodDef => parser.AT_LEAST_ONE7(actionORMethodDef),
+      AT_LEAST_ONE8: actionORMethodDef => parser.AT_LEAST_ONE8(actionORMethodDef),
+      AT_LEAST_ONE9: actionORMethodDef => parser.AT_LEAST_ONE9(actionORMethodDef),
+      AT_LEAST_ONE_SEP: options => parser.AT_LEAST_ONE_SEP(options),
+      AT_LEAST_ONE_SEP1: options => parser.AT_LEAST_ONE_SEP1(options),
+      AT_LEAST_ONE_SEP2: options => parser.AT_LEAST_ONE_SEP2(options),
+      AT_LEAST_ONE_SEP3: options => parser.AT_LEAST_ONE_SEP3(options),
+      AT_LEAST_ONE_SEP4: options => parser.AT_LEAST_ONE_SEP4(options),
+      AT_LEAST_ONE_SEP5: options => parser.AT_LEAST_ONE_SEP5(options),
+      AT_LEAST_ONE_SEP6: options => parser.AT_LEAST_ONE_SEP6(options),
+      AT_LEAST_ONE_SEP7: options => parser.AT_LEAST_ONE_SEP7(options),
+      AT_LEAST_ONE_SEP8: options => parser.AT_LEAST_ONE_SEP8(options),
+      AT_LEAST_ONE_SEP9: options => parser.AT_LEAST_ONE_SEP9(options),
+      SUBRULE: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE1: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE1(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE2: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE2(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE3: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE3(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE4: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE4(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE5: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE5(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE6: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE6(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE7: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE7(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE8: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE8(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
+      SUBRULE9: (cstDef: RuleDef) => {
+        try {
+          return parser.SUBRULE9(parser[cstDef.name]);
+        } catch (error: unknown) {
+          console.error(`Error with subrule: ${cstDef.name}`);
+          throw error;
+        }
+      },
     };
 
     for (const rule of this.rules) {
-      populatedParser[rule.name] = populatedParser.RULE(rule.name, rule.impl.bind(this)(selfRef));
+      parser[rule.name] = parser.RULE(rule.name, rule.impl(selfRef));
     }
 
-    return <CstParser & Record<T, any>> populatedParser;
+    parser.performSelfAnalysis();
+
+    return <CstParser & Record<T, any>> parser;
   }
 }

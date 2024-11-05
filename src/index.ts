@@ -1,4 +1,4 @@
-import { build } from './grammar/gram';
+import { build } from './grammar/gramTest';
 
 build();
 
