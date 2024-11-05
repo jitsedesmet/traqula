@@ -8,17 +8,17 @@ import { allSymbols } from '../lexer/symbols';
 import { allTerminals } from '../lexer/terminals';
 import { Builder, type RuleDef } from './buildExample';
 import {
-  buildInCall,
+  builtInCall,
   expression,
   sparql12Builder,
 } from './gramTest';
 
-const BuildInAdjust = createToken({ name: 'BuildInAdjust', pattern: 'ADJUST' });
+const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 
-const buildInAdjust: RuleDef & { name: 'buildInAdjust' } = {
-  name: 'buildInAdjust',
+const builtInAdjust: RuleDef & { name: 'builtInAdjust' } = {
+  name: 'builtInAdjust',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2 }) => () => {
-    CONSUME(BuildInAdjust);
+    CONSUME(BuiltInAdjust);
     CONSUME(l.symbols.LParen);
     SUBRULE1(expression);
     CONSUME(l.symbols.comma);
@@ -27,11 +27,11 @@ const buildInAdjust: RuleDef & { name: 'buildInAdjust' } = {
   },
 };
 
-const _buildInCall: RuleDef & { name: 'buildInCall' } = {
-  name: buildInCall.name,
+const _builtInCall: RuleDef & { name: 'builtInCall' } = {
+  name: builtInCall.name,
   impl: ({ SUBRULE, OR }) => () => {
     OR([
-      { ALT: () => SUBRULE(buildInAdjust) },
+      { ALT: () => SUBRULE(builtInAdjust) },
       { ALT: () => SUBRULE(alternativeBuildInCall) },
     ]);
   },
@@ -39,20 +39,20 @@ const _buildInCall: RuleDef & { name: 'buildInCall' } = {
 
 const alternativeBuildInCall: RuleDef & { name: 'alternativeBuildInCall' } = {
   name: 'alternativeBuildInCall',
-  impl: buildInCall.impl,
+  impl: builtInCall.impl,
 };
 
 const adjustBuilder = Builder.createBuilder()
-  .addRule(buildInAdjust)
-  .addRule(_buildInCall)
+  .addRule(builtInAdjust)
+  .addRule(_builtInCall)
   .addRule(alternativeBuildInCall)
-  .merge(sparql12Builder, [ _buildInCall ]);
+  .merge(sparql12Builder, [ _builtInCall ]);
 
 export function trySparqlAdjust(): void {
   const tokens = [
     ...allBaseTokens,
     ...allBuiltInCalls,
-    BuildInAdjust,
+    BuiltInAdjust,
     ...allGraphTokens,
     ...allTerminals,
     ...allSymbols,

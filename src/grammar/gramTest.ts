@@ -336,7 +336,7 @@ export const groupCondition: RuleDef & { name: 'groupCondition' } = {
   name: 'groupCondition',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
-      { ALT: () => SUBRULE(buildInCall) },
+      { ALT: () => SUBRULE(builtInCall) },
       { ALT: () => SUBRULE(functionCall) },
       { ALT: () => {
         CONSUME(l.symbols.LParen);
@@ -940,7 +940,7 @@ export const constraint: RuleDef & { name: 'constraint' } = {
   impl: ({ SUBRULE, OR }) => () => {
     OR([
       { ALT: () => SUBRULE(brackettedExpression) },
-      { ALT: () => SUBRULE(buildInCall) },
+      { ALT: () => SUBRULE(builtInCall) },
       { ALT: () => SUBRULE(functionCall) },
     ]);
   },
@@ -1589,7 +1589,7 @@ export const primaryExpression: RuleDef & { name: 'primaryExpression' } = {
   impl: ({ SUBRULE, OR }) => () => {
     OR([
       { ALT: () => SUBRULE(brackettedExpression) },
-      { ALT: () => SUBRULE(buildInCall) },
+      { ALT: () => SUBRULE(builtInCall) },
       { ALT: () => SUBRULE(iriOrFunction) },
       { ALT: () => SUBRULE(rdfLiteral) },
       { ALT: () => SUBRULE(numericLiteral) },
@@ -1608,112 +1608,112 @@ export const brackettedExpression: RuleDef & { name: 'brackettedExpression' } = 
   },
 };
 
-export const buildInStr = exprFunc1(l.buildIn.str);
-export const buildInLang = exprFunc1(l.buildIn.lang);
-export const buildInLangmatches = exprFunc2(l.buildIn.langmatches);
-export const buildInDatatype = exprFunc1(l.buildIn.datatype);
-export const buildInBound = varFunc1(l.buildIn.bound);
-export const buildInIri = exprFunc1(l.buildIn.iri);
-export const buildInUri = exprFunc1(l.buildIn.uri);
-export const buildInBnode = exprOrNilFunc1(l.buildIn.bnode);
-export const buildInRand = nilFunc1(l.buildIn.rand);
-export const buildInAbs = exprFunc1(l.buildIn.abs);
-export const buildInCeil = exprFunc1(l.buildIn.ceil);
-export const buildInFloor = exprFunc1(l.buildIn.floor);
-export const buildInRound = exprFunc1(l.buildIn.round);
-export const buildInConcat = exprListFunc1(l.buildIn.concat);
-export const buildInStrlen = exprFunc1(l.buildIn.strlen);
-export const buildInUcase = exprFunc1(l.buildIn.ucase);
-export const buildInLcase = exprFunc1(l.buildIn.lcase);
-export const buildInEncode_for_uri = exprFunc1(l.buildIn.encode_for_uri);
-export const buildInContains = exprFunc2(l.buildIn.contains);
-export const buildInStrstarts = exprFunc2(l.buildIn.strstarts);
-export const buildInStrends = exprFunc2(l.buildIn.strends);
-export const buildInStrbefore = exprFunc2(l.buildIn.strbefore);
-export const buildInStrafter = exprFunc2(l.buildIn.strafter);
-export const buildInYear = exprFunc1(l.buildIn.year);
-export const buildInMonth = exprFunc1(l.buildIn.month);
-export const buildInDay = exprFunc1(l.buildIn.day);
-export const buildInHours = exprFunc1(l.buildIn.hours);
-export const buildInMinutes = exprFunc1(l.buildIn.minutes);
-export const buildInSeconds = exprFunc1(l.buildIn.seconds);
-export const buildInTimezone = exprFunc1(l.buildIn.timezone);
-export const buildInTz = exprFunc1(l.buildIn.tz);
-export const buildInNow = nilFunc1(l.buildIn.now);
-export const buildInUuid = nilFunc1(l.buildIn.uuid);
-export const buildInStruuid = nilFunc1(l.buildIn.struuid);
-export const buildInMd5 = exprFunc1(l.buildIn.md5);
-export const buildInSha1 = exprFunc1(l.buildIn.sha1);
-export const buildInSha256 = exprFunc1(l.buildIn.sha256);
-export const buildInSha384 = exprFunc1(l.buildIn.sha384);
-export const buildInSha512 = exprFunc1(l.buildIn.sha512);
-export const buildInCoalesce = exprListFunc1(l.buildIn.coalesce);
-export const buildInIf = exprFunc2(l.buildIn.if_);
-export const buildInStrlang = exprFunc2(l.buildIn.strlang);
-export const buildInStrdt = exprFunc2(l.buildIn.strdt);
-export const buildInSameterm = exprFunc2(l.buildIn.sameterm);
-export const buildInIsiri = exprFunc1(l.buildIn.isiri);
-export const buildInIsuri = exprFunc1(l.buildIn.isuri);
-export const buildInIsblank = exprFunc1(l.buildIn.isblank);
-export const buildInIsliteral = exprFunc1(l.buildIn.isliteral);
-export const buildInIsnumeric = exprFunc1(l.buildIn.isnumeric);
+export const builtInStr = exprFunc1(l.builtIn.str);
+export const builtInLang = exprFunc1(l.builtIn.lang);
+export const builtInLangmatches = exprFunc2(l.builtIn.langmatches);
+export const builtInDatatype = exprFunc1(l.builtIn.datatype);
+export const builtInBound = varFunc1(l.builtIn.bound);
+export const builtInIri = exprFunc1(l.builtIn.iri);
+export const builtInUri = exprFunc1(l.builtIn.uri);
+export const builtInBnode = exprOrNilFunc1(l.builtIn.bnode);
+export const builtInRand = nilFunc1(l.builtIn.rand);
+export const builtInAbs = exprFunc1(l.builtIn.abs);
+export const builtInCeil = exprFunc1(l.builtIn.ceil);
+export const builtInFloor = exprFunc1(l.builtIn.floor);
+export const builtInRound = exprFunc1(l.builtIn.round);
+export const builtInConcat = exprListFunc1(l.builtIn.concat);
+export const builtInStrlen = exprFunc1(l.builtIn.strlen);
+export const builtInUcase = exprFunc1(l.builtIn.ucase);
+export const builtInLcase = exprFunc1(l.builtIn.lcase);
+export const builtInEncode_for_uri = exprFunc1(l.builtIn.encode_for_uri);
+export const builtInContains = exprFunc2(l.builtIn.contains);
+export const builtInStrstarts = exprFunc2(l.builtIn.strstarts);
+export const builtInStrends = exprFunc2(l.builtIn.strends);
+export const builtInStrbefore = exprFunc2(l.builtIn.strbefore);
+export const builtInStrafter = exprFunc2(l.builtIn.strafter);
+export const builtInYear = exprFunc1(l.builtIn.year);
+export const builtInMonth = exprFunc1(l.builtIn.month);
+export const builtInDay = exprFunc1(l.builtIn.day);
+export const builtInHours = exprFunc1(l.builtIn.hours);
+export const builtInMinutes = exprFunc1(l.builtIn.minutes);
+export const builtInSeconds = exprFunc1(l.builtIn.seconds);
+export const builtInTimezone = exprFunc1(l.builtIn.timezone);
+export const builtInTz = exprFunc1(l.builtIn.tz);
+export const builtInNow = nilFunc1(l.builtIn.now);
+export const builtInUuid = nilFunc1(l.builtIn.uuid);
+export const builtInStruuid = nilFunc1(l.builtIn.struuid);
+export const builtInMd5 = exprFunc1(l.builtIn.md5);
+export const builtInSha1 = exprFunc1(l.builtIn.sha1);
+export const builtInSha256 = exprFunc1(l.builtIn.sha256);
+export const builtInSha384 = exprFunc1(l.builtIn.sha384);
+export const builtInSha512 = exprFunc1(l.builtIn.sha512);
+export const builtInCoalesce = exprListFunc1(l.builtIn.coalesce);
+export const builtInIf = exprFunc2(l.builtIn.if_);
+export const builtInStrlang = exprFunc2(l.builtIn.strlang);
+export const builtInStrdt = exprFunc2(l.builtIn.strdt);
+export const builtInSameterm = exprFunc2(l.builtIn.sameterm);
+export const builtInIsiri = exprFunc1(l.builtIn.isiri);
+export const builtInIsuri = exprFunc1(l.builtIn.isuri);
+export const builtInIsblank = exprFunc1(l.builtIn.isblank);
+export const builtInIsliteral = exprFunc1(l.builtIn.isliteral);
+export const builtInIsnumeric = exprFunc1(l.builtIn.isnumeric);
 
-export const buildInCall: RuleDef & { name: 'buildInCall' } = {
-  name: 'buildInCall',
+export const builtInCall: RuleDef & { name: 'builtInCall' } = {
+  name: 'builtInCall',
   impl: ({ OR, SUBRULE }) => () => {
     OR([
       { ALT: () => SUBRULE(aggregate) },
-      { ALT: () => SUBRULE(buildInStr) },
-      { ALT: () => SUBRULE(buildInLang) },
-      { ALT: () => SUBRULE(buildInLangmatches) },
-      { ALT: () => SUBRULE(buildInDatatype) },
-      { ALT: () => SUBRULE(buildInBound) },
-      { ALT: () => SUBRULE(buildInIri) },
-      { ALT: () => SUBRULE(buildInUri) },
-      { ALT: () => SUBRULE(buildInBnode) },
-      { ALT: () => SUBRULE(buildInRand) },
-      { ALT: () => SUBRULE(buildInAbs) },
-      { ALT: () => SUBRULE(buildInCeil) },
-      { ALT: () => SUBRULE(buildInFloor) },
-      { ALT: () => SUBRULE(buildInRound) },
-      { ALT: () => SUBRULE(buildInConcat) },
+      { ALT: () => SUBRULE(builtInStr) },
+      { ALT: () => SUBRULE(builtInLang) },
+      { ALT: () => SUBRULE(builtInLangmatches) },
+      { ALT: () => SUBRULE(builtInDatatype) },
+      { ALT: () => SUBRULE(builtInBound) },
+      { ALT: () => SUBRULE(builtInIri) },
+      { ALT: () => SUBRULE(builtInUri) },
+      { ALT: () => SUBRULE(builtInBnode) },
+      { ALT: () => SUBRULE(builtInRand) },
+      { ALT: () => SUBRULE(builtInAbs) },
+      { ALT: () => SUBRULE(builtInCeil) },
+      { ALT: () => SUBRULE(builtInFloor) },
+      { ALT: () => SUBRULE(builtInRound) },
+      { ALT: () => SUBRULE(builtInConcat) },
       { ALT: () => SUBRULE(substringExpression) },
-      { ALT: () => SUBRULE(buildInStrlen) },
+      { ALT: () => SUBRULE(builtInStrlen) },
       { ALT: () => SUBRULE(strReplaceExpression) },
-      { ALT: () => SUBRULE(buildInUcase) },
-      { ALT: () => SUBRULE(buildInLcase) },
-      { ALT: () => SUBRULE(buildInEncode_for_uri) },
-      { ALT: () => SUBRULE(buildInContains) },
-      { ALT: () => SUBRULE(buildInStrstarts) },
-      { ALT: () => SUBRULE(buildInStrends) },
-      { ALT: () => SUBRULE(buildInStrbefore) },
-      { ALT: () => SUBRULE(buildInStrafter) },
-      { ALT: () => SUBRULE(buildInYear) },
-      { ALT: () => SUBRULE(buildInMonth) },
-      { ALT: () => SUBRULE(buildInDay) },
-      { ALT: () => SUBRULE(buildInHours) },
-      { ALT: () => SUBRULE(buildInMinutes) },
-      { ALT: () => SUBRULE(buildInSeconds) },
-      { ALT: () => SUBRULE(buildInTimezone) },
-      { ALT: () => SUBRULE(buildInTz) },
-      { ALT: () => SUBRULE(buildInNow) },
-      { ALT: () => SUBRULE(buildInUuid) },
-      { ALT: () => SUBRULE(buildInStruuid) },
-      { ALT: () => SUBRULE(buildInMd5) },
-      { ALT: () => SUBRULE(buildInSha1) },
-      { ALT: () => SUBRULE(buildInSha256) },
-      { ALT: () => SUBRULE(buildInSha384) },
-      { ALT: () => SUBRULE(buildInSha512) },
-      { ALT: () => SUBRULE(buildInCoalesce) },
-      { ALT: () => SUBRULE(buildInIf) },
-      { ALT: () => SUBRULE(buildInStrlang) },
-      { ALT: () => SUBRULE(buildInStrdt) },
-      { ALT: () => SUBRULE(buildInSameterm) },
-      { ALT: () => SUBRULE(buildInIsiri) },
-      { ALT: () => SUBRULE(buildInIsuri) },
-      { ALT: () => SUBRULE(buildInIsblank) },
-      { ALT: () => SUBRULE(buildInIsliteral) },
-      { ALT: () => SUBRULE(buildInIsnumeric) },
+      { ALT: () => SUBRULE(builtInUcase) },
+      { ALT: () => SUBRULE(builtInLcase) },
+      { ALT: () => SUBRULE(builtInEncode_for_uri) },
+      { ALT: () => SUBRULE(builtInContains) },
+      { ALT: () => SUBRULE(builtInStrstarts) },
+      { ALT: () => SUBRULE(builtInStrends) },
+      { ALT: () => SUBRULE(builtInStrbefore) },
+      { ALT: () => SUBRULE(builtInStrafter) },
+      { ALT: () => SUBRULE(builtInYear) },
+      { ALT: () => SUBRULE(builtInMonth) },
+      { ALT: () => SUBRULE(builtInDay) },
+      { ALT: () => SUBRULE(builtInHours) },
+      { ALT: () => SUBRULE(builtInMinutes) },
+      { ALT: () => SUBRULE(builtInSeconds) },
+      { ALT: () => SUBRULE(builtInTimezone) },
+      { ALT: () => SUBRULE(builtInTz) },
+      { ALT: () => SUBRULE(builtInNow) },
+      { ALT: () => SUBRULE(builtInUuid) },
+      { ALT: () => SUBRULE(builtInStruuid) },
+      { ALT: () => SUBRULE(builtInMd5) },
+      { ALT: () => SUBRULE(builtInSha1) },
+      { ALT: () => SUBRULE(builtInSha256) },
+      { ALT: () => SUBRULE(builtInSha384) },
+      { ALT: () => SUBRULE(builtInSha512) },
+      { ALT: () => SUBRULE(builtInCoalesce) },
+      { ALT: () => SUBRULE(builtInIf) },
+      { ALT: () => SUBRULE(builtInStrlang) },
+      { ALT: () => SUBRULE(builtInStrdt) },
+      { ALT: () => SUBRULE(builtInSameterm) },
+      { ALT: () => SUBRULE(builtInIsiri) },
+      { ALT: () => SUBRULE(builtInIsuri) },
+      { ALT: () => SUBRULE(builtInIsblank) },
+      { ALT: () => SUBRULE(builtInIsliteral) },
+      { ALT: () => SUBRULE(builtInIsnumeric) },
       { ALT: () => SUBRULE(regexExpression) },
       { ALT: () => SUBRULE(existsFunc) },
       { ALT: () => SUBRULE(notExistsFunc) },
@@ -1724,7 +1724,7 @@ export const buildInCall: RuleDef & { name: 'buildInCall' } = {
 export const regexExpression: RuleDef & { name: 'regexExpression' } = {
   name: 'regexExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.buildIn.regex);
+    CONSUME(l.builtIn.regex);
     CONSUME(l.symbols.LParen);
     SUBRULE1(expression);
     CONSUME1(l.symbols.comma);
@@ -1740,7 +1740,7 @@ export const regexExpression: RuleDef & { name: 'regexExpression' } = {
 export const substringExpression: RuleDef & { name: 'substringExpression' } = {
   name: 'substringExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.buildIn.substr);
+    CONSUME(l.builtIn.substr);
     CONSUME(l.symbols.LParen);
     SUBRULE1(expression);
     CONSUME1(l.symbols.comma);
@@ -1756,7 +1756,7 @@ export const substringExpression: RuleDef & { name: 'substringExpression' } = {
 export const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = {
   name: 'strReplaceExpression',
   impl: ({ CONSUME1, CONSUME2, CONSUME3, SUBRULE3, SUBRULE4, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.buildIn.replace);
+    CONSUME(l.builtIn.replace);
     CONSUME(l.symbols.LParen);
     SUBRULE1(expression);
     CONSUME1(l.symbols.comma);
@@ -1774,7 +1774,7 @@ export const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = 
 export const existsFunc: RuleDef & { name: 'existsFunc' } = {
   name: 'existsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.buildIn.exists);
+    CONSUME(l.builtIn.exists);
     SUBRULE(groupGraphPattern);
   },
 };
@@ -1782,21 +1782,21 @@ export const existsFunc: RuleDef & { name: 'existsFunc' } = {
 export const notExistsFunc: RuleDef & { name: 'notExistsFunc' } = {
   name: 'notExistsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.buildIn.notexists);
+    CONSUME(l.builtIn.notexists);
     SUBRULE(groupGraphPattern);
   },
 };
 
-export const aggregateCount = baseAggregateFunc(l.buildIn.count);
-export const aggregateSum = baseAggregateFunc(l.buildIn.sum);
-export const aggregateMin = baseAggregateFunc(l.buildIn.min);
-export const aggregateMax = baseAggregateFunc(l.buildIn.max);
-export const aggregateAvg = baseAggregateFunc(l.buildIn.avg);
-export const aggregateSample = baseAggregateFunc(l.buildIn.sample);
-export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buildIn.groupConcat.name> } = {
-  name: unCapitalize(l.buildIn.groupConcat.name),
+export const aggregateCount = baseAggregateFunc(l.builtIn.count);
+export const aggregateSum = baseAggregateFunc(l.builtIn.sum);
+export const aggregateMin = baseAggregateFunc(l.builtIn.min);
+export const aggregateMax = baseAggregateFunc(l.builtIn.max);
+export const aggregateAvg = baseAggregateFunc(l.builtIn.avg);
+export const aggregateSample = baseAggregateFunc(l.builtIn.sample);
+export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.builtIn.groupConcat.name> } = {
+  name: unCapitalize(l.builtIn.groupConcat.name),
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
-    CONSUME(l.buildIn.groupConcat);
+    CONSUME(l.builtIn.groupConcat);
     CONSUME(l.symbols.LParen);
     OPTION1(() => {
       CONSUME(l.distinct);
@@ -1804,7 +1804,7 @@ export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buil
     SUBRULE(expression);
     OPTION2(() => {
       CONSUME(l.symbols.semi);
-      CONSUME(l.buildIn.separator);
+      CONSUME(l.builtIn.separator);
       CONSUME(l.symbols.equal);
       SUBRULE(string);
     });
@@ -2070,56 +2070,56 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(unaryExpression)
   .addRule(primaryExpression)
   .addRule(brackettedExpression)
-  .addRule(buildInCall)
-  .addRule(buildInStr)
-  .addRule(buildInLang)
-  .addRule(buildInLangmatches)
-  .addRule(buildInDatatype)
-  .addRule(buildInBound)
-  .addRule(buildInIri)
-  .addRule(buildInUri)
-  .addRule(buildInBnode)
-  .addRule(buildInRand)
-  .addRule(buildInAbs)
-  .addRule(buildInCeil)
-  .addRule(buildInFloor)
-  .addRule(buildInRound)
-  .addRule(buildInConcat)
-  .addRule(buildInStrlen)
-  .addRule(buildInUcase)
-  .addRule(buildInLcase)
-  .addRule(buildInEncode_for_uri)
-  .addRule(buildInContains)
-  .addRule(buildInStrstarts)
-  .addRule(buildInStrends)
-  .addRule(buildInStrbefore)
-  .addRule(buildInStrafter)
-  .addRule(buildInYear)
-  .addRule(buildInMonth)
-  .addRule(buildInDay)
-  .addRule(buildInHours)
-  .addRule(buildInMinutes)
-  .addRule(buildInSeconds)
-  .addRule(buildInTimezone)
-  .addRule(buildInTz)
-  .addRule(buildInNow)
-  .addRule(buildInUuid)
-  .addRule(buildInStruuid)
-  .addRule(buildInMd5)
-  .addRule(buildInSha1)
-  .addRule(buildInSha256)
-  .addRule(buildInSha384)
-  .addRule(buildInSha512)
-  .addRule(buildInCoalesce)
-  .addRule(buildInIf)
-  .addRule(buildInStrlang)
-  .addRule(buildInStrdt)
-  .addRule(buildInSameterm)
-  .addRule(buildInIsiri)
-  .addRule(buildInIsuri)
-  .addRule(buildInIsblank)
-  .addRule(buildInIsliteral)
-  .addRule(buildInIsnumeric)
+  .addRule(builtInCall)
+  .addRule(builtInStr)
+  .addRule(builtInLang)
+  .addRule(builtInLangmatches)
+  .addRule(builtInDatatype)
+  .addRule(builtInBound)
+  .addRule(builtInIri)
+  .addRule(builtInUri)
+  .addRule(builtInBnode)
+  .addRule(builtInRand)
+  .addRule(builtInAbs)
+  .addRule(builtInCeil)
+  .addRule(builtInFloor)
+  .addRule(builtInRound)
+  .addRule(builtInConcat)
+  .addRule(builtInStrlen)
+  .addRule(builtInUcase)
+  .addRule(builtInLcase)
+  .addRule(builtInEncode_for_uri)
+  .addRule(builtInContains)
+  .addRule(builtInStrstarts)
+  .addRule(builtInStrends)
+  .addRule(builtInStrbefore)
+  .addRule(builtInStrafter)
+  .addRule(builtInYear)
+  .addRule(builtInMonth)
+  .addRule(builtInDay)
+  .addRule(builtInHours)
+  .addRule(builtInMinutes)
+  .addRule(builtInSeconds)
+  .addRule(builtInTimezone)
+  .addRule(builtInTz)
+  .addRule(builtInNow)
+  .addRule(builtInUuid)
+  .addRule(builtInStruuid)
+  .addRule(builtInMd5)
+  .addRule(builtInSha1)
+  .addRule(builtInSha256)
+  .addRule(builtInSha384)
+  .addRule(builtInSha512)
+  .addRule(builtInCoalesce)
+  .addRule(builtInIf)
+  .addRule(builtInStrlang)
+  .addRule(builtInStrdt)
+  .addRule(builtInSameterm)
+  .addRule(builtInIsiri)
+  .addRule(builtInIsuri)
+  .addRule(builtInIsblank)
+  .addRule(builtInIsliteral)
+  .addRule(builtInIsnumeric)
   .addRule(regexExpression)
   .addRule(substringExpression)
   .addRule(strReplaceExpression)
