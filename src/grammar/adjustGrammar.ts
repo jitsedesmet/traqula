@@ -32,20 +32,20 @@ const _builtInCall: RuleDef & { name: 'builtInCall' } = {
   impl: ({ SUBRULE, OR }) => () => {
     OR([
       { ALT: () => SUBRULE(builtInAdjust) },
-      { ALT: () => SUBRULE(alternativeBuildInCall) },
+      { ALT: () => SUBRULE(existingBuildInCall) },
     ]);
   },
 };
 
-const alternativeBuildInCall: RuleDef & { name: 'alternativeBuildInCall' } = {
-  name: 'alternativeBuildInCall',
+const existingBuildInCall: RuleDef & { name: 'existingBuildInCall' } = {
+  name: 'existingBuildInCall',
   impl: builtInCall.impl,
 };
 
 const adjustBuilder = Builder.createBuilder()
   .addRule(builtInAdjust)
   .addRule(_builtInCall)
-  .addRule(alternativeBuildInCall)
+  .addRule(existingBuildInCall)
   .merge(sparql12Builder, [ _builtInCall ]);
 
 export function trySparqlAdjust(): void {
