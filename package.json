@@ -1,15 +1,27 @@
 {
   "name": "TRAQULA",
+  "packageManager": "yarn@1.22.22",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "git clean -dfx"
+    "build": "tsc && node src/generator/sparqlParserGenerator.js && node src/generator/adjustParserGenerator.js && tsc",
+    "build and run": "yarn build && node src/index.js",
+    "run": "node src/index.js",
+    "lint": "eslint . --cache",
+    "lint-fix": "eslint . --fix",
+    "clean": "git clean -dfx",
+    "generate": "peggy -o ./src/parser/parser.js -m --allowed-start-rules \"BlankNode\" --dts --format \"commonjs\" ./src/generator/file1.peggy"
   },
   "private": true,
   "devDependencies": {
-    "peggy": "^4.1.1"
+    "@types/node": "^22.9.0",
+    "@rubensworks/eslint-config": "^3.0.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.57.0",
+    "peggy": "^4.1.1",
+    "ts-pegjs": "^4.2.1",
+    "typescript": "^5.3.3"
   }
 }
