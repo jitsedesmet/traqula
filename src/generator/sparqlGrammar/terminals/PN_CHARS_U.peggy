@@ -1,0 +1,1 @@
+PN_CHARS_U = PN_CHARS_BASE / '_'i

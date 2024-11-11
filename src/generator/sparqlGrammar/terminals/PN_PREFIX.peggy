@@ -1,0 +1,1 @@
+PN_PREFIX = PN_CHARS_BASE ((PN_CHARS / '.'i)* PN_CHARS)?
