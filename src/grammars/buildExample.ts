@@ -65,7 +65,7 @@ interface CstDef {
    * in EBNF notation this is equivalent to: "[...]".
    *
    * Note that there are two syntax forms:
-   * - Passing the grammar action directly:
+   * - Passing the grammars action directly:
    *   ```
    *     this.OPTION(() => {
    *       this.CONSUME(Digit)}
@@ -82,13 +82,13 @@ interface CstDef {
    *   ```
    *
    * The optional 'GATE' property in "options" object form can be used to add constraints
-   * to invoking the grammar action.
+   * to invoking the grammars action.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the optional production in it's top rule.
    *
-   * @param  actionORMethodDef - The grammar action to optionally invoke once
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param  actionORMethodDef - The grammars action to optionally invoke once
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    * @returns The `GrammarAction` return value (OUT) if the optional syntax is encountered
    *          or `undefined` if not.
@@ -126,7 +126,7 @@ interface CstDef {
   /**
    * Parsing DSL method that indicates a choice between a set of alternatives must be made.
    * This is equivalent to an EBNF alternation (A | B | C | D ...), except
-   * that the alternatives are ordered like in a PEG grammar.
+   * that the alternatives are ordered like in a PEG grammars.
    * This means that the **first** matching alternative is always chosen.
    *
    * There are several forms for the inner alternatives array:
@@ -199,7 +199,7 @@ interface CstDef {
    * This is equivalent to EBNF repetition \{...\}.
    *
    * Note that there are two syntax forms:
-   * - Passing the grammar action directly:
+   * - Passing the grammars action directly:
    *   ```
    *     this.MANY(() => {
    *       this.CONSUME(Comma)
@@ -219,13 +219,13 @@ interface CstDef {
    *   ```
    *
    * The optional 'GATE' property in "options" object form can be used to add constraints
-   * to invoking the grammar action.
+   * to invoking the grammars action.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the repetition production in it's top rule.
    *
-   * @param actionORMethodDef - The grammar action to optionally invoke multiple times
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param actionORMethodDef - The grammars action to optionally invoke multiple times
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    */
   MANY: (
@@ -277,14 +277,14 @@ interface CstDef {
    * and it is not possible to use a shorter form like in the MANY DSL method.
    *
    * Note that for the purposes of deciding on whether or not another iteration exists
-   * Only a single Token is examined (The separator). Therefore if the grammar being implemented is
+   * Only a single Token is examined (The separator). Therefore if the grammars being implemented is
    * so "crazy" to require multiple tokens to identify an item separator please use the more basic DSL methods
    * to implement it.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the repetition production in it's top rule.
    *
-   * @param options - An object defining the grammar of each iteration and the separator between iterations
+   * @param options - An object defining the grammars of each iteration and the separator between iterations
    *
    */
   MANY_SEP: (options: ManySepMethodOpts<any>) => void;
@@ -304,8 +304,8 @@ interface CstDef {
    *
    * @see MANY
    *
-   * @param actionORMethodDef  - The grammar action to optionally invoke multiple times
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param actionORMethodDef  - The grammars action to optionally invoke multiple times
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    */
   AT_LEAST_ONE: (
@@ -347,7 +347,7 @@ interface CstDef {
    *
    * @see MANY_SEP
    *
-   * @param options - An object defining the grammar of each iteration and the separator between iterations
+   * @param options - An object defining the grammars of each iteration and the separator between iterations
    *
    * @return {ISeparatedIterationResult<OUT>}
    */
@@ -406,7 +406,7 @@ export class Builder<T extends string > {
           existingRules.delete(rule.name);
         } else {
           // Need to be explicit about overriding since the name of a rule is the key,
-          // but you don't necessarily know the keys used in the grammar you are extending
+          // but you don't necessarily know the keys used in the grammars you are extending
           throw new Error(`Rule ${rule.name} already exists, if this was intended, provide the rule to overridingRules`);
         }
       } else {

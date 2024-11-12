@@ -18,7 +18,7 @@ export class OpenParser extends CstParser {
    * Creates a Grammar Rule
    *
    * Note that any parameters of your implementation must be optional as it will
-   * be called without parameters during the grammar recording phase.
+   * be called without parameters during the grammars recording phase.
    */
   public override RULE<F extends () => void>(name: string, implementation: F, config?: IRuleConfig<CstNode>):
   ParserMethod<Parameters<F>, CstNode> {
@@ -105,7 +105,7 @@ export class OpenParser extends CstParser {
    * in EBNF notation this is equivalent to: "[...]".
    *
    * Note that there are two syntax forms:
-   * - Passing the grammar action directly:
+   * - Passing the grammars action directly:
    *   ```
    *     this.OPTION(() => {
    *       this.CONSUME(Digit)}
@@ -122,13 +122,13 @@ export class OpenParser extends CstParser {
    *   ```
    *
    * The optional 'GATE' property in "options" object form can be used to add constraints
-   * to invoking the grammar action.
+   * to invoking the grammars action.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the optional production in it's top rule.
    *
-   * @param  actionORMethodDef - The grammar action to optionally invoke once
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param  actionORMethodDef - The grammars action to optionally invoke once
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    * @returns The `GrammarAction` return value (OUT) if the optional syntax is encountered
    *          or `undefined` if not.
@@ -176,7 +176,7 @@ export class OpenParser extends CstParser {
   /**
    * Parsing DSL method that indicates a choice between a set of alternatives must be made.
    * This is equivalent to an EBNF alternation (A | B | C | D ...), except
-   * that the alternatives are ordered like in a PEG grammar.
+   * that the alternatives are ordered like in a PEG grammars.
    * This means that the **first** matching alternative is always chosen.
    *
    * There are several forms for the inner alternatives array:
@@ -279,7 +279,7 @@ export class OpenParser extends CstParser {
    * This is equivalent to EBNF repetition \{...\}.
    *
    * Note that there are two syntax forms:
-   * - Passing the grammar action directly:
+   * - Passing the grammars action directly:
    *   ```
    *     this.MANY(() => {
    *       this.CONSUME(Comma)
@@ -299,13 +299,13 @@ export class OpenParser extends CstParser {
    *   ```
    *
    * The optional 'GATE' property in "options" object form can be used to add constraints
-   * to invoking the grammar action.
+   * to invoking the grammars action.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the repetition production in it's top rule.
    *
-   * @param actionORMethodDef - The grammar action to optionally invoke multiple times
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param actionORMethodDef - The grammars action to optionally invoke multiple times
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    */
   public override MANY(actionORMethodDef: GrammarAction<any> | DSLMethodOpts<any>): void {
@@ -367,14 +367,14 @@ export class OpenParser extends CstParser {
    * and it is not possible to use a shorter form like in the MANY DSL method.
    *
    * Note that for the purposes of deciding on whether or not another iteration exists
-   * Only a single Token is examined (The separator). Therefore if the grammar being implemented is
+   * Only a single Token is examined (The separator). Therefore if the grammars being implemented is
    * so "crazy" to require multiple tokens to identify an item separator please use the more basic DSL methods
    * to implement it.
    *
    * As in CONSUME the index in the method name indicates the occurrence
    * of the repetition production in it's top rule.
    *
-   * @param options - An object defining the grammar of each iteration and the separator between iterations
+   * @param options - An object defining the grammars of each iteration and the separator between iterations
    *
    */
   public override MANY_SEP(options: ManySepMethodOpts<any>): void {
@@ -424,8 +424,8 @@ export class OpenParser extends CstParser {
    *
    * @see MANY
    *
-   * @param actionORMethodDef  - The grammar action to optionally invoke multiple times
-   *                             or an "OPTIONS" object describing the grammar action and optional properties.
+   * @param actionORMethodDef  - The grammars action to optionally invoke multiple times
+   *                             or an "OPTIONS" object describing the grammars action and optional properties.
    *
    */
   public override AT_LEAST_ONE(actionORMethodDef: GrammarAction<any> | DSLMethodOptsWithErr<any>): void {
@@ -477,7 +477,7 @@ export class OpenParser extends CstParser {
    *
    * @see MANY_SEP
    *
-   * @param options - An object defining the grammar of each iteration and the separator between iterations
+   * @param options - An object defining the grammars of each iteration and the separator between iterations
    *
    * @return {ISeparatedIterationResult<OUT>}
    */

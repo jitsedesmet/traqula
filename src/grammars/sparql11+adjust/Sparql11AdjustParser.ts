@@ -1,17 +1,17 @@
 import { Lexer } from 'chevrotain';
-import { allBuiltInCalls } from '../lexer/BuildinCalls';
-import { allGraphTokens } from '../lexer/graph';
-import { createToken } from '../lexer/helpers';
-import * as l from '../lexer/index';
-import { allBaseTokens } from '../lexer/index';
-import { allSymbols } from '../lexer/symbols';
-import { allTerminals } from '../lexer/terminals';
-import { Builder, type RuleDef } from './buildExample';
+import { allBuiltInCalls } from '../../lexer/BuildinCalls';
+import { allGraphTokens } from '../../lexer/graph';
+import { createToken } from '../../lexer/helpers';
+import * as l from '../../lexer/index';
+import { allBaseTokens } from '../../lexer/index';
+import { allSymbols } from '../../lexer/symbols';
+import { allTerminals } from '../../lexer/terminals';
+import { Builder, type RuleDef } from '../buildExample';
+import { builtInCall } from '../sparql11/builtIn';
+import { expression } from '../sparql11/expression';
 import {
-  builtInCall,
-  expression,
   sparql12Builder,
-} from './gramTest';
+} from '../sparql11/Sparql11Parser';
 
 const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 
