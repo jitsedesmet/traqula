@@ -105,6 +105,9 @@ export const allBaseTokens: TokenType[] = [
   notIn,
 ];
 
+/**
+ * [!!!ORDER MATTERS!!!](https://chevrotain.io/docs/tutorial/step1_lexing.html#creating-the-lexer)
+ */
 export const allTokens: TokenType[] = [
   ...allBaseTokens,
   ...allBuiltInCalls,

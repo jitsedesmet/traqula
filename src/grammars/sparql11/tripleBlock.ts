@@ -1,8 +1,7 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import { var_, varOrTerm } from './general';
+import { objectList, var_, varOrTerm } from './general';
 import { path } from './propertyPaths';
-import { objectList } from './queryUnit';
 
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)

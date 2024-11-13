@@ -10,7 +10,32 @@ import {
   rdfLiteral,
   var_,
 } from './general';
-import { argList } from './whereClause';
+
+/**
+ * [[71]](https://www.w3.org/TR/sparql11-query/#rArgList)
+ */
+export const argList: RuleDef & { name: 'argList' } = {
+  name: 'argList',
+  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
+    OR([
+      { ALT: () => CONSUME(l.terminals.nil) },
+      {
+        ALT: () => {
+          CONSUME(l.symbols.LParen);
+          OPTION(() => {
+            CONSUME(l.distinct);
+          });
+          SUBRULE1(expression);
+          MANY(() => {
+            CONSUME(l.symbols.comma);
+            SUBRULE2(expression);
+          });
+          CONSUME(l.symbols.RParen);
+        },
+      },
+    ]);
+  },
+};
 
 export const expressionList: RuleDef & { name: 'expressionList' } = {
   name: 'expressionList',

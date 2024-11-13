@@ -68,6 +68,7 @@ import {
 import { datasetClause, defaultGraphClause, namedGraphClause, sourceSelector } from './dataSetClause';
 import {
   additiveExpression,
+  argList,
   brackettedExpression,
   conditionalAndExpression,
   conditionalOrExpression,
@@ -84,21 +85,32 @@ import {
 import {
   baseDecl,
   blankNode,
+  blankNodePropertyList,
   booleanLiteral,
+  collection,
+  graphNode,
   graphTerm,
   iri,
   numericLiteral,
   numericLiteralNegative,
   numericLiteralPositive,
   numericLiteralUnsigned,
+  object,
+  objectList,
   prefixDecl,
   prefixedName,
   prologue,
+  propertyList,
+  propertyListNotEmpty,
   rdfLiteral,
   string,
+  triplesNode,
+  triplesSameSubject,
+  triplesTemplate,
   var_,
   varOrIri,
   varOrTerm,
+  verb,
 } from './general';
 import {
   path,
@@ -113,26 +125,17 @@ import {
 } from './propertyPaths';
 import {
   askQuery,
-  blankNodePropertyList,
-  collection,
   constructQuery,
   constructTemplate,
   constructTriples,
   describeQuery,
-  graphNode,
-  object,
-  objectList,
-  propertyList,
-  propertyListNotEmpty,
   query,
   queryUnit,
   selectClause,
   selectQuery,
   subSelect,
-  triplesNode,
-  triplesSameSubject,
   valuesClause,
-  verb,
+
 } from './queryUnit';
 import {
   groupClause,
@@ -181,14 +184,12 @@ import {
   quadPattern,
   quads,
   quadsNotTriples,
-  triplesTemplate,
   update,
   update1,
   updateUnit,
   usingClause,
 } from './updateUnit';
 import {
-  argList,
   bind,
   constraint,
   dataBlock,

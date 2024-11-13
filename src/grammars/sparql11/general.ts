@@ -238,3 +238,161 @@ export const blankNode: RuleDef & { name: 'blankNode' } = {
     ]);
   },
 };
+
+/**
+ * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
+ */
+export const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
+  name: 'triplesTemplate',
+  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
+    SUBRULE(triplesSameSubject);
+    OPTION1(() => {
+      CONSUME(l.symbols.dot);
+      OPTION2(() => {
+        SUBRULE(triplesTemplate);
+      });
+    });
+  },
+};
+
+/**
+ * [[75]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubject)
+ */
+export const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
+  name: 'triplesSameSubject',
+  impl: ({ SUBRULE, OR }) => () => {
+    OR([
+      {
+        ALT: () => {
+          SUBRULE(varOrTerm);
+          SUBRULE(propertyListNotEmpty);
+        },
+      },
+      {
+        ALT: () => {
+          SUBRULE(triplesNode);
+          SUBRULE(propertyList);
+        },
+      },
+    ]);
+  },
+};
+
+/**
+ * [[76]](https://www.w3.org/TR/sparql11-query/#rPropertyList)
+ */
+export const propertyList: RuleDef & { name: 'propertyList' } = {
+  name: 'propertyList',
+  impl: ({ SUBRULE, OPTION }) => () => {
+    OPTION(() => {
+      SUBRULE(propertyListNotEmpty);
+    });
+  },
+};
+
+/**
+ * [[77]](https://www.w3.org/TR/sparql11-query/#rPropertyListNotEmpty)
+ */
+export const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = {
+  name: 'propertyListNotEmpty',
+  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION }) => () => {
+    SUBRULE1(verb);
+    SUBRULE1(objectList);
+    MANY(() => {
+      CONSUME(l.symbols.semi);
+      OPTION(() => {
+        SUBRULE2(verb);
+        SUBRULE2(objectList);
+      });
+    });
+  },
+};
+
+/**
+ * [[78]](https://www.w3.org/TR/sparql11-query/#rVerb)
+ */
+export const verb: RuleDef & { name: 'verb' } = {
+  name: 'verb',
+  impl: ({ SUBRULE, CONSUME, OR }) => () => {
+    OR([
+      { ALT: () => SUBRULE(varOrIri) },
+      { ALT: () => CONSUME(l.a) },
+    ]);
+  },
+};
+
+/**
+ * [[79]](https://www.w3.org/TR/sparql11-query/#rObjectList)
+ */
+export const objectList: RuleDef & { name: 'objectList' } = {
+  name: 'objectList',
+  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
+    SUBRULE1(object);
+    MANY(() => {
+      CONSUME(l.symbols.comma);
+      SUBRULE2(object);
+    });
+  },
+};
+
+/**
+ * [[80]](https://www.w3.org/TR/sparql11-query/#rObject)
+ */
+export const object: RuleDef & { name: 'object' } = {
+  name: 'object',
+  impl: ({ SUBRULE }) => () => {
+    SUBRULE(graphNode);
+  },
+};
+
+/**
+ * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
+ */
+export const triplesNode: RuleDef & { name: 'triplesNode' } = {
+  name: 'triplesNode',
+  impl: ({ SUBRULE, OR }) => () => {
+    OR([
+      { ALT: () => SUBRULE(collection) },
+      { ALT: () => SUBRULE(blankNodePropertyList) },
+    ]);
+  },
+};
+
+/**
+ * [[99]](https://www.w3.org/TR/sparql11-query/#rBlankNodePropertyList)
+ */
+export const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } = {
+  name: 'blankNodePropertyList',
+  impl: ({ SUBRULE, CONSUME }) => () => {
+    CONSUME(l.symbols.LSquare);
+    SUBRULE(propertyListNotEmpty);
+    CONSUME(l.symbols.RSquare);
+  },
+};
+
+/**
+ * [[102]](https://www.w3.org/TR/sparql11-query/#rCollection)
+ */
+export const collection: RuleDef & { name: 'collection' } = {
+  name: 'collection',
+  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
+    CONSUME(l.symbols.LParen);
+    AT_LEAST_ONE(() => {
+      SUBRULE(graphNode);
+    });
+    CONSUME(l.symbols.RParen);
+  },
+};
+
+/**
+ * [[103]](https://www.w3.org/TR/sparql11-query/#rGraphNode)
+ */
+export const graphNode: RuleDef & { name: 'graphNode' } = {
+  name: 'graphNode',
+  impl: ({ SUBRULE, OR }) => () => {
+    OR([
+      { ALT: () => SUBRULE(varOrTerm) },
+      { ALT: () => SUBRULE(triplesNode) },
+    ]);
+  },
+};

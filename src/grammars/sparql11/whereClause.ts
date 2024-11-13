@@ -1,7 +1,7 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import { builtInCall } from './builtIn';
-import { brackettedExpression, expression } from './expression';
+import { argList, brackettedExpression, expression } from './expression';
 import { booleanLiteral, iri, numericLiteral, rdfLiteral, var_, varOrIri } from './general';
 import { subSelect } from './queryUnit';
 import { triplesBlock } from './tripleBlock';
@@ -74,6 +74,9 @@ export const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' 
   },
 };
 
+/**
+ * [[57]](https://www.w3.org/TR/sparql11-query/#rOptionalGraphPattern)
+ */
 export const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = {
   name: 'optionalGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -82,6 +85,9 @@ export const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = 
   },
 };
 
+/**
+ * [[67]](https://www.w3.org/TR/sparql11-query/#rGroupOrUnionGraphPattern)
+ */
 export const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPattern' } = {
   name: 'groupOrUnionGraphPattern',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
@@ -93,6 +99,9 @@ export const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPatte
   },
 };
 
+/**
+ * [[58]](https://www.w3.org/TR/sparql11-query/#rGraphGraphPattern)
+ */
 export const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
   name: 'graphGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -101,6 +110,10 @@ export const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
     SUBRULE(groupGraphPattern);
   },
 };
+
+/**
+ * [[59]](https://www.w3.org/TR/sparql11-query/#rServiceGraphPattern)
+ */
 export const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
   name: 'serviceGraphPattern',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
@@ -112,6 +125,10 @@ export const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
     SUBRULE(groupGraphPattern);
   },
 };
+
+/**
+ * [[60]](https://www.w3.org/TR/sparql11-query/#rBind)
+ */
 export const bind: RuleDef & { name: 'bind' } = {
   name: 'bind',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -123,6 +140,10 @@ export const bind: RuleDef & { name: 'bind' } = {
     CONSUME(l.symbols.RParen);
   },
 };
+
+/**
+ * [[61]](https://www.w3.org/TR/sparql11-query/#rInlineData)
+ */
 export const inlineData: RuleDef & { name: 'inlineData' } = {
   name: 'inlineData',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -130,6 +151,10 @@ export const inlineData: RuleDef & { name: 'inlineData' } = {
     SUBRULE(dataBlock);
   },
 };
+
+/**
+ * [[62]](https://www.w3.org/TR/sparql11-query/#rDataBlock)
+ */
 export const dataBlock: RuleDef & { name: 'dataBlock' } = {
   name: 'dataBlock',
   impl: ({ SUBRULE, OR }) => () => {
@@ -147,6 +172,10 @@ export const dataBlock: RuleDef & { name: 'dataBlock' } = {
     ]);
   },
 };
+
+/**
+ * [[63]](https://www.w3.org/TR/sparql11-query/#rInlineDataOneVar)
+ */
 export const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
   name: 'inlineDataOneVar',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
@@ -158,6 +187,10 @@ export const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
     CONSUME(l.symbols.RCurly);
   },
 };
+
+/**
+ * [[64]](https://www.w3.org/TR/sparql11-query/#rInlineDataFull)
+ */
 export const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
   name: 'inlineDataFull',
   impl: ({ SUBRULE, CONSUME, MANY1, MANY2, OR1, OR2, CONSUME1, MANY3, CONSUME2 }) => () => {
@@ -199,6 +232,10 @@ export const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
     CONSUME(l.symbols.RCurly);
   },
 };
+
+/**
+ * [[65]](https://www.w3.org/TR/sparql11-query/#rDataBlockValue)
+ */
 export const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
   name: 'dataBlockValue',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
@@ -212,6 +249,9 @@ export const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
   },
 };
 
+/**
+ * [[66]](https://www.w3.org/TR/sparql11-query/#rMinusGraphPattern)
+ */
 export const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
   name: 'minusGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -219,6 +259,10 @@ export const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
     SUBRULE(groupGraphPattern);
   },
 };
+
+/**
+ * [[68]](https://www.w3.org/TR/sparql11-query/#rFilter)
+ */
 export const filter: RuleDef & { name: 'filter' } = {
   name: 'filter',
   impl: ({ SUBRULE, CONSUME }) => () => {
@@ -226,6 +270,10 @@ export const filter: RuleDef & { name: 'filter' } = {
     SUBRULE(constraint);
   },
 };
+
+/**
+ * [[69]](https://www.w3.org/TR/sparql11-query/#rConstraint)
+ */
 export const constraint: RuleDef & { name: 'constraint' } = {
   name: 'constraint',
   impl: ({ SUBRULE, OR }) => () => {
@@ -236,32 +284,14 @@ export const constraint: RuleDef & { name: 'constraint' } = {
     ]);
   },
 };
+
+/**
+ * [[70]](https://www.w3.org/TR/sparql11-query/#rFunctionCall)
+ */
 export const functionCall: RuleDef & { name: 'functionCall' } = {
   name: 'functionCall',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(iri);
     SUBRULE(argList);
-  },
-};
-export const argList: RuleDef & { name: 'argList' } = {
-  name: 'argList',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.nil) },
-      {
-        ALT: () => {
-          CONSUME(l.symbols.LParen);
-          OPTION(() => {
-            CONSUME(l.distinct);
-          });
-          SUBRULE1(expression);
-          MANY(() => {
-            CONSUME(l.symbols.comma);
-            SUBRULE2(expression);
-          });
-          CONSUME(l.symbols.RParen);
-        },
-      },
-    ]);
   },
 };

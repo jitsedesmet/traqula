@@ -1,7 +1,6 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import { iri, prologue, varOrIri } from './general';
-import { triplesSameSubject } from './queryUnit';
+import { iri, prologue, triplesTemplate, varOrIri } from './general';
 import { groupGraphPattern } from './whereClause';
 
 /**
@@ -309,22 +308,6 @@ export const quadData: RuleDef & { name: 'quadData' } = {
     CONSUME(l.symbols.LCurly);
     SUBRULE(quads);
     CONSUME(l.symbols.RCurly);
-  },
-};
-
-/**
- * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
- */
-export const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
-  name: 'triplesTemplate',
-  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    SUBRULE(triplesSameSubject);
-    OPTION1(() => {
-      CONSUME(l.symbols.dot);
-      OPTION2(() => {
-        SUBRULE(triplesTemplate);
-      });
-    });
   },
 };
 
