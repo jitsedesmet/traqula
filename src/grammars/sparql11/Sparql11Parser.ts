@@ -415,7 +415,7 @@ export function trySparql12(): void {
   const lexResult = lexer.tokenize('SELECT (LANGMATCHES(?S, ?P) AS ?adjusted) WHERE { ?s ?p ?o }');
 
   parser.input = lexResult.tokens;
-  parser.query();
+  console.log(parser.queryUnit());
   // eslint-disable-next-line no-console
   console.log(parser.errors.join('\n'));
 }

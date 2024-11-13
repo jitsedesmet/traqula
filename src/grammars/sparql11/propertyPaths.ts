@@ -6,7 +6,7 @@ import { iri } from './general';
 /**
  * [[88]](https://www.w3.org/TR/sparql11-query/#rPath)
  */
-export const path: RuleDef & { name: 'path' } = {
+export const path: RuleDef<'path'> = {
   name: 'path',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(pathAlternative);
@@ -16,7 +16,7 @@ export const path: RuleDef & { name: 'path' } = {
 /**
  * [[89]](https://www.w3.org/TR/sparql11-query/#rPathAlternative)
  */
-export const pathAlternative: RuleDef & { name: 'pathAlternative' } = {
+export const pathAlternative: RuleDef<'pathAlternative'> = {
   name: 'pathAlternative',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(pathSequence);
@@ -30,7 +30,7 @@ export const pathAlternative: RuleDef & { name: 'pathAlternative' } = {
 /**
  * [[90]](https://www.w3.org/TR/sparql11-query/#rPathSequence)
  */
-export const pathSequence: RuleDef & { name: 'pathSequence' } = {
+export const pathSequence: RuleDef<'pathSequence'> = {
   name: 'pathSequence',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(pathEltOrInverse);
@@ -44,7 +44,7 @@ export const pathSequence: RuleDef & { name: 'pathSequence' } = {
 /**
  * [[91]](https://www.w3.org/TR/sparql11-query/#rPathElt)
  */
-export const pathElt: RuleDef & { name: 'pathElt' } = {
+export const pathElt: RuleDef<'pathElt'> = {
   name: 'pathElt',
   impl: ({ SUBRULE, OPTION }) => () => {
     SUBRULE(pathPrimary);
@@ -57,7 +57,7 @@ export const pathElt: RuleDef & { name: 'pathElt' } = {
 /**
  * [[92]](https://www.w3.org/TR/sparql11-query/#rPathEltOrInverse)
  */
-export const pathEltOrInverse: RuleDef & { name: 'pathEltOrInverse' } = {
+export const pathEltOrInverse: RuleDef<'pathEltOrInverse'> = {
   name: 'pathEltOrInverse',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OR }) => () => {
     OR([
@@ -79,7 +79,7 @@ export const pathEltOrInverse: RuleDef & { name: 'pathEltOrInverse' } = {
 /**
  * [[93]](https://www.w3.org/TR/sparql11-query/#rPathMod)
  */
-export const pathMod: RuleDef & { name: 'pathMod' } = {
+export const pathMod: RuleDef<'pathMod'> = {
   name: 'pathMod',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -93,7 +93,7 @@ export const pathMod: RuleDef & { name: 'pathMod' } = {
 /**
  * [[94]](https://www.w3.org/TR/sparql11-query/#rPathPrimary)
  */
-export const pathPrimary: RuleDef & { name: 'pathPrimary' } = {
+export const pathPrimary: RuleDef<'pathPrimary'> = {
   name: 'pathPrimary',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -119,7 +119,7 @@ export const pathPrimary: RuleDef & { name: 'pathPrimary' } = {
 /**
  * [[95]](https://www.w3.org/TR/sparql11-query/#rPathNegatedPropertySet)
  */
-export const pathNegatedPropertySet: RuleDef & { name: 'pathNegatedPropertySet' } = {
+export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet'> = {
   name: 'pathNegatedPropertySet',
   impl: ({ SUBRULE3, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
@@ -148,7 +148,7 @@ export const pathNegatedPropertySet: RuleDef & { name: 'pathNegatedPropertySet' 
 /**
  * [[96]](https://www.w3.org/TR/sparql11-query/#rPathOneInPropertySet)
  */
-export const pathOneInPropertySet: RuleDef & { name: 'pathOneInPropertySet' } = {
+export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet'> = {
   name: 'pathOneInPropertySet',
   impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2 }) => () => {
     OR1([

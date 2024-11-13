@@ -1,10 +1,14 @@
+import type { Literal } from 'rdf-data-factory';
+import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+
+const factory = new DataFactory();
 
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)
  */
-export const prologue: RuleDef & { name: 'prologue' } = {
+export const prologue: RuleDef<'prologue'> = {
   name: 'prologue',
   impl: ({ SUBRULE, MANY, OR }) => () => {
     MANY(() => {
@@ -19,7 +23,7 @@ export const prologue: RuleDef & { name: 'prologue' } = {
 /**
  * [[5]](https://www.w3.org/TR/sparql11-query/#rBaseDecl)
  */
-export const baseDecl: RuleDef & { name: 'baseDecl' } = {
+export const baseDecl: RuleDef<'baseDecl'> = {
   name: 'baseDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.baseDecl);
@@ -30,7 +34,7 @@ export const baseDecl: RuleDef & { name: 'baseDecl' } = {
 /**
  * [[6]](https://www.w3.org/TR/sparql11-query/#rPrefixDecl)
  */
-export const prefixDecl: RuleDef & { name: 'prefixDecl' } = {
+export const prefixDecl: RuleDef<'prefixDecl'> = {
   name: 'prefixDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.prefixDecl);
@@ -42,7 +46,7 @@ export const prefixDecl: RuleDef & { name: 'prefixDecl' } = {
 /**
  * [[106]](https://www.w3.org/TR/sparql11-query/#rVarOrTerm)
  */
-export const varOrTerm: RuleDef & { name: 'varOrTerm' } = {
+export const varOrTerm: RuleDef<'varOrTerm'> = {
   name: 'varOrTerm',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -55,7 +59,7 @@ export const varOrTerm: RuleDef & { name: 'varOrTerm' } = {
 /**
  * [[107]](https://www.w3.org/TR/sparql11-query/#rVarOrIri)
  */
-export const varOrIri: RuleDef & { name: 'varOrIri' } = {
+export const varOrIri: RuleDef<'varOrIri'> = {
   name: 'varOrIri',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -68,7 +72,7 @@ export const varOrIri: RuleDef & { name: 'varOrIri' } = {
 /**
  * [[108]](https://www.w3.org/TR/sparql11-query/#rVar)
  */
-export const var_: RuleDef & { name: 'var' } = {
+export const var_: RuleDef<'var'> = {
   name: 'var',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -81,7 +85,7 @@ export const var_: RuleDef & { name: 'var' } = {
 /**
  * [[109]](https://www.w3.org/TR/sparql11-query/#rGraphTerm)
  */
-export const graphTerm: RuleDef & { name: 'graphTerm' } = {
+export const graphTerm: RuleDef<'graphTerm'> = {
   name: 'graphTerm',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -98,7 +102,7 @@ export const graphTerm: RuleDef & { name: 'graphTerm' } = {
 /**
  * [[129]](https://www.w3.org/TR/sparql11-query/#rRDFLiteral)
  */
-export const rdfLiteral: RuleDef & { name: 'rdfLiteral' } = {
+export const rdfLiteral: RuleDef<'rdfLiteral'> = {
   name: 'rdfLiteral',
   impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
     SUBRULE(string);
@@ -119,7 +123,7 @@ export const rdfLiteral: RuleDef & { name: 'rdfLiteral' } = {
 /**
  * [[130]](https://www.w3.org/TR/sparql11-query/#rNumericLiteral)
  */
-export const numericLiteral: RuleDef & { name: 'numericLiteral' } = {
+export const numericLiteral: RuleDef<'numericLiteral'> = {
   name: 'numericLiteral',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -133,7 +137,7 @@ export const numericLiteral: RuleDef & { name: 'numericLiteral' } = {
 /**
  * [[131]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralUnsigned)
  */
-export const numericLiteralUnsigned: RuleDef & { name: 'numericLiteralUnsigned' } = {
+export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned'> = {
   name: 'numericLiteralUnsigned',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -147,7 +151,7 @@ export const numericLiteralUnsigned: RuleDef & { name: 'numericLiteralUnsigned' 
 /**
  * [[132]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralPositive)
  */
-export const numericLiteralPositive: RuleDef & { name: 'numericLiteralPositive' } = {
+export const numericLiteralPositive: RuleDef<'numericLiteralPositive'> = {
   name: 'numericLiteralPositive',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -161,7 +165,7 @@ export const numericLiteralPositive: RuleDef & { name: 'numericLiteralPositive' 
 /**
  * [[133]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralNegative)
  */
-export const numericLiteralNegative: RuleDef & { name: 'numericLiteralNegative' } = {
+export const numericLiteralNegative: RuleDef<'numericLiteralNegative'> = {
   name: 'numericLiteralNegative',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -175,20 +179,27 @@ export const numericLiteralNegative: RuleDef & { name: 'numericLiteralNegative' 
 /**
  * [[134]](https://www.w3.org/TR/sparql11-query/#rBooleanLiteral)
  */
-export const booleanLiteral: RuleDef & { name: 'booleanLiteral' } = {
+export const booleanLiteral: RuleDef<'booleanLiteral', Literal> = {
   name: 'booleanLiteral',
   impl: ({ CONSUME, OR }) => () => {
+    let result = factory.literal('false', factory.namedNode('http://www.w3.org/2001/XMLSchema#boolean'));
     OR([
-      { ALT: () => CONSUME(l.true_) },
-      { ALT: () => CONSUME(l.false_) },
+      { ALT: () => {
+        CONSUME(l.true_);
+        result = factory.literal('true', factory.namedNode('http://www.w3.org/2001/XMLSchema#boolean'));
+      } },
+      { ALT: () => {
+        CONSUME(l.false_);
+      } },
     ]);
+    return result;
   },
 };
 
 /**
  * [[135]](https://www.w3.org/TR/sparql11-query/#rString)
  */
-export const string: RuleDef & { name: 'string' } = {
+export const string: RuleDef<'string'> = {
   name: 'string',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -203,7 +214,7 @@ export const string: RuleDef & { name: 'string' } = {
 /**
  * [[136]](https://www.w3.org/TR/sparql11-query/#riri)
  */
-export const iri: RuleDef & { name: 'iri' } = {
+export const iri: RuleDef<'iri'> = {
   name: 'iri',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -216,7 +227,7 @@ export const iri: RuleDef & { name: 'iri' } = {
 /**
  * [[137]](https://www.w3.org/TR/sparql11-query/#rPrefixedName)
  */
-export const prefixedName: RuleDef & { name: 'prefixedName' } = {
+export const prefixedName: RuleDef<'prefixedName'> = {
   name: 'prefixedName',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -229,7 +240,7 @@ export const prefixedName: RuleDef & { name: 'prefixedName' } = {
 /**
  * [[138]](https://www.w3.org/TR/sparql11-query/#rBlankNode)
  */
-export const blankNode: RuleDef & { name: 'blankNode' } = {
+export const blankNode: RuleDef<'blankNode'> = {
   name: 'blankNode',
   impl: ({ CONSUME, OR }) => () => {
     OR([
@@ -242,7 +253,7 @@ export const blankNode: RuleDef & { name: 'blankNode' } = {
 /**
  * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
  */
-export const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
+export const triplesTemplate: RuleDef<'triplesTemplate'> = {
   name: 'triplesTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubject);
@@ -258,7 +269,7 @@ export const triplesTemplate: RuleDef & { name: 'triplesTemplate' } = {
 /**
  * [[75]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubject)
  */
-export const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
+export const triplesSameSubject: RuleDef<'triplesSameSubject'> = {
   name: 'triplesSameSubject',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -281,7 +292,7 @@ export const triplesSameSubject: RuleDef & { name: 'triplesSameSubject' } = {
 /**
  * [[76]](https://www.w3.org/TR/sparql11-query/#rPropertyList)
  */
-export const propertyList: RuleDef & { name: 'propertyList' } = {
+export const propertyList: RuleDef<'propertyList'> = {
   name: 'propertyList',
   impl: ({ SUBRULE, OPTION }) => () => {
     OPTION(() => {
@@ -293,7 +304,7 @@ export const propertyList: RuleDef & { name: 'propertyList' } = {
 /**
  * [[77]](https://www.w3.org/TR/sparql11-query/#rPropertyListNotEmpty)
  */
-export const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = {
+export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty'> = {
   name: 'propertyListNotEmpty',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION }) => () => {
     SUBRULE1(verb);
@@ -311,7 +322,7 @@ export const propertyListNotEmpty: RuleDef & { name: 'propertyListNotEmpty' } = 
 /**
  * [[78]](https://www.w3.org/TR/sparql11-query/#rVerb)
  */
-export const verb: RuleDef & { name: 'verb' } = {
+export const verb: RuleDef<'verb'> = {
   name: 'verb',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -324,7 +335,7 @@ export const verb: RuleDef & { name: 'verb' } = {
 /**
  * [[79]](https://www.w3.org/TR/sparql11-query/#rObjectList)
  */
-export const objectList: RuleDef & { name: 'objectList' } = {
+export const objectList: RuleDef<'objectList'> = {
   name: 'objectList',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(object);
@@ -338,7 +349,7 @@ export const objectList: RuleDef & { name: 'objectList' } = {
 /**
  * [[80]](https://www.w3.org/TR/sparql11-query/#rObject)
  */
-export const object: RuleDef & { name: 'object' } = {
+export const object: RuleDef<'object'> = {
   name: 'object',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(graphNode);
@@ -348,7 +359,7 @@ export const object: RuleDef & { name: 'object' } = {
 /**
  * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
  */
-export const triplesNode: RuleDef & { name: 'triplesNode' } = {
+export const triplesNode: RuleDef<'triplesNode'> = {
   name: 'triplesNode',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -361,7 +372,7 @@ export const triplesNode: RuleDef & { name: 'triplesNode' } = {
 /**
  * [[99]](https://www.w3.org/TR/sparql11-query/#rBlankNodePropertyList)
  */
-export const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } = {
+export const blankNodePropertyList: RuleDef<'blankNodePropertyList'> = {
   name: 'blankNodePropertyList',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LSquare);
@@ -373,7 +384,7 @@ export const blankNodePropertyList: RuleDef & { name: 'blankNodePropertyList' } 
 /**
  * [[102]](https://www.w3.org/TR/sparql11-query/#rCollection)
  */
-export const collection: RuleDef & { name: 'collection' } = {
+export const collection: RuleDef<'collection'> = {
   name: 'collection',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -387,7 +398,7 @@ export const collection: RuleDef & { name: 'collection' } = {
 /**
  * [[103]](https://www.w3.org/TR/sparql11-query/#rGraphNode)
  */
-export const graphNode: RuleDef & { name: 'graphNode' } = {
+export const graphNode: RuleDef<'graphNode'> = {
   name: 'graphNode',
   impl: ({ SUBRULE, OR }) => () => {
     OR([

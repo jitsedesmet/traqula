@@ -8,7 +8,7 @@ import { constraint, functionCall } from './whereClause';
 /**
  * [[18]](https://www.w3.org/TR/sparql11-query/#rSolutionModifier)
  */
-export const solutionModifier: RuleDef & { name: 'solutionModifier' } = {
+export const solutionModifier: RuleDef<'solutionModifier'> = {
   name: 'solutionModifier',
   impl: ({ SUBRULE, OPTION1, OPTION2, OPTION3, OPTION4 }) => () => {
     OPTION1(() => {
@@ -29,7 +29,7 @@ export const solutionModifier: RuleDef & { name: 'solutionModifier' } = {
 /**
  * [[19]](https://www.w3.org/TR/sparql11-query/#rGroupClause)
  */
-export const groupClause: RuleDef & { name: 'groupClause' } = {
+export const groupClause: RuleDef<'groupClause'> = {
   name: 'groupClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.groupBy);
@@ -42,7 +42,7 @@ export const groupClause: RuleDef & { name: 'groupClause' } = {
 /**
  * [[20]](https://www.w3.org/TR/sparql11-query/#rGroupCondition)
  */
-export const groupCondition: RuleDef & { name: 'groupCondition' } = {
+export const groupCondition: RuleDef<'groupCondition'> = {
   name: 'groupCondition',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
     OR([
@@ -67,7 +67,7 @@ export const groupCondition: RuleDef & { name: 'groupCondition' } = {
 /**
  * [[21]](https://www.w3.org/TR/sparql11-query/#rHavingClause)
  */
-export const havingClause: RuleDef & { name: 'havingClause' } = {
+export const havingClause: RuleDef<'havingClause'> = {
   name: 'havingClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.having);
@@ -80,7 +80,7 @@ export const havingClause: RuleDef & { name: 'havingClause' } = {
 /**
  * [[22]](https://www.w3.org/TR/sparql11-query/#rHavingCondition)
  */
-export const havingCondition: RuleDef & { name: 'havingCondition' } = {
+export const havingCondition: RuleDef<'havingCondition'> = {
   name: 'havingCondition',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(constraint);
@@ -90,7 +90,7 @@ export const havingCondition: RuleDef & { name: 'havingCondition' } = {
 /**
  * [[23]](https://www.w3.org/TR/sparql11-query/#rOrderClause)
  */
-export const orderClause: RuleDef & { name: 'orderClause' } = {
+export const orderClause: RuleDef<'orderClause'> = {
   name: 'orderClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.order);
@@ -103,7 +103,7 @@ export const orderClause: RuleDef & { name: 'orderClause' } = {
 /**
  * [[24]](https://www.w3.org/TR/sparql11-query/#rOrderCondition)
  */
-export const orderCondition: RuleDef & { name: 'orderCondition' } = {
+export const orderCondition: RuleDef<'orderCondition'> = {
   name: 'orderCondition',
   impl: ({ SUBRULE, CONSUME, OR1, OR2 }) => () => {
     OR1([
@@ -125,7 +125,7 @@ export const orderCondition: RuleDef & { name: 'orderCondition' } = {
 /**
  * [[25]](https://www.w3.org/TR/sparql11-query/#rLimitOffsetClauses)
  */
-export const limitOffsetClauses: RuleDef & { name: 'limitOffsetClauses' } = {
+export const limitOffsetClauses: RuleDef<'limitOffsetClauses'> = {
   name: 'limitOffsetClauses',
   impl: ({ SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
     OR([
@@ -152,7 +152,7 @@ export const limitOffsetClauses: RuleDef & { name: 'limitOffsetClauses' } = {
 /**
  * [[26]](https://www.w3.org/TR/sparql11-query/#rLimitClause)
  */
-export const limitClause: RuleDef & { name: 'limitClause' } = {
+export const limitClause: RuleDef<'limitClause'> = {
   name: 'limitClause',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.limit);
@@ -163,7 +163,7 @@ export const limitClause: RuleDef & { name: 'limitClause' } = {
 /**
  * [[27]](https://www.w3.org/TR/sparql11-query/#rWhereClause)
  */
-export const offsetClause: RuleDef & { name: 'offsetClause' } = {
+export const offsetClause: RuleDef<'offsetClause'> = {
   name: 'offsetClause',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.offset);

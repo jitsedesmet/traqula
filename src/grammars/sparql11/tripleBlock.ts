@@ -6,7 +6,7 @@ import { path } from './propertyPaths';
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)
  */
-export const triplesBlock: RuleDef & { name: 'triplesBlock' } = {
+export const triplesBlock: RuleDef<'triplesBlock'> = {
   name: 'triplesBlock',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubjectPath);
@@ -22,7 +22,7 @@ export const triplesBlock: RuleDef & { name: 'triplesBlock' } = {
 /**
  * [[81]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubjectPath)
  */
-export const triplesSameSubjectPath: RuleDef & { name: 'triplesSameSubjectPath' } = {
+export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath'> = {
   name: 'triplesSameSubjectPath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -41,7 +41,7 @@ export const triplesSameSubjectPath: RuleDef & { name: 'triplesSameSubjectPath' 
 /**
  * [[82]](https://www.w3.org/TR/sparql11-query/#rPropertyListPath)
  */
-export const propertyListPath: RuleDef & { name: 'propertyListPath' } = {
+export const propertyListPath: RuleDef<'propertyListPath'> = {
   name: 'propertyListPath',
   impl: ({ SUBRULE, OPTION }) => () => {
     OPTION(() => {
@@ -53,7 +53,7 @@ export const propertyListPath: RuleDef & { name: 'propertyListPath' } = {
 /**
  * [[83]](https://www.w3.org/TR/sparql11-query/#rPropertyListPathNotEmpty)
  */
-export const propertyListPathNotEmpty: RuleDef & { name: 'propertyListPathNotEmpty' } = {
+export const propertyListPathNotEmpty: RuleDef<'propertyListPathNotEmpty'> = {
   name: 'propertyListPathNotEmpty',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => () => {
     OR1([
@@ -77,7 +77,7 @@ export const propertyListPathNotEmpty: RuleDef & { name: 'propertyListPathNotEmp
 /**
  * [[84]](https://www.w3.org/TR/sparql11-query/#rVerbPath)
  */
-export const verbPath: RuleDef & { name: 'verbPath' } = {
+export const verbPath: RuleDef<'verbPath'> = {
   name: 'verbPath',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(path);
@@ -87,7 +87,7 @@ export const verbPath: RuleDef & { name: 'verbPath' } = {
 /**
  * [[85]](https://www.w3.org/TR/sparql11-query/#rVerbSimple)
  */
-export const verbSimple: RuleDef & { name: 'verbSimple' } = {
+export const verbSimple: RuleDef<'verbSimple'> = {
   name: 'verbSimple',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(var_);
@@ -97,7 +97,7 @@ export const verbSimple: RuleDef & { name: 'verbSimple' } = {
 /**
  * [[86]](https://www.w3.org/TR/sparql11-query/#rObjectListPath)
  */
-export const objectListPath: RuleDef & { name: 'objectListPath' } = {
+export const objectListPath: RuleDef<'objectListPath'> = {
   name: 'objectListPath',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(objectPath);
@@ -111,7 +111,7 @@ export const objectListPath: RuleDef & { name: 'objectListPath' } = {
 /**
  * [[87]](https://www.w3.org/TR/sparql11-query/#rObjectPath)
  */
-export const objectPath: RuleDef & { name: 'objectPath' } = {
+export const objectPath: RuleDef<'objectPath'> = {
   name: 'objectPath',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(graphNodePath);
@@ -121,7 +121,7 @@ export const objectPath: RuleDef & { name: 'objectPath' } = {
 /**
  * [[100]](https://www.w3.org/TR/sparql11-query/#rTriplesNodePath)
  */
-export const triplesNodePath: RuleDef & { name: 'triplesNodePath' } = {
+export const triplesNodePath: RuleDef<'triplesNodePath'> = {
   name: 'triplesNodePath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -134,7 +134,7 @@ export const triplesNodePath: RuleDef & { name: 'triplesNodePath' } = {
 /**
  * [[101]](https://www.w3.org/TR/sparql11-query/#rBlankNodePropertyListPath)
  */
-export const blankNodePropertyListPath: RuleDef & { name: 'blankNodePropertyListPath' } = {
+export const blankNodePropertyListPath: RuleDef<'blankNodePropertyListPath'> = {
   name: 'blankNodePropertyListPath',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LSquare);
@@ -146,7 +146,7 @@ export const blankNodePropertyListPath: RuleDef & { name: 'blankNodePropertyList
 /**
  * [[103]](https://www.w3.org/TR/sparql11-query/#rCollectionPath)
  */
-export const collectionPath: RuleDef & { name: 'collectionPath' } = {
+export const collectionPath: RuleDef<'collectionPath'> = {
   name: 'collectionPath',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -160,7 +160,7 @@ export const collectionPath: RuleDef & { name: 'collectionPath' } = {
 /**
  * [[105]](https://www.w3.org/TR/sparql11-query/#rGraphNodePath)
  */
-export const graphNodePath: RuleDef & { name: 'graphNodePath' } = {
+export const graphNodePath: RuleDef<'graphNodePath'> = {
   name: 'graphNodePath',
   impl: ({ SUBRULE, OR }) => () => {
     OR([

@@ -67,7 +67,7 @@ export const builtInIsnumeric = exprFunc1(l.builtIn.isnumeric);
 /**
  * [[121]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const builtInCall: RuleDef & { name: 'builtInCall' } = {
+export const builtInCall: RuleDef<'builtInCall'> = {
   name: 'builtInCall',
   impl: ({ OR, SUBRULE }) => () => {
     OR([
@@ -133,7 +133,7 @@ export const builtInCall: RuleDef & { name: 'builtInCall' } = {
 /**
  * [[122]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const regexExpression: RuleDef & { name: 'regexExpression' } = {
+export const regexExpression: RuleDef<'regexExpression'> = {
   name: 'regexExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.builtIn.regex);
@@ -152,7 +152,7 @@ export const regexExpression: RuleDef & { name: 'regexExpression' } = {
 /**
  * [[123]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const substringExpression: RuleDef & { name: 'substringExpression' } = {
+export const substringExpression: RuleDef<'substringExpression'> = {
   name: 'substringExpression',
   impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.builtIn.substr);
@@ -171,7 +171,7 @@ export const substringExpression: RuleDef & { name: 'substringExpression' } = {
 /**
  * [[124]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = {
+export const strReplaceExpression: RuleDef<'strReplaceExpression'> = {
   name: 'strReplaceExpression',
   impl: ({ CONSUME1, CONSUME2, CONSUME3, SUBRULE3, SUBRULE4, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.builtIn.replace);
@@ -192,7 +192,7 @@ export const strReplaceExpression: RuleDef & { name: 'strReplaceExpression' } = 
 /**
  * [[125]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const existsFunc: RuleDef & { name: 'existsFunc' } = {
+export const existsFunc: RuleDef<'existsFunc'> = {
   name: 'existsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.builtIn.exists);
@@ -203,7 +203,7 @@ export const existsFunc: RuleDef & { name: 'existsFunc' } = {
 /**
  * [[126]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const notExistsFunc: RuleDef & { name: 'notExistsFunc' } = {
+export const notExistsFunc: RuleDef<'notExistsFunc'> = {
   name: 'notExistsFunc',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.builtIn.notexists);
@@ -239,7 +239,7 @@ export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buil
 /**
  * [[127]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const aggregate: RuleDef & { name: 'aggregate' } = {
+export const aggregate: RuleDef<'aggregate'> = {
   name: 'aggregate',
   impl: ({ SUBRULE, OR }) => () => {
     OR([

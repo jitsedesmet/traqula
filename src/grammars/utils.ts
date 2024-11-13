@@ -8,7 +8,7 @@ export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
 }
 
-export function exprFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function exprFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
@@ -20,7 +20,7 @@ export function exprFunc1<T extends string>(func: TokenType & { name: T }): Rule
   };
 }
 
-export function exprFunc2<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function exprFunc2<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE1, SUBRULE2, CONSUME }) => () => {
@@ -34,7 +34,7 @@ export function exprFunc2<T extends string>(func: TokenType & { name: T }): Rule
   };
 }
 
-export function varFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function varFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
@@ -46,7 +46,7 @@ export function varFunc1<T extends string>(func: TokenType & { name: T }): RuleD
   };
 }
 
-export function exprOrNilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function exprOrNilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, OR, SUBRULE }) => () => {
@@ -63,7 +63,7 @@ export function exprOrNilFunc1<T extends string>(func: TokenType & { name: T }):
   };
 }
 
-export function nilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function nilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME }) => () => {
@@ -73,7 +73,7 @@ export function nilFunc1<T extends string>(func: TokenType & { name: T }): RuleD
   };
 }
 
-export function exprListFunc1<T extends string>(func: TokenType & { name: T }): RuleDef & { name: Uncapitalize<T> } {
+export function exprListFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE }) => () => {
@@ -84,7 +84,7 @@ export function exprListFunc1<T extends string>(func: TokenType & { name: T }): 
 }
 
 export function baseAggregateFunc<T extends string>(func: TokenType & { name: T }):
-  RuleDef & { name: Uncapitalize<T> } {
+RuleDef<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE, OPTION, OR }) => () => {

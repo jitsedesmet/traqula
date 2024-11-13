@@ -9,7 +9,7 @@ import { triplesBlock } from './tripleBlock';
 /**
  * [[17]](https://www.w3.org/TR/sparql11-query/#rWhereClause)
  */
-export const whereClause: RuleDef & { name: 'whereClause' } = {
+export const whereClause: RuleDef<'whereClause'> = {
   name: 'whereClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
@@ -22,7 +22,7 @@ export const whereClause: RuleDef & { name: 'whereClause' } = {
 /**
  * [[53]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPattern)
  */
-export const groupGraphPattern: RuleDef & { name: 'groupGraphPattern' } = {
+export const groupGraphPattern: RuleDef<'groupGraphPattern'> = {
   name: 'groupGraphPattern',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -37,7 +37,7 @@ export const groupGraphPattern: RuleDef & { name: 'groupGraphPattern' } = {
 /**
  * [[54]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPatternSub)
  */
-export const groupGraphPatternSub: RuleDef & { name: 'groupGraphPatternSub' } = {
+export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub'> = {
   name: 'groupGraphPatternSub',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     OPTION1(() => {
@@ -58,7 +58,7 @@ export const groupGraphPatternSub: RuleDef & { name: 'groupGraphPatternSub' } = 
 /**
  * [[56]](https://www.w3.org/TR/sparql11-query/#rGraphPatternNotTriples)
  */
-export const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' } = {
+export const graphPatternNotTriples: RuleDef<'graphPatternNotTriples'> = {
   name: 'graphPatternNotTriples',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -77,7 +77,7 @@ export const graphPatternNotTriples: RuleDef & { name: 'graphPatternNotTriples' 
 /**
  * [[57]](https://www.w3.org/TR/sparql11-query/#rOptionalGraphPattern)
  */
-export const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = {
+export const optionalGraphPattern: RuleDef<'optionalGraphPattern'> = {
   name: 'optionalGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.optional);
@@ -88,7 +88,7 @@ export const optionalGraphPattern: RuleDef & { name: 'optionalGraphPattern' } = 
 /**
  * [[67]](https://www.w3.org/TR/sparql11-query/#rGroupOrUnionGraphPattern)
  */
-export const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPattern' } = {
+export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern'> = {
   name: 'groupOrUnionGraphPattern',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
     SUBRULE1(groupGraphPattern);
@@ -102,7 +102,7 @@ export const groupOrUnionGraphPattern: RuleDef & { name: 'groupOrUnionGraphPatte
 /**
  * [[58]](https://www.w3.org/TR/sparql11-query/#rGraphGraphPattern)
  */
-export const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
+export const graphGraphPattern: RuleDef<'graphGraphPattern'> = {
   name: 'graphGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
@@ -114,7 +114,7 @@ export const graphGraphPattern: RuleDef & { name: 'graphGraphPattern' } = {
 /**
  * [[59]](https://www.w3.org/TR/sparql11-query/#rServiceGraphPattern)
  */
-export const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
+export const serviceGraphPattern: RuleDef<'serviceGraphPattern'> = {
   name: 'serviceGraphPattern',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.service);
@@ -129,7 +129,7 @@ export const serviceGraphPattern: RuleDef & { name: 'serviceGraphPattern' } = {
 /**
  * [[60]](https://www.w3.org/TR/sparql11-query/#rBind)
  */
-export const bind: RuleDef & { name: 'bind' } = {
+export const bind: RuleDef<'bind'> = {
   name: 'bind',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.bind);
@@ -144,7 +144,7 @@ export const bind: RuleDef & { name: 'bind' } = {
 /**
  * [[61]](https://www.w3.org/TR/sparql11-query/#rInlineData)
  */
-export const inlineData: RuleDef & { name: 'inlineData' } = {
+export const inlineData: RuleDef<'inlineData'> = {
   name: 'inlineData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.values);
@@ -155,7 +155,7 @@ export const inlineData: RuleDef & { name: 'inlineData' } = {
 /**
  * [[62]](https://www.w3.org/TR/sparql11-query/#rDataBlock)
  */
-export const dataBlock: RuleDef & { name: 'dataBlock' } = {
+export const dataBlock: RuleDef<'dataBlock'> = {
   name: 'dataBlock',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -176,7 +176,7 @@ export const dataBlock: RuleDef & { name: 'dataBlock' } = {
 /**
  * [[63]](https://www.w3.org/TR/sparql11-query/#rInlineDataOneVar)
  */
-export const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
+export const inlineDataOneVar: RuleDef<'inlineDataOneVar'> = {
   name: 'inlineDataOneVar',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
     SUBRULE(var_);
@@ -191,7 +191,7 @@ export const inlineDataOneVar: RuleDef & { name: 'inlineDataOneVar' } = {
 /**
  * [[64]](https://www.w3.org/TR/sparql11-query/#rInlineDataFull)
  */
-export const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
+export const inlineDataFull: RuleDef<'inlineDataFull'> = {
   name: 'inlineDataFull',
   impl: ({ SUBRULE, CONSUME, MANY1, MANY2, OR1, OR2, CONSUME1, MANY3, CONSUME2 }) => () => {
     OR1([
@@ -236,7 +236,7 @@ export const inlineDataFull: RuleDef & { name: 'inlineDataFull' } = {
 /**
  * [[65]](https://www.w3.org/TR/sparql11-query/#rDataBlockValue)
  */
-export const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
+export const dataBlockValue: RuleDef<'dataBlockValue'> = {
   name: 'dataBlockValue',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -252,7 +252,7 @@ export const dataBlockValue: RuleDef & { name: 'dataBlockValue' } = {
 /**
  * [[66]](https://www.w3.org/TR/sparql11-query/#rMinusGraphPattern)
  */
-export const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
+export const minusGraphPattern: RuleDef<'minusGraphPattern'> = {
   name: 'minusGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.minus);
@@ -263,7 +263,7 @@ export const minusGraphPattern: RuleDef & { name: 'minusGraphPattern' } = {
 /**
  * [[68]](https://www.w3.org/TR/sparql11-query/#rFilter)
  */
-export const filter: RuleDef & { name: 'filter' } = {
+export const filter: RuleDef<'filter'> = {
   name: 'filter',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.filter);
@@ -274,7 +274,7 @@ export const filter: RuleDef & { name: 'filter' } = {
 /**
  * [[69]](https://www.w3.org/TR/sparql11-query/#rConstraint)
  */
-export const constraint: RuleDef & { name: 'constraint' } = {
+export const constraint: RuleDef<'constraint'> = {
   name: 'constraint',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -288,7 +288,7 @@ export const constraint: RuleDef & { name: 'constraint' } = {
 /**
  * [[70]](https://www.w3.org/TR/sparql11-query/#rFunctionCall)
  */
-export const functionCall: RuleDef & { name: 'functionCall' } = {
+export const functionCall: RuleDef<'functionCall'> = {
   name: 'functionCall',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(iri);

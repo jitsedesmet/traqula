@@ -6,7 +6,7 @@ import { groupGraphPattern } from './whereClause';
 /**
  * [[3]](https://www.w3.org/TR/sparql11-query/#rUpdateUnit)
  */
-export const updateUnit: RuleDef & { name: 'updateUnit' } = {
+export const updateUnit: RuleDef<'updateUnit'> = {
   name: 'updateUnit',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(update);
@@ -16,7 +16,7 @@ export const updateUnit: RuleDef & { name: 'updateUnit' } = {
 /**
  * [[29]](https://www.w3.org/TR/sparql11-query/#rUpdate)
  */
-export const update: RuleDef & { name: 'update' } = {
+export const update: RuleDef<'update'> = {
   name: 'update',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(prologue);
@@ -33,7 +33,7 @@ export const update: RuleDef & { name: 'update' } = {
 /**
  * [[30]](https://www.w3.org/TR/sparql11-query/#rUpdate1)
  */
-export const update1: RuleDef & { name: 'update1' } = {
+export const update1: RuleDef<'update1'> = {
   name: 'update1',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -55,7 +55,7 @@ export const update1: RuleDef & { name: 'update1' } = {
 /**
  * [[31]](https://www.w3.org/TR/sparql11-query/#rLoad)
  */
-export const load: RuleDef & { name: 'load' } = {
+export const load: RuleDef<'load'> = {
   name: 'load',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     CONSUME(l.load);
@@ -71,7 +71,7 @@ export const load: RuleDef & { name: 'load' } = {
 /**
  * [[32]](https://www.w3.org/TR/sparql11-query/#rClear)
  */
-export const clear: RuleDef & { name: 'clear' } = {
+export const clear: RuleDef<'clear'> = {
   name: 'clear',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.clear);
@@ -83,7 +83,7 @@ export const clear: RuleDef & { name: 'clear' } = {
 /**
  * [[33]](https://www.w3.org/TR/sparql11-query/#rDrop)
  */
-export const drop: RuleDef & { name: 'drop' } = {
+export const drop: RuleDef<'drop'> = {
   name: 'drop',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.drop);
@@ -95,7 +95,7 @@ export const drop: RuleDef & { name: 'drop' } = {
 /**
  * [[34]](https://www.w3.org/TR/sparql11-query/#rCreate)
  */
-export const create: RuleDef & { name: 'create' } = {
+export const create: RuleDef<'create'> = {
   name: 'create',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.create);
@@ -107,7 +107,7 @@ export const create: RuleDef & { name: 'create' } = {
 /**
  * [[35]](https://www.w3.org/TR/sparql11-query/#rAdd)
  */
-export const add: RuleDef & { name: 'add' } = {
+export const add: RuleDef<'add'> = {
   name: 'add',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.add);
@@ -121,7 +121,7 @@ export const add: RuleDef & { name: 'add' } = {
 /**
  * [[36]](https://www.w3.org/TR/sparql11-query/#rMove)
  */
-export const move: RuleDef & { name: 'move' } = {
+export const move: RuleDef<'move'> = {
   name: 'move',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.move);
@@ -135,7 +135,7 @@ export const move: RuleDef & { name: 'move' } = {
 /**
  * [[37]](https://www.w3.org/TR/sparql11-query/#rCopy)
  */
-export const copy: RuleDef & { name: 'copy' } = {
+export const copy: RuleDef<'copy'> = {
   name: 'copy',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
     CONSUME(l.copy);
@@ -149,7 +149,7 @@ export const copy: RuleDef & { name: 'copy' } = {
 /**
  * [[38]](https://www.w3.org/TR/sparql11-query/#rInsertData)
  */
-export const insertData: RuleDef & { name: 'insertData' } = {
+export const insertData: RuleDef<'insertData'> = {
   name: 'insertData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.insertData);
@@ -160,7 +160,7 @@ export const insertData: RuleDef & { name: 'insertData' } = {
 /**
  * [[39]](https://www.w3.org/TR/sparql11-query/#rDeleteData)
  */
-export const deleteData: RuleDef & { name: 'deleteData' } = {
+export const deleteData: RuleDef<'deleteData'> = {
   name: 'deleteData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteData);
@@ -171,7 +171,7 @@ export const deleteData: RuleDef & { name: 'deleteData' } = {
 /**
  * [[40]](https://www.w3.org/TR/sparql11-query/#rDeleteWhere)
  */
-export const deleteWhere: RuleDef & { name: 'deleteWhere' } = {
+export const deleteWhere: RuleDef<'deleteWhere'> = {
   name: 'deleteWhere',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteWhere);
@@ -182,7 +182,7 @@ export const deleteWhere: RuleDef & { name: 'deleteWhere' } = {
 /**
  * [[41]](https://www.w3.org/TR/sparql11-query/#rModify)
  */
-export const modify: RuleDef & { name: 'modify' } = {
+export const modify: RuleDef<'modify'> = {
   name: 'modify',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
     OPTION1(() => {
@@ -205,7 +205,7 @@ export const modify: RuleDef & { name: 'modify' } = {
 /**
  * [[42]](https://www.w3.org/TR/sparql11-query/#rDeleteClause)
  */
-export const deleteClause: RuleDef & { name: 'deleteClause' } = {
+export const deleteClause: RuleDef<'deleteClause'> = {
   name: 'deleteClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.deleteClause);
@@ -216,7 +216,7 @@ export const deleteClause: RuleDef & { name: 'deleteClause' } = {
 /**
  * [[43]](https://www.w3.org/TR/sparql11-query/#rInsertClause)
  */
-export const insertClause: RuleDef & { name: 'insertClause' } = {
+export const insertClause: RuleDef<'insertClause'> = {
   name: 'insertClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.insertClause);
@@ -227,7 +227,7 @@ export const insertClause: RuleDef & { name: 'insertClause' } = {
 /**
  * [[44]](https://www.w3.org/TR/sparql11-query/#rUsingClause)
  */
-export const usingClause: RuleDef & { name: 'usingClause' } = {
+export const usingClause: RuleDef<'usingClause'> = {
   name: 'usingClause',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, OR }) => () => {
     CONSUME(l.usingClause);
@@ -246,7 +246,7 @@ export const usingClause: RuleDef & { name: 'usingClause' } = {
 /**
  * [[45]](https://www.w3.org/TR/sparql11-query/#rGraphOrDefault)
  */
-export const graphOrDefault: RuleDef & { name: 'graphOrDefault' } = {
+export const graphOrDefault: RuleDef<'graphOrDefault'> = {
   name: 'graphOrDefault',
   impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
     OR([
@@ -264,7 +264,7 @@ export const graphOrDefault: RuleDef & { name: 'graphOrDefault' } = {
 /**
  * [[46]](https://www.w3.org/TR/sparql11-query/#rGraphRef)
  */
-export const graphRef: RuleDef & { name: 'graphRef' } = {
+export const graphRef: RuleDef<'graphRef'> = {
   name: 'graphRef',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
@@ -275,7 +275,7 @@ export const graphRef: RuleDef & { name: 'graphRef' } = {
 /**
  * [[47]](https://www.w3.org/TR/sparql11-query/#rGraphRefAll)
  */
-export const graphRefAll: RuleDef & { name: 'graphRefAll' } = {
+export const graphRefAll: RuleDef<'graphRefAll'> = {
   name: 'graphRefAll',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     OR([
@@ -290,7 +290,7 @@ export const graphRefAll: RuleDef & { name: 'graphRefAll' } = {
 /**
  * [[48]](https://www.w3.org/TR/sparql11-query/#rQuadPattern)
  */
-export const quadPattern: RuleDef & { name: 'quadPattern' } = {
+export const quadPattern: RuleDef<'quadPattern'> = {
   name: 'quadPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -302,7 +302,7 @@ export const quadPattern: RuleDef & { name: 'quadPattern' } = {
 /**
  * [[49]](https://www.w3.org/TR/sparql11-query/#rQuadData)
  */
-export const quadData: RuleDef & { name: 'quadData' } = {
+export const quadData: RuleDef<'quadData'> = {
   name: 'quadData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -314,7 +314,7 @@ export const quadData: RuleDef & { name: 'quadData' } = {
 /**
  * [[50]](https://www.w3.org/TR/sparql11-query/#rQuads)
  */
-export const quads: RuleDef & { name: 'quads' } = {
+export const quads: RuleDef<'quads'> = {
   name: 'quads',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     OPTION1(() => {
@@ -335,7 +335,7 @@ export const quads: RuleDef & { name: 'quads' } = {
 /**
  * [[51]](https://www.w3.org/TR/sparql11-query/#rQuadsNotTriples)
  */
-export const quadsNotTriples: RuleDef & { name: 'quadsNotTriples' } = {
+export const quadsNotTriples: RuleDef<'quadsNotTriples'> = {
   name: 'quadsNotTriples',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.graph.graph);

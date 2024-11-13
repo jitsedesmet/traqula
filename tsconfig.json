@@ -8,6 +8,10 @@
     ],
     "module": "ES2020",
     "moduleResolution": "Bundler",
+
+//    From Jitse
+//    "noImplicitAny": false,
+
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "strict": true,

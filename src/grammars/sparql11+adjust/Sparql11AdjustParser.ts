@@ -15,7 +15,7 @@ import {
 
 const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 
-const builtInAdjust: RuleDef & { name: 'builtInAdjust' } = {
+const builtInAdjust: RuleDef<'builtInAdjust'> = {
   name: 'builtInAdjust',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2 }) => () => {
     CONSUME(BuiltInAdjust);
@@ -27,7 +27,7 @@ const builtInAdjust: RuleDef & { name: 'builtInAdjust' } = {
   },
 };
 
-const _builtInCall: RuleDef & { name: 'builtInCall' } = {
+const _builtInCall: RuleDef<'builtInCall'> = {
   name: builtInCall.name,
   impl: ({ SUBRULE, OR }) => () => {
     OR([
@@ -37,7 +37,7 @@ const _builtInCall: RuleDef & { name: 'builtInCall' } = {
   },
 };
 
-const existingBuildInCall: RuleDef & { name: 'existingBuildInCall' } = {
+const existingBuildInCall: RuleDef<'existingBuildInCall'> = {
   name: 'existingBuildInCall',
   impl: builtInCall.impl,
 };

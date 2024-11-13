@@ -7,16 +7,15 @@ import type {
   ManySepMethodOpts,
   OrMethodOpts,
 } from '@chevrotain/types';
-import type {
-  ConsumeMethodOpts,
-  CstNode,
-  IToken,
-  ParserMethod,
-  TokenType,
-  TokenVocabulary,
-  CstParser,
+import {
+  type ConsumeMethodOpts,
+  type CstNode,
+  type IToken,
+  type ParserMethod,
+  type TokenType,
+  type TokenVocabulary,
+  EmbeddedActionsParser,
 } from 'chevrotain';
-import { OpenParser } from './OpenParser';
 
 interface CstDef {
   /**
@@ -361,21 +360,21 @@ interface CstDef {
   AT_LEAST_ONE_SEP7: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP8: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP9: (options: AtLeastOneSepMethodOpts<any>) => void;
-  SUBRULE: (cstDef: RuleDef) => CstNode;
-  SUBRULE1: (cstDef: RuleDef) => CstNode;
-  SUBRULE2: (cstDef: RuleDef) => CstNode;
-  SUBRULE3: (cstDef: RuleDef) => CstNode;
-  SUBRULE4: (cstDef: RuleDef) => CstNode;
-  SUBRULE5: (cstDef: RuleDef) => CstNode;
-  SUBRULE6: (cstDef: RuleDef) => CstNode;
-  SUBRULE7: (cstDef: RuleDef) => CstNode;
-  SUBRULE8: (cstDef: RuleDef) => CstNode;
-  SUBRULE9: (cstDef: RuleDef) => CstNode;
+  SUBRULE: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE1: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE2: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE3: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE4: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE5: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE6: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE7: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE8: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE9: (cstDef: RuleDef<any>) => CstNode;
 }
 
-export type RuleDef = {
-  name: string;
-  impl: (def: CstDef) => () => void;
+export type RuleDef<T extends string = string, U = any> = {
+  name: T;
+  impl: (def: CstDef) => () => U;
 };
 
 export class Builder<T extends string > {
@@ -423,168 +422,206 @@ export class Builder<T extends string > {
     return <Builder<T | U>> res;
   }
 
-  public consume(tokenVocabulary: TokenVocabulary): CstParser & Record<T, ParserMethod<unknown[], CstNode>> {
-    const notParser = new OpenParser(tokenVocabulary);
-    const parser = <OpenParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> notParser;
-    const selfRef: CstDef = {
-      CONSUME: (tokenType, option) => parser.CONSUME(tokenType, option),
-      CONSUME1: (tokenType, option) => parser.CONSUME1(tokenType, option),
-      CONSUME2: (tokenType, option) => parser.CONSUME2(tokenType, option),
-      CONSUME3: (tokenType, option) => parser.CONSUME3(tokenType, option),
-      CONSUME4: (tokenType, option) => parser.CONSUME4(tokenType, option),
-      CONSUME5: (tokenType, option) => parser.CONSUME5(tokenType, option),
-      CONSUME6: (tokenType, option) => parser.CONSUME6(tokenType, option),
-      CONSUME7: (tokenType, option) => parser.CONSUME7(tokenType, option),
-      CONSUME8: (tokenType, option) => parser.CONSUME8(tokenType, option),
-      CONSUME9: (tokenType, option) => parser.CONSUME9(tokenType, option),
-      OPTION: actionORMethodDef => parser.OPTION(actionORMethodDef),
-      OPTION1: actionORMethodDef => parser.OPTION1(actionORMethodDef),
-      OPTION2: actionORMethodDef => parser.OPTION2(actionORMethodDef),
-      OPTION3: actionORMethodDef => parser.OPTION3(actionORMethodDef),
-      OPTION4: actionORMethodDef => parser.OPTION4(actionORMethodDef),
-      OPTION5: actionORMethodDef => parser.OPTION5(actionORMethodDef),
-      OPTION6: actionORMethodDef => parser.OPTION6(actionORMethodDef),
-      OPTION7: actionORMethodDef => parser.OPTION7(actionORMethodDef),
-      OPTION8: actionORMethodDef => parser.OPTION8(actionORMethodDef),
-      OPTION9: actionORMethodDef => parser.OPTION9(actionORMethodDef),
-      OR: altsOrOpts => parser.OR(altsOrOpts),
-      OR1: altsOrOpts => parser.OR1(altsOrOpts),
-      OR2: altsOrOpts => parser.OR2(altsOrOpts),
-      OR3: altsOrOpts => parser.OR3(altsOrOpts),
-      OR4: altsOrOpts => parser.OR4(altsOrOpts),
-      OR5: altsOrOpts => parser.OR5(altsOrOpts),
-      OR6: altsOrOpts => parser.OR6(altsOrOpts),
-      OR7: altsOrOpts => parser.OR7(altsOrOpts),
-      OR8: altsOrOpts => parser.OR8(altsOrOpts),
-      OR9: altsOrOpts => parser.OR9(altsOrOpts),
-      MANY: actionORMethodDef => parser.MANY(actionORMethodDef),
-      MANY1: actionORMethodDef => parser.MANY1(actionORMethodDef),
-      MANY2: actionORMethodDef => parser.MANY2(actionORMethodDef),
-      MANY3: actionORMethodDef => parser.MANY3(actionORMethodDef),
-      MANY4: actionORMethodDef => parser.MANY4(actionORMethodDef),
-      MANY5: actionORMethodDef => parser.MANY5(actionORMethodDef),
-      MANY6: actionORMethodDef => parser.MANY6(actionORMethodDef),
-      MANY7: actionORMethodDef => parser.MANY7(actionORMethodDef),
-      MANY8: actionORMethodDef => parser.MANY8(actionORMethodDef),
-      MANY9: actionORMethodDef => parser.MANY9(actionORMethodDef),
-      MANY_SEP: options => parser.MANY_SEP(options),
-      MANY_SEP1: options => parser.MANY_SEP1(options),
-      MANY_SEP2: options => parser.MANY_SEP2(options),
-      MANY_SEP3: options => parser.MANY_SEP3(options),
-      MANY_SEP4: options => parser.MANY_SEP4(options),
-      MANY_SEP5: options => parser.MANY_SEP5(options),
-      MANY_SEP6: options => parser.MANY_SEP6(options),
-      MANY_SEP7: options => parser.MANY_SEP7(options),
-      MANY_SEP8: options => parser.MANY_SEP8(options),
-      MANY_SEP9: options => parser.MANY_SEP9(options),
-      AT_LEAST_ONE: actionORMethodDef => parser.AT_LEAST_ONE(actionORMethodDef),
-      AT_LEAST_ONE1: actionORMethodDef => parser.AT_LEAST_ONE1(actionORMethodDef),
-      AT_LEAST_ONE2: actionORMethodDef => parser.AT_LEAST_ONE2(actionORMethodDef),
-      AT_LEAST_ONE3: actionORMethodDef => parser.AT_LEAST_ONE3(actionORMethodDef),
-      AT_LEAST_ONE4: actionORMethodDef => parser.AT_LEAST_ONE4(actionORMethodDef),
-      AT_LEAST_ONE5: actionORMethodDef => parser.AT_LEAST_ONE5(actionORMethodDef),
-      AT_LEAST_ONE6: actionORMethodDef => parser.AT_LEAST_ONE6(actionORMethodDef),
-      AT_LEAST_ONE7: actionORMethodDef => parser.AT_LEAST_ONE7(actionORMethodDef),
-      AT_LEAST_ONE8: actionORMethodDef => parser.AT_LEAST_ONE8(actionORMethodDef),
-      AT_LEAST_ONE9: actionORMethodDef => parser.AT_LEAST_ONE9(actionORMethodDef),
-      AT_LEAST_ONE_SEP: options => parser.AT_LEAST_ONE_SEP(options),
-      AT_LEAST_ONE_SEP1: options => parser.AT_LEAST_ONE_SEP1(options),
-      AT_LEAST_ONE_SEP2: options => parser.AT_LEAST_ONE_SEP2(options),
-      AT_LEAST_ONE_SEP3: options => parser.AT_LEAST_ONE_SEP3(options),
-      AT_LEAST_ONE_SEP4: options => parser.AT_LEAST_ONE_SEP4(options),
-      AT_LEAST_ONE_SEP5: options => parser.AT_LEAST_ONE_SEP5(options),
-      AT_LEAST_ONE_SEP6: options => parser.AT_LEAST_ONE_SEP6(options),
-      AT_LEAST_ONE_SEP7: options => parser.AT_LEAST_ONE_SEP7(options),
-      AT_LEAST_ONE_SEP8: options => parser.AT_LEAST_ONE_SEP8(options),
-      AT_LEAST_ONE_SEP9: options => parser.AT_LEAST_ONE_SEP9(options),
-      SUBRULE: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE1: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE1(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE2: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE2(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE3: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE3(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE4: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE4(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE5: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE5(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE6: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE6(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE7: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE7(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE8: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE8(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-      SUBRULE9: (cstDef: RuleDef) => {
-        try {
-          return parser.SUBRULE9(parser[cstDef.name]);
-        } catch (error: unknown) {
-          console.error(`Error with subrule: ${cstDef.name}`);
-          throw error;
-        }
-      },
-    };
+  public consume(tokenVocabulary: TokenVocabulary):
+    EmbeddedActionsParser & Record<T, ParserMethod<unknown[], CstNode>> {
+    const rules = this.rules;
+    class MyParser extends EmbeddedActionsParser {
+      public constructor() {
+        super(tokenVocabulary);
+        const selfRef: CstDef = {
+          CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),
+          CONSUME1: (tokenType, option) => this.CONSUME1(tokenType, option),
+          CONSUME2: (tokenType, option) => this.CONSUME2(tokenType, option),
+          CONSUME3: (tokenType, option) => this.CONSUME3(tokenType, option),
+          CONSUME4: (tokenType, option) => this.CONSUME4(tokenType, option),
+          CONSUME5: (tokenType, option) => this.CONSUME5(tokenType, option),
+          CONSUME6: (tokenType, option) => this.CONSUME6(tokenType, option),
+          CONSUME7: (tokenType, option) => this.CONSUME7(tokenType, option),
+          CONSUME8: (tokenType, option) => this.CONSUME8(tokenType, option),
+          CONSUME9: (tokenType, option) => this.CONSUME9(tokenType, option),
+          OPTION: actionORMethodDef => this.OPTION(actionORMethodDef),
+          OPTION1: actionORMethodDef => this.OPTION1(actionORMethodDef),
+          OPTION2: actionORMethodDef => this.OPTION2(actionORMethodDef),
+          OPTION3: actionORMethodDef => this.OPTION3(actionORMethodDef),
+          OPTION4: actionORMethodDef => this.OPTION4(actionORMethodDef),
+          OPTION5: actionORMethodDef => this.OPTION5(actionORMethodDef),
+          OPTION6: actionORMethodDef => this.OPTION6(actionORMethodDef),
+          OPTION7: actionORMethodDef => this.OPTION7(actionORMethodDef),
+          OPTION8: actionORMethodDef => this.OPTION8(actionORMethodDef),
+          OPTION9: actionORMethodDef => this.OPTION9(actionORMethodDef),
+          OR: altsOrOpts => this.OR(altsOrOpts),
+          OR1: altsOrOpts => this.OR1(altsOrOpts),
+          OR2: altsOrOpts => this.OR2(altsOrOpts),
+          OR3: altsOrOpts => this.OR3(altsOrOpts),
+          OR4: altsOrOpts => this.OR4(altsOrOpts),
+          OR5: altsOrOpts => this.OR5(altsOrOpts),
+          OR6: altsOrOpts => this.OR6(altsOrOpts),
+          OR7: altsOrOpts => this.OR7(altsOrOpts),
+          OR8: altsOrOpts => this.OR8(altsOrOpts),
+          OR9: altsOrOpts => this.OR9(altsOrOpts),
+          MANY: actionORMethodDef => this.MANY(actionORMethodDef),
+          MANY1: actionORMethodDef => this.MANY1(actionORMethodDef),
+          MANY2: actionORMethodDef => this.MANY2(actionORMethodDef),
+          MANY3: actionORMethodDef => this.MANY3(actionORMethodDef),
+          MANY4: actionORMethodDef => this.MANY4(actionORMethodDef),
+          MANY5: actionORMethodDef => this.MANY5(actionORMethodDef),
+          MANY6: actionORMethodDef => this.MANY6(actionORMethodDef),
+          MANY7: actionORMethodDef => this.MANY7(actionORMethodDef),
+          MANY8: actionORMethodDef => this.MANY8(actionORMethodDef),
+          MANY9: actionORMethodDef => this.MANY9(actionORMethodDef),
+          MANY_SEP: options => this.MANY_SEP(options),
+          MANY_SEP1: options => this.MANY_SEP1(options),
+          MANY_SEP2: options => this.MANY_SEP2(options),
+          MANY_SEP3: options => this.MANY_SEP3(options),
+          MANY_SEP4: options => this.MANY_SEP4(options),
+          MANY_SEP5: options => this.MANY_SEP5(options),
+          MANY_SEP6: options => this.MANY_SEP6(options),
+          MANY_SEP7: options => this.MANY_SEP7(options),
+          MANY_SEP8: options => this.MANY_SEP8(options),
+          MANY_SEP9: options => this.MANY_SEP9(options),
+          AT_LEAST_ONE: actionORMethodDef => this.AT_LEAST_ONE(actionORMethodDef),
+          AT_LEAST_ONE1: actionORMethodDef => this.AT_LEAST_ONE1(actionORMethodDef),
+          AT_LEAST_ONE2: actionORMethodDef => this.AT_LEAST_ONE2(actionORMethodDef),
+          AT_LEAST_ONE3: actionORMethodDef => this.AT_LEAST_ONE3(actionORMethodDef),
+          AT_LEAST_ONE4: actionORMethodDef => this.AT_LEAST_ONE4(actionORMethodDef),
+          AT_LEAST_ONE5: actionORMethodDef => this.AT_LEAST_ONE5(actionORMethodDef),
+          AT_LEAST_ONE6: actionORMethodDef => this.AT_LEAST_ONE6(actionORMethodDef),
+          AT_LEAST_ONE7: actionORMethodDef => this.AT_LEAST_ONE7(actionORMethodDef),
+          AT_LEAST_ONE8: actionORMethodDef => this.AT_LEAST_ONE8(actionORMethodDef),
+          AT_LEAST_ONE9: actionORMethodDef => this.AT_LEAST_ONE9(actionORMethodDef),
+          AT_LEAST_ONE_SEP: options => this.AT_LEAST_ONE_SEP(options),
+          AT_LEAST_ONE_SEP1: options => this.AT_LEAST_ONE_SEP1(options),
+          AT_LEAST_ONE_SEP2: options => this.AT_LEAST_ONE_SEP2(options),
+          AT_LEAST_ONE_SEP3: options => this.AT_LEAST_ONE_SEP3(options),
+          AT_LEAST_ONE_SEP4: options => this.AT_LEAST_ONE_SEP4(options),
+          AT_LEAST_ONE_SEP5: options => this.AT_LEAST_ONE_SEP5(options),
+          AT_LEAST_ONE_SEP6: options => this.AT_LEAST_ONE_SEP6(options),
+          AT_LEAST_ONE_SEP7: options => this.AT_LEAST_ONE_SEP7(options),
+          AT_LEAST_ONE_SEP8: options => this.AT_LEAST_ONE_SEP8(options),
+          AT_LEAST_ONE_SEP9: options => this.AT_LEAST_ONE_SEP9(options),
+          SUBRULE: (cstDef: RuleDef<any>) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE1: (cstDef: RuleDef<any>) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE1(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE2: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE2(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE3: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE3(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE4: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE4(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE5: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE5(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE6: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE6(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE7: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE7(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE8: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE8(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+          SUBRULE9: (cstDef: RuleDef) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              return this.SUBRULE9(this[cstDef.name]);
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
+        };
 
-    for (const rule of this.rules) {
-      parser[rule.name] = parser.RULE(rule.name, rule.impl(selfRef));
+        for (const rule of rules) {
+          // eslint-disable-next-line ts/ban-ts-comment
+          // @ts-expect-error TS7053
+          this[rule.name] = this.RULE(rule.name, rule.impl(selfRef));
+        }
+
+        this.performSelfAnalysis();
+      }
     }
+    const parser = <EmbeddedActionsParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> new MyParser();
 
-    parser.performSelfAnalysis();
-
-    return <CstParser & Record<T, any>> parser;
+    return <EmbeddedActionsParser & Record<T, any>> parser;
   }
 }

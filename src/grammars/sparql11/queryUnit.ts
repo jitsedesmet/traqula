@@ -9,17 +9,18 @@ import { dataBlock, whereClause } from './whereClause';
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)
  */
-export const queryUnit: RuleDef & { name: 'queryUnit' } = {
+export const queryUnit: RuleDef<'queryUnit'> = {
   name: 'queryUnit',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(query);
+    return true;
   },
 };
 
 /**
  * [[2]](https://www.w3.org/TR/sparql11-query/#rQuery)
  */
-export const query: RuleDef & { name: 'query' } = {
+export const query: RuleDef<'query'> = {
   name: 'query',
   impl: ({ SUBRULE, OR }) => () => {
     SUBRULE(prologue);
@@ -36,7 +37,7 @@ export const query: RuleDef & { name: 'query' } = {
 /**
  * [[7]](https://www.w3.org/TR/sparql11-query/#rSelectQuery)
  */
-export const selectQuery: RuleDef & { name: 'selectQuery' } = {
+export const selectQuery: RuleDef<'selectQuery'> = {
   name: 'selectQuery',
   impl: ({ SUBRULE, MANY }) => () => {
     SUBRULE(selectClause);
@@ -49,7 +50,7 @@ export const selectQuery: RuleDef & { name: 'selectQuery' } = {
 /**
  * [[8]](https://www.w3.org/TR/sparql11-query/#rSubSelect)
  */
-export const subSelect: RuleDef & { name: 'subSelect' } = {
+export const subSelect: RuleDef<'subSelect'> = {
   name: 'subSelect',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(selectClause);
@@ -62,7 +63,7 @@ export const subSelect: RuleDef & { name: 'subSelect' } = {
 /**
  * [[9]](https://www.w3.org/TR/sparql11-query/#rSelectClause)
  */
-export const selectClause: RuleDef & { name: 'selectClause' } = {
+export const selectClause: RuleDef<'selectClause'> = {
   name: 'selectClause',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
     CONSUME(l.select);
@@ -95,7 +96,7 @@ export const selectClause: RuleDef & { name: 'selectClause' } = {
 /**
  * [[10]](https://www.w3.org/TR/sparql11-query/#rConstructQuery)
  */
-export const constructQuery: RuleDef & { name: 'constructQuery' } = {
+export const constructQuery: RuleDef<'constructQuery'> = {
   name: 'constructQuery',
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
@@ -127,7 +128,7 @@ export const constructQuery: RuleDef & { name: 'constructQuery' } = {
 /**
  * [[11]](https://www.w3.org/TR/sparql11-query/#rDescribeQuery)
  */
-export const describeQuery: RuleDef & { name: 'describeQuery' } = {
+export const describeQuery: RuleDef<'describeQuery'> = {
   name: 'describeQuery',
   impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, MANY, OPTION, OR }) => () => {
     CONSUME(l.describe);
@@ -148,7 +149,7 @@ export const describeQuery: RuleDef & { name: 'describeQuery' } = {
 /**
  * [[12]](https://www.w3.org/TR/sparql11-query/#rAskQuery)
  */
-export const askQuery: RuleDef & { name: 'askQuery' } = {
+export const askQuery: RuleDef<'askQuery'> = {
   name: 'askQuery',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
     CONSUME(l.ask);
@@ -163,7 +164,7 @@ export const askQuery: RuleDef & { name: 'askQuery' } = {
 /**
  * [[28]](https://www.w3.org/TR/sparql11-query/#rValuesClause)
  */
-export const valuesClause: RuleDef & { name: 'valuesClause' } = {
+export const valuesClause: RuleDef<'valuesClause'> = {
   name: 'valuesClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
@@ -176,7 +177,7 @@ export const valuesClause: RuleDef & { name: 'valuesClause' } = {
 /**
  * [[73]](https://www.w3.org/TR/sparql11-query/#ConstructTemplate)
  */
-export const constructTemplate: RuleDef & { name: 'constructTemplate' } = {
+export const constructTemplate: RuleDef<'constructTemplate'> = {
   name: 'constructTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -190,7 +191,7 @@ export const constructTemplate: RuleDef & { name: 'constructTemplate' } = {
 /**
  * [[12]](https://www.w3.org/TR/sparql11-query/#rConstructTriples)
  */
-export const constructTriples: RuleDef & { name: 'constructTriples' } = {
+export const constructTriples: RuleDef<'constructTriples'> = {
   name: 'constructTriples',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     SUBRULE(triplesSameSubject);
