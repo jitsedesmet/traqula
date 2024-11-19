@@ -53,6 +53,7 @@ export const true_ = createToken({ name: 'True', pattern: 'true' });
 export const false_ = createToken({ name: 'False', pattern: 'false' });
 export const in_ = createToken({ name: 'In', pattern: 'IN' });
 export const notIn = createToken({ name: 'NotIn', pattern: 'NOT IN' });
+export const separator = createToken({ name: 'Separator', pattern: 'SEPARATOR' });
 
 export const allBaseTokens: TokenType[] = [
   baseDecl,
@@ -103,6 +104,7 @@ export const allBaseTokens: TokenType[] = [
   false_,
   in_,
   notIn,
+  separator,,
 ];
 
 /**

@@ -1,8 +1,9 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import { builtInCall } from './builtIn';
-import { argList, brackettedExpression, expression } from './expression';
-import { booleanLiteral, iri, numericLiteral, rdfLiteral, var_, varOrIri } from './general';
+import { argList, brackettedExpression, expression, type IExpression } from './expression';
+import { var_, varOrIri } from './general';
+import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
 import { subSelect } from './queryUnit';
 import { triplesBlock } from './tripleBlock';
 
@@ -22,7 +23,7 @@ export const whereClause: RuleDef<'whereClause'> = {
 /**
  * [[53]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPattern)
  */
-export const groupGraphPattern: RuleDef<'groupGraphPattern'> = {
+export const groupGraphPattern: RuleDef<'groupGraphPattern', IExpression> = {
   name: 'groupGraphPattern',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.symbols.LCurly);

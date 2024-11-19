@@ -1,252 +1,59 @@
-import type { Literal } from 'rdf-data-factory';
 import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+import type { BaseQuery, IriTerm, Term, VariableTerm } from '../sparqlJSTypes';
+import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
 
 const factory = new DataFactory();
+;const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)
  */
-export const prologue: RuleDef<'prologue'> = {
+export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>> = {
   name: 'prologue',
   impl: ({ SUBRULE, MANY, OR }) => () => {
+    let base: undefined | string;
+    const prefixes: Record<string, string> = {};
     MANY(() => {
       OR([
-        { ALT: () => SUBRULE(baseDecl) },
-        { ALT: () => SUBRULE(prefixDecl) },
+        { ALT: () => {
+          base = SUBRULE(baseDecl);
+        } },
+        { ALT: () => {
+          const [ name, value ] = SUBRULE(prefixDecl);
+          prefixes[name] = value;
+        } },
       ]);
     });
+    return {
+      base,
+      prefixes,
+    };
   },
 };
 
 /**
  * [[5]](https://www.w3.org/TR/sparql11-query/#rBaseDecl)
  */
-export const baseDecl: RuleDef<'baseDecl'> = {
+export const baseDecl: RuleDef<'baseDecl', string> = {
   name: 'baseDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.baseDecl);
-    CONSUME(l.terminals.iriRef);
+    return CONSUME(l.terminals.iriRef).image;
   },
 };
 
 /**
  * [[6]](https://www.w3.org/TR/sparql11-query/#rPrefixDecl)
  */
-export const prefixDecl: RuleDef<'prefixDecl'> = {
+export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
   name: 'prefixDecl',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.prefixDecl);
-    CONSUME(l.terminals.pNameNs);
-    CONSUME(l.terminals.iriRef);
-  },
-};
-
-/**
- * [[106]](https://www.w3.org/TR/sparql11-query/#rVarOrTerm)
- */
-export const varOrTerm: RuleDef<'varOrTerm'> = {
-  name: 'varOrTerm',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(var_) },
-      { ALT: () => SUBRULE(graphTerm) },
-    ]);
-  },
-};
-
-/**
- * [[107]](https://www.w3.org/TR/sparql11-query/#rVarOrIri)
- */
-export const varOrIri: RuleDef<'varOrIri'> = {
-  name: 'varOrIri',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(var_) },
-      { ALT: () => SUBRULE(iri) },
-    ]);
-  },
-};
-
-/**
- * [[108]](https://www.w3.org/TR/sparql11-query/#rVar)
- */
-export const var_: RuleDef<'var'> = {
-  name: 'var',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.var1) },
-      { ALT: () => CONSUME(l.terminals.var2) },
-    ]);
-  },
-};
-
-/**
- * [[109]](https://www.w3.org/TR/sparql11-query/#rGraphTerm)
- */
-export const graphTerm: RuleDef<'graphTerm'> = {
-  name: 'graphTerm',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(iri) },
-      { ALT: () => SUBRULE(rdfLiteral) },
-      { ALT: () => SUBRULE(numericLiteral) },
-      { ALT: () => SUBRULE(booleanLiteral) },
-      { ALT: () => SUBRULE(blankNode) },
-      { ALT: () => CONSUME(l.terminals.nil) },
-    ]);
-  },
-};
-
-/**
- * [[129]](https://www.w3.org/TR/sparql11-query/#rRDFLiteral)
- */
-export const rdfLiteral: RuleDef<'rdfLiteral'> = {
-  name: 'rdfLiteral',
-  impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
-    SUBRULE(string);
-    OPTION(() => {
-      OR([
-        { ALT: () => CONSUME(l.terminals.langTag) },
-        {
-          ALT: () => {
-            CONSUME(l.symbols.hathat);
-            SUBRULE(iri);
-          },
-        },
-      ]);
-    });
-  },
-};
-
-/**
- * [[130]](https://www.w3.org/TR/sparql11-query/#rNumericLiteral)
- */
-export const numericLiteral: RuleDef<'numericLiteral'> = {
-  name: 'numericLiteral',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(numericLiteralUnsigned) },
-      { ALT: () => SUBRULE(numericLiteralPositive) },
-      { ALT: () => SUBRULE(numericLiteralNegative) },
-    ]);
-  },
-};
-
-/**
- * [[131]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralUnsigned)
- */
-export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned'> = {
-  name: 'numericLiteralUnsigned',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.integer) },
-      { ALT: () => CONSUME(l.terminals.decimal) },
-      { ALT: () => CONSUME(l.terminals.double) },
-    ]);
-  },
-};
-
-/**
- * [[132]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralPositive)
- */
-export const numericLiteralPositive: RuleDef<'numericLiteralPositive'> = {
-  name: 'numericLiteralPositive',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.interferePositive) },
-      { ALT: () => CONSUME(l.terminals.decimalPositive) },
-      { ALT: () => CONSUME(l.terminals.doublePositive) },
-    ]);
-  },
-};
-
-/**
- * [[133]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralNegative)
- */
-export const numericLiteralNegative: RuleDef<'numericLiteralNegative'> = {
-  name: 'numericLiteralNegative',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.interfereNegative) },
-      { ALT: () => CONSUME(l.terminals.decimalNegative) },
-      { ALT: () => CONSUME(l.terminals.doubleNegative) },
-    ]);
-  },
-};
-
-/**
- * [[134]](https://www.w3.org/TR/sparql11-query/#rBooleanLiteral)
- */
-export const booleanLiteral: RuleDef<'booleanLiteral', Literal> = {
-  name: 'booleanLiteral',
-  impl: ({ CONSUME, OR }) => () => {
-    let result = factory.literal('false', factory.namedNode('http://www.w3.org/2001/XMLSchema#boolean'));
-    OR([
-      { ALT: () => {
-        CONSUME(l.true_);
-        result = factory.literal('true', factory.namedNode('http://www.w3.org/2001/XMLSchema#boolean'));
-      } },
-      { ALT: () => {
-        CONSUME(l.false_);
-      } },
-    ]);
-    return result;
-  },
-};
-
-/**
- * [[135]](https://www.w3.org/TR/sparql11-query/#rString)
- */
-export const string: RuleDef<'string'> = {
-  name: 'string',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.stringLiteral1) },
-      { ALT: () => CONSUME(l.terminals.stringLiteral2) },
-      { ALT: () => CONSUME(l.terminals.stringLiteralLong1) },
-      { ALT: () => CONSUME(l.terminals.stringLiteralLong2) },
-    ]);
-  },
-};
-
-/**
- * [[136]](https://www.w3.org/TR/sparql11-query/#riri)
- */
-export const iri: RuleDef<'iri'> = {
-  name: 'iri',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.iriRef) },
-      { ALT: () => SUBRULE(prefixedName) },
-    ]);
-  },
-};
-
-/**
- * [[137]](https://www.w3.org/TR/sparql11-query/#rPrefixedName)
- */
-export const prefixedName: RuleDef<'prefixedName'> = {
-  name: 'prefixedName',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.pNameLn) },
-      { ALT: () => CONSUME(l.terminals.pNameNs) },
-    ]);
-  },
-};
-
-/**
- * [[138]](https://www.w3.org/TR/sparql11-query/#rBlankNode)
- */
-export const blankNode: RuleDef<'blankNode'> = {
-  name: 'blankNode',
-  impl: ({ CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.blankNodeLabel) },
-      { ALT: () => CONSUME(l.terminals.anon) },
-    ]);
+    const name = CONSUME(l.terminals.pNameNs).image;
+    const value = CONSUME(l.terminals.iriRef).image;
+    return [ name, value ];
   },
 };
 
@@ -398,12 +205,61 @@ export const collection: RuleDef<'collection'> = {
 /**
  * [[103]](https://www.w3.org/TR/sparql11-query/#rGraphNode)
  */
-export const graphNode: RuleDef<'graphNode'> = {
+export const graphNode: RuleDef<'graphNode', Term> = {
   name: 'graphNode',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(varOrTerm) },
-      { ALT: () => SUBRULE(triplesNode) },
-    ]);
-  },
+  impl: ({ SUBRULE, OR }) => () => OR([
+    { ALT: () => SUBRULE(varOrTerm) },
+    { ALT: () => SUBRULE(triplesNode) },
+  ]),
+};
+
+/**
+ * [[106]](https://www.w3.org/TR/sparql11-query/#rVarOrTerm)
+ */
+export const varOrTerm: RuleDef<'varOrTerm', Term> = {
+  name: 'varOrTerm',
+  impl: ({ SUBRULE, OR }) => () => OR([
+    { ALT: () => SUBRULE(var_) },
+    { ALT: () => SUBRULE(graphTerm) },
+  ]),
+};
+
+/**
+ * [[107]](https://www.w3.org/TR/sparql11-query/#rVarOrIri)
+ */
+export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
+  name: 'varOrIri',
+  impl: ({ SUBRULE, OR }) => () => OR<IriTerm | VariableTerm>([
+    { ALT: () => SUBRULE(var_) },
+    { ALT: () => SUBRULE(iri) },
+  ]),
+};
+
+/**
+ * [[108]](https://www.w3.org/TR/sparql11-query/#rVar)
+ */
+export const var_: RuleDef<'var', VariableTerm> = {
+  name: 'var',
+  impl: ({ CONSUME, OR }) => () => OR([
+    { ALT: () => factory.variable(CONSUME(l.terminals.var1).image) },
+    { ALT: () => factory.variable(CONSUME(l.terminals.var2).image) },
+  ]),
+};
+
+/**
+ * [[109]](https://www.w3.org/TR/sparql11-query/#rGraphTerm)
+ */
+export const graphTerm: RuleDef<'graphTerm', Term> = {
+  name: 'graphTerm',
+  impl: ({ SUBRULE, CONSUME, OR }) => () => OR<Term>([
+    { ALT: () => SUBRULE(iri) },
+    { ALT: () => SUBRULE(rdfLiteral) },
+    { ALT: () => SUBRULE(numericLiteral) },
+    { ALT: () => SUBRULE(booleanLiteral) },
+    { ALT: () => SUBRULE(blankNode) },
+    { ALT: () => {
+      CONSUME(l.terminals.nil);
+      return factory.namedNode(`${RDF}nil`);
+    } },
+  ]),
 };

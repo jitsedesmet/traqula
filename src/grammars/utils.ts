@@ -2,102 +2,250 @@ import type { TokenType } from 'chevrotain';
 import * as l from '../lexer/index';
 import type { RuleDef } from './buildExample';
 import { expression, expressionList } from './sparql11/expression';
-import { var_ } from './sparql11/general';
+import { type IVar, var_ } from './sparql11/general';
+import { groupGraphPattern } from './sparql11/whereClause';
+import type { Expression } from './sparqlJSTypes';
 
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
 }
 
-export function exprFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export interface IExpressionFunctionX<T extends string, U extends Expression[]> {
+  type: 'operation';
+  operator: T;
+  args: U;
+}
+export type RuleDefExpressionFunctionX<T extends string, U extends Expression[]>
+  = RuleDef<T, IExpressionFunctionX<T, U>>;
+
+export function funcExpr1<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      SUBRULE(expression);
+      const arg = SUBRULE(expression);
       CONSUME(l.symbols.RParen);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: [ arg ],
+      };
     },
   };
 }
 
-export function exprFunc2<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export function funcExpr2<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE1, SUBRULE2, CONSUME }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      SUBRULE1(expression);
+      const arg1 = SUBRULE1(expression);
       CONSUME(l.symbols.comma);
-      SUBRULE2(expression);
+      const arg2 = SUBRULE2(expression);
       CONSUME(l.symbols.RParen);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: [ arg1, arg2 ],
+      };
     },
   };
 }
 
-export function varFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export interface IVarFunctionX<T extends string, U extends IVar[]> {
+  type: 'operation';
+  operator: T;
+  args: U;
+}
+export function funcVar1<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [IVar]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      SUBRULE(var_);
+      const arg = SUBRULE(var_);
       CONSUME(l.symbols.RParen);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: [ arg ],
+      };
     },
   };
 }
 
-export function exprOrNilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export function funcExprOrNil1<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [] | [Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, OR, SUBRULE }) => () => {
       CONSUME(func);
-      OR([
+      const args = OR<[] | [Expression]>([
         { ALT: () => {
           CONSUME(l.symbols.LParen);
-          SUBRULE(expression);
+          const arg = SUBRULE(expression);
           CONSUME(l.symbols.RParen);
+          return [ arg ];
         } },
-        { ALT: () => CONSUME(l.terminals.nil) },
+        { ALT: () => {
+          CONSUME(l.terminals.nil);
+          return [];
+        } },
       ]);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args,
+      };
     },
   };
 }
 
-export function nilFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export function funcNil1<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, []> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME }) => () => {
       CONSUME(func);
       CONSUME(l.terminals.nil);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: [],
+      };
     },
   };
 }
 
-export function exprListFunc1<T extends string>(func: TokenType & { name: T }): RuleDef<Uncapitalize<T>> {
+export function funcExprList1<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, Expression[]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE }) => () => {
       CONSUME(func);
-      SUBRULE(expressionList);
+      const args = SUBRULE(expressionList);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args,
+      };
     },
   };
 }
 
+export function funcExpr2or3<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression] | [Expression, Expression, Expression]> {
+  return {
+    name: unCapitalize(func.name),
+    impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, CONSUME1, OPTION, CONSUME2 }) => () => {
+      CONSUME(func);
+      CONSUME(l.symbols.LParen);
+      const arg1 = SUBRULE1(expression);
+      CONSUME1(l.symbols.comma);
+      const arg2 = SUBRULE2(expression);
+      const arg3 = OPTION(() => {
+        CONSUME2(l.symbols.comma);
+        return SUBRULE3(expression);
+      });
+      CONSUME(l.symbols.RParen);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: arg3 ? [ arg1, arg2, arg3 ] : [ arg1, arg2 ],
+      };
+    },
+  };
+}
+
+export function funcExpr3or4<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<
+  Uncapitalize<T>,
+  [Expression, Expression, Expression] | [Expression, Expression, Expression, Expression]
+> {
+  return {
+    name: unCapitalize(func.name),
+    impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, CONSUME1, OPTION, CONSUME2, SUBRULE4, CONSUME3 }) => () => {
+      CONSUME(func);
+      CONSUME(l.symbols.LParen);
+      const arg1 = SUBRULE1(expression);
+      CONSUME1(l.symbols.comma);
+      const arg2 = SUBRULE2(expression);
+      CONSUME2(l.symbols.comma);
+      const arg3 = SUBRULE3(expression);
+      const arg4 = OPTION(() => {
+        CONSUME3(l.symbols.comma);
+        return SUBRULE4(expression);
+      });
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: arg4 ? [ arg1, arg2, arg3, arg4 ] : [ arg1, arg2, arg3 ],
+      };
+    },
+  };
+}
+
+export function funcGroupGraphPattern<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<
+    Uncapitalize<T>,
+    [Expression]
+  > {
+  return {
+    name: unCapitalize(func.name),
+    impl: ({ SUBRULE, CONSUME }) => () => {
+      CONSUME(l.builtIn.exists);
+      const arg = SUBRULE(groupGraphPattern);
+      return {
+        type: 'operation',
+        operator: unCapitalize(func.name),
+        args: [ arg ],
+      };
+    },
+  };
+}
+
+export interface Wildcard {
+  termType: 'Wildcard';
+  value: '*';
+}
+
+export interface IExpressionAggregator<T extends string> {
+  type: 'aggregate';
+  expression: Expression | Wildcard;
+  aggregation: T;
+  separator: string | undefined;
+}
+export type RuleDefExpressionAggregatorX<T extends string> = RuleDef<T, IExpressionAggregator<T>>;
 export function baseAggregateFunc<T extends string>(func: TokenType & { name: T }):
-RuleDef<Uncapitalize<T>> {
+RuleDefExpressionAggregatorX<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE, OPTION, OR }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      OPTION(() => {
+      const distinct = OPTION(() => {
         CONSUME(l.distinct);
-      });
-      OR([
-        { ALT: () => CONSUME(l.symbols.star) },
+        return true;
+      }) ?? false;
+      const arg = OR<Expression | '*'>([
+        { ALT: () => {
+          CONSUME(l.symbols.star);
+          return '*';
+        } },
         { ALT: () => SUBRULE(expression) },
       ]);
       CONSUME(l.symbols.RParen);
+      return {
+        type: 'aggregate',
+        operator: unCapitalize(func.name),
+        arg,
+        distinct,
+      };
     },
   };
 }

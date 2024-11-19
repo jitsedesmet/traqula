@@ -1,7 +1,7 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 
-import { iri } from './general';
+import { iri } from './literals';
 
 /**
  * [[13]](https://www.w3.org/TR/sparql11-query/#rDatasetClause)

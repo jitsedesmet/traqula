@@ -17,7 +17,7 @@ import {
   EmbeddedActionsParser,
 } from 'chevrotain';
 
-interface CstDef {
+export interface CstDef {
   /**
    *
    * A Parsing DSL method use to consume a single Token.
@@ -183,16 +183,16 @@ interface CstDef {
    *
    * @returns The result of invoking the chosen alternative.
    */
-  OR: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR1: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR2: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR3: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR4: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR5: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR6: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR7: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR8: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
-  OR9: (altsOrOpts: IOrAlt<any>[] | OrMethodOpts<any>) => any;
+  OR: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR1: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR2: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR3: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR4: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR5: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR6: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR7: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR8: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
+  OR9: <T>(altsOrOpts: IOrAlt<T>[] | OrMethodOpts<T>) => T;
   /**
    * Parsing DSL method, that indicates a repetition of zero or more.
    * This is equivalent to EBNF repetition \{...\}.
@@ -360,19 +360,19 @@ interface CstDef {
   AT_LEAST_ONE_SEP7: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP8: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP9: (options: AtLeastOneSepMethodOpts<any>) => void;
-  SUBRULE: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE1: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE2: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE3: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE4: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE5: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE6: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE7: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE8: (cstDef: RuleDef<any>) => CstNode;
-  SUBRULE9: (cstDef: RuleDef<any>) => CstNode;
+  SUBRULE: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE1: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE2: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE3: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE4: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE5: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE6: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE7: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE8: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE9: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
 }
 
-export type RuleDef<T extends string = string, U = any> = {
+export type RuleDef<T extends string = string, U = unknown> = {
   name: T;
   impl: (def: CstDef) => () => U;
 };

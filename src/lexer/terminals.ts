@@ -35,7 +35,7 @@ const doublePattern = new RegExp(`([0-9]+\\.[0-9]*(${exponentPattern.source}))|(
 const interferePositivePattern = new RegExp(`\\+${integerPattern.source}`, 'u');
 const decimalPositivePattern = new RegExp(`\\+${decimalPattern.source}`, 'u');
 const doublePositivePattern = new RegExp(`\\+${doublePattern.source}`, 'u');
-const interfereNegativePattern = new RegExp(`-${integerPattern.source}`, 'u');
+const integerNegativePattern = new RegExp(`-${integerPattern.source}`, 'u');
 const decimalNegativePattern = new RegExp(`-${decimalPattern.source}`, 'u');
 const doubleNegativePattern = new RegExp(`-${doublePattern.source}`, 'u');
 const echarPattern = /\\["'bfnrt]/u;
@@ -61,7 +61,7 @@ export const double = createToken({ name: 'Double', pattern: doublePattern });
 export const interferePositive = createToken({ name: 'InterferePositive', pattern: interferePositivePattern });
 export const decimalPositive = createToken({ name: 'DecimalPositive', pattern: decimalPositivePattern });
 export const doublePositive = createToken({ name: 'DoublePositive', pattern: doublePositivePattern });
-export const interfereNegative = createToken({ name: 'InterfereNegative', pattern: interfereNegativePattern });
+export const integerNegative = createToken({ name: 'IntegerNegative', pattern: integerNegativePattern });
 export const decimalNegative = createToken({ name: 'DecimalNegative', pattern: decimalNegativePattern });
 export const doubleNegative = createToken({ name: 'DoubleNegative', pattern: doubleNegativePattern });
 export const stringLiteral1 = createToken({ name: 'StringLiteral1', pattern: stringLiteral1Pattern });
@@ -86,7 +86,7 @@ export const allTerminals = [
   interferePositive,
   decimalPositive,
   doublePositive,
-  interfereNegative,
+  integerNegative,
   decimalNegative,
   doubleNegative,
   stringLiteral1,

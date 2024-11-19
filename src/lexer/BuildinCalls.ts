@@ -63,7 +63,6 @@ export enum BuildInCalls {
   Avg = 'builtInAvg',
   Sample = 'builtInSample',
   Group_concat = 'builtInGroup_concat',
-  Separator = 'builtInSeparator',
 }
 
 function capitalize<T extends string>(string: T): Capitalize<T> {
@@ -131,7 +130,6 @@ export const max = createToken({ name: capitalize(BuildInCalls.Max), pattern: 'M
 export const avg = createToken({ name: capitalize(BuildInCalls.Avg), pattern: 'AVG' });
 export const sample = createToken({ name: capitalize(BuildInCalls.Sample), pattern: 'SAMPLE' });
 export const groupConcat = createToken({ name: capitalize(BuildInCalls.Group_concat), pattern: 'GROUP_CONCAT' });
-export const separator = createToken({ name: capitalize(BuildInCalls.Separator), pattern: 'SEPARATOR' });
 
 export const allBuiltInCalls: TokenType[] = [
   str,
@@ -195,5 +193,4 @@ export const allBuiltInCalls: TokenType[] = [
   avg,
   sample,
   groupConcat,
-  separator,
 ];

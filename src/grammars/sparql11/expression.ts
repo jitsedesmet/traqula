@@ -1,6 +1,11 @@
+import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+import type { Expression } from '../sparqlJSTypes';
 import { builtInCall } from './builtIn';
+import {
+  var_,
+} from './general';
 import {
   booleanLiteral,
   iri,
@@ -8,59 +13,96 @@ import {
   numericLiteralNegative,
   numericLiteralPositive,
   rdfLiteral,
-  var_,
-} from './general';
+} from './literals';
 
 /**
  * [[71]](https://www.w3.org/TR/sparql11-query/#rArgList)
  */
-export const argList: RuleDef<'argList'> = {
+export interface IArgList {
+  type: 'functionCall';
+  args: any[];
+  distinct: boolean;
+}
+
+export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;
+export type RelationalOperator = '=' | '!=' | '<' | '>' | '<=' | '>=' | 'IN' | 'NOT IN';
+export type AdditiveOperator = '+' | '-' | '*' | '/';
+export type unaryOperator = '!' | '+' | '-';
+export type buildInOperator = 'STR' | 'LANG' | 'LANGMATCHES' | 'DATATYPE' | 'BOUND' | 'IRI' | 'URI' | 'BNODE' |
+  'RAND' | 'ABS' | 'CEIL' | 'FLOOR' | 'ROUND' | 'CONCAT' | 'STRLEN' | 'UCASE' | 'LCASE' | 'ENCODE_FOR_URI' |
+  'CONTAINS' | 'STRSTARTS' | 'STRENDS' | 'STRBEFORE' | 'STRAFTER' | 'YEAR' | 'MONTH' | 'DAY' | 'HOURS' | 'MINUTES' |
+  'SECONDS' | 'TIMEZONE' | 'TZ' | 'NOW' | 'UUID' | 'STRUUID' | 'MD5' | 'SHA1' | 'SHA256' | 'SHA384' | 'SHA512' |
+  'COALESCE' | 'IF' | 'STRLANG' | 'STRDT' | 'sameTerm' | 'isIRI' | 'isURI' | 'isBLANK' | 'isLITERAL' | 'isNUMERIC' |
+  'REGEX' | 'SUBSTR' | 'REPLACE' | 'EXISTS' | 'NOT EXISTS';
+export type aggregatorOperator = 'COUNT' | 'SUM' | 'MIN' | 'MAX' | 'AVG' | 'SAMPLE' | 'GROUP_CONCAT';
+export interface IExpression {
+
+}
+
+export const argList: RuleDef<'argList', IArgList> = {
   name: 'argList',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.nil) },
-      {
-        ALT: () => {
-          CONSUME(l.symbols.LParen);
-          OPTION(() => {
-            CONSUME(l.distinct);
-          });
-          SUBRULE1(expression);
-          MANY(() => {
-            CONSUME(l.symbols.comma);
-            SUBRULE2(expression);
-          });
-          CONSUME(l.symbols.RParen);
-        },
+  impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR([
+    { ALT: () => {
+      CONSUME(l.terminals.nil);
+      return {
+        type: 'functionCall',
+        args: [],
+        distinct: false,
+      };
+    } },
+    {
+      ALT: () => {
+        const args: Expression[] = [];
+        CONSUME(l.symbols.LParen);
+        const distinct = OPTION(() => {
+          CONSUME(l.distinct);
+          return true;
+        }) ?? false;
+
+        MANY_SEP({
+          DEF: () => args.push(SUBRULE1(expression)),
+          SEP: l.symbols.comma,
+        });
+        CONSUME(l.symbols.RParen);
+
+        return {
+          type: 'functionCall',
+          args,
+          distinct,
+        };
       },
-    ]);
-  },
+    },
+  ]),
 };
 
-export const expressionList: RuleDef<'expressionList'> = {
+export const expressionList: RuleDef<'expressionList', Expression[]> = {
   name: 'expressionList',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OR }) => () => {
-    OR([
-      { ALT: () => CONSUME(l.terminals.nil) },
-      {
-        ALT: () => {
-          CONSUME(l.symbols.LParen);
-          SUBRULE1(expression);
-          MANY(() => {
-            CONSUME(l.symbols.comma);
-            SUBRULE2(expression);
-          });
-          CONSUME(l.symbols.RParen);
-        },
+  impl: ({ CONSUME, SUBRULE, MANY_SEP, OR }) => () => OR([
+    { ALT: () => {
+      CONSUME(l.terminals.nil);
+      return [];
+    } },
+    {
+      ALT: () => {
+        const args: Expression[] = [];
+        CONSUME(l.symbols.LParen);
+        MANY_SEP({
+          SEP: l.symbols.comma,
+          DEF: () => {
+            args.push(SUBRULE(expression));
+          },
+        });
+        CONSUME(l.symbols.RParen);
+        return args;
       },
-    ]);
-  },
+    },
+  ]),
 };
 
 /**
  * [[110]](https://www.w3.org/TR/sparql11-query/#rExpression)
  */
-export const expression: RuleDef<'expression'> = {
+export const expression: RuleDef<'expression', Expression> = {
   name: 'expression',
   impl: ({ SUBRULE }) => () => {
     SUBRULE(conditionalOrExpression);
@@ -72,11 +114,10 @@ export const expression: RuleDef<'expression'> = {
  */
 export const conditionalOrExpression: RuleDef<'conditionalOrExpression'> = {
   name: 'conditionalOrExpression',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
-    SUBRULE1(conditionalAndExpression);
-    MANY(() => {
-      CONSUME(l.symbols.logicOr);
-      SUBRULE2(conditionalAndExpression);
+  impl: ({ MANY_SEP, SUBRULE }) => () => {
+    MANY_SEP({
+      DEF: () => SUBRULE(conditionalAndExpression),
+      SEP: l.symbols.logicOr,
     });
   },
 };
@@ -316,7 +357,7 @@ export const brackettedExpression: RuleDef<'brackettedExpression'> = {
 /**
  * [[128]](https://www.w3.org/TR/sparql11-query/#ririOrFunction)
  */
-export const iriOrFunction: RuleDef<'iriOrFunction'> = {
+export const iriOrFunction: RuleDef<'iriOrFunction', { iri: NamedNode; argList: ArgList | undefined }> = {
   name: 'iriOrFunction',
   impl: ({ SUBRULE, OPTION }) => () => {
     SUBRULE(iri);

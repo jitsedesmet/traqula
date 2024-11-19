@@ -163,10 +163,10 @@ export const limitClause: RuleDef<'limitClause'> = {
 /**
  * [[27]](https://www.w3.org/TR/sparql11-query/#rWhereClause)
  */
-export const offsetClause: RuleDef<'offsetClause'> = {
-  name: 'offsetClause',
+export const offsetClause = {
+  name: <const> 'offsetClause',
   impl: ({ CONSUME }) => () => {
     CONSUME(l.offset);
     CONSUME(l.terminals.integer);
   },
-};
+} satisfies RuleDef;

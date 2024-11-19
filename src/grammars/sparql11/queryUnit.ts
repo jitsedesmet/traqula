@@ -1,5 +1,6 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+import type { Query, ValuePatternRow } from '../sparqlJSTypes';
 import { datasetClause } from './dataSetClause';
 import { expression } from './expression';
 import { prologue, triplesSameSubject, triplesTemplate, var_, varOrIri } from './general';
@@ -9,28 +10,31 @@ import { dataBlock, whereClause } from './whereClause';
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)
  */
-export const queryUnit: RuleDef<'queryUnit'> = {
+export const queryUnit: RuleDef<'queryUnit', Query> = {
   name: 'queryUnit',
-  impl: ({ SUBRULE }) => () => {
-    SUBRULE(query);
-    return true;
-  },
+  impl: ({ SUBRULE }) => () => SUBRULE(query),
 };
 
 /**
  * [[2]](https://www.w3.org/TR/sparql11-query/#rQuery)
  */
-export const query: RuleDef<'query'> = {
+export const query: RuleDef<'query', Query> = {
   name: 'query',
   impl: ({ SUBRULE, OR }) => () => {
-    SUBRULE(prologue);
+    const prologueValues = SUBRULE(prologue);
     OR([
       { ALT: () => SUBRULE(selectQuery) },
       { ALT: () => SUBRULE(constructQuery) },
       { ALT: () => SUBRULE(describeQuery) },
       { ALT: () => SUBRULE(askQuery) },
     ]);
-    SUBRULE(valuesClause);
+    const values = SUBRULE(valuesClause);
+
+    return {
+      ...prologueValues,
+      type: 'query',
+      values,
+    };
   },
 };
 
@@ -164,7 +168,7 @@ export const askQuery: RuleDef<'askQuery'> = {
 /**
  * [[28]](https://www.w3.org/TR/sparql11-query/#rValuesClause)
  */
-export const valuesClause: RuleDef<'valuesClause'> = {
+export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[]> = {
   name: 'valuesClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {

@@ -2,67 +2,69 @@ import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import {
   baseAggregateFunc,
-  exprFunc1,
-  exprFunc2,
-  exprListFunc1,
-  exprOrNilFunc1,
-  nilFunc1,
+  funcExpr1,
+  funcExpr2,
+  funcExpr2or3,
+  funcExpr3or4,
+  funcExprList1,
+  funcExprOrNil1,
+  funcNil1,
   unCapitalize,
-  varFunc1,
+  funcVar1,
+  funcGroupGraphPattern,
 } from '../utils';
 import { expression } from './expression';
-import { string } from './general';
-import { groupGraphPattern } from './whereClause';
+import { string } from './literals';
 
-export const builtInStr = exprFunc1(l.builtIn.str);
-export const builtInLang = exprFunc1(l.builtIn.lang);
-export const builtInLangmatches = exprFunc2(l.builtIn.langmatches);
-export const builtInDatatype = exprFunc1(l.builtIn.datatype);
-export const builtInBound = varFunc1(l.builtIn.bound);
-export const builtInIri = exprFunc1(l.builtIn.iri);
-export const builtInUri = exprFunc1(l.builtIn.uri);
-export const builtInBnode = exprOrNilFunc1(l.builtIn.bnode);
-export const builtInRand = nilFunc1(l.builtIn.rand);
-export const builtInAbs = exprFunc1(l.builtIn.abs);
-export const builtInCeil = exprFunc1(l.builtIn.ceil);
-export const builtInFloor = exprFunc1(l.builtIn.floor);
-export const builtInRound = exprFunc1(l.builtIn.round);
-export const builtInConcat = exprListFunc1(l.builtIn.concat);
-export const builtInStrlen = exprFunc1(l.builtIn.strlen);
-export const builtInUcase = exprFunc1(l.builtIn.ucase);
-export const builtInLcase = exprFunc1(l.builtIn.lcase);
-export const builtInEncode_for_uri = exprFunc1(l.builtIn.encode_for_uri);
-export const builtInContains = exprFunc2(l.builtIn.contains);
-export const builtInStrstarts = exprFunc2(l.builtIn.strstarts);
-export const builtInStrends = exprFunc2(l.builtIn.strends);
-export const builtInStrbefore = exprFunc2(l.builtIn.strbefore);
-export const builtInStrafter = exprFunc2(l.builtIn.strafter);
-export const builtInYear = exprFunc1(l.builtIn.year);
-export const builtInMonth = exprFunc1(l.builtIn.month);
-export const builtInDay = exprFunc1(l.builtIn.day);
-export const builtInHours = exprFunc1(l.builtIn.hours);
-export const builtInMinutes = exprFunc1(l.builtIn.minutes);
-export const builtInSeconds = exprFunc1(l.builtIn.seconds);
-export const builtInTimezone = exprFunc1(l.builtIn.timezone);
-export const builtInTz = exprFunc1(l.builtIn.tz);
-export const builtInNow = nilFunc1(l.builtIn.now);
-export const builtInUuid = nilFunc1(l.builtIn.uuid);
-export const builtInStruuid = nilFunc1(l.builtIn.struuid);
-export const builtInMd5 = exprFunc1(l.builtIn.md5);
-export const builtInSha1 = exprFunc1(l.builtIn.sha1);
-export const builtInSha256 = exprFunc1(l.builtIn.sha256);
-export const builtInSha384 = exprFunc1(l.builtIn.sha384);
-export const builtInSha512 = exprFunc1(l.builtIn.sha512);
-export const builtInCoalesce = exprListFunc1(l.builtIn.coalesce);
-export const builtInIf = exprFunc2(l.builtIn.if_);
-export const builtInStrlang = exprFunc2(l.builtIn.strlang);
-export const builtInStrdt = exprFunc2(l.builtIn.strdt);
-export const builtInSameterm = exprFunc2(l.builtIn.sameterm);
-export const builtInIsiri = exprFunc1(l.builtIn.isiri);
-export const builtInIsuri = exprFunc1(l.builtIn.isuri);
-export const builtInIsblank = exprFunc1(l.builtIn.isblank);
-export const builtInIsliteral = exprFunc1(l.builtIn.isliteral);
-export const builtInIsnumeric = exprFunc1(l.builtIn.isnumeric);
+export const builtInStr = funcExpr1(l.builtIn.str);
+export const builtInLang = funcExpr1(l.builtIn.lang);
+export const builtInLangmatches = funcExpr2(l.builtIn.langmatches);
+export const builtInDatatype = funcExpr1(l.builtIn.datatype);
+export const builtInBound = funcVar1(l.builtIn.bound);
+export const builtInIri = funcExpr1(l.builtIn.iri);
+export const builtInUri = funcExpr1(l.builtIn.uri);
+export const builtInBnode = funcExprOrNil1(l.builtIn.bnode);
+export const builtInRand = funcNil1(l.builtIn.rand);
+export const builtInAbs = funcExpr1(l.builtIn.abs);
+export const builtInCeil = funcExpr1(l.builtIn.ceil);
+export const builtInFloor = funcExpr1(l.builtIn.floor);
+export const builtInRound = funcExpr1(l.builtIn.round);
+export const builtInConcat = funcExprList1(l.builtIn.concat);
+export const builtInStrlen = funcExpr1(l.builtIn.strlen);
+export const builtInUcase = funcExpr1(l.builtIn.ucase);
+export const builtInLcase = funcExpr1(l.builtIn.lcase);
+export const builtInEncode_for_uri = funcExpr1(l.builtIn.encode_for_uri);
+export const builtInContains = funcExpr2(l.builtIn.contains);
+export const builtInStrstarts = funcExpr2(l.builtIn.strstarts);
+export const builtInStrends = funcExpr2(l.builtIn.strends);
+export const builtInStrbefore = funcExpr2(l.builtIn.strbefore);
+export const builtInStrafter = funcExpr2(l.builtIn.strafter);
+export const builtInYear = funcExpr1(l.builtIn.year);
+export const builtInMonth = funcExpr1(l.builtIn.month);
+export const builtInDay = funcExpr1(l.builtIn.day);
+export const builtInHours = funcExpr1(l.builtIn.hours);
+export const builtInMinutes = funcExpr1(l.builtIn.minutes);
+export const builtInSeconds = funcExpr1(l.builtIn.seconds);
+export const builtInTimezone = funcExpr1(l.builtIn.timezone);
+export const builtInTz = funcExpr1(l.builtIn.tz);
+export const builtInNow = funcNil1(l.builtIn.now);
+export const builtInUuid = funcNil1(l.builtIn.uuid);
+export const builtInStruuid = funcNil1(l.builtIn.struuid);
+export const builtInMd5 = funcExpr1(l.builtIn.md5);
+export const builtInSha1 = funcExpr1(l.builtIn.sha1);
+export const builtInSha256 = funcExpr1(l.builtIn.sha256);
+export const builtInSha384 = funcExpr1(l.builtIn.sha384);
+export const builtInSha512 = funcExpr1(l.builtIn.sha512);
+export const builtInCoalesce = funcExprList1(l.builtIn.coalesce);
+export const builtInIf = funcExpr2(l.builtIn.if_);
+export const builtInStrlang = funcExpr2(l.builtIn.strlang);
+export const builtInStrdt = funcExpr2(l.builtIn.strdt);
+export const builtInSameterm = funcExpr2(l.builtIn.sameterm);
+export const builtInIsiri = funcExpr1(l.builtIn.isiri);
+export const builtInIsuri = funcExpr1(l.builtIn.isuri);
+export const builtInIsblank = funcExpr1(l.builtIn.isblank);
+export const builtInIsliteral = funcExpr1(l.builtIn.isliteral);
+export const builtInIsnumeric = funcExpr1(l.builtIn.isnumeric);
 
 /**
  * [[121]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
@@ -133,83 +135,27 @@ export const builtInCall: RuleDef<'builtInCall'> = {
 /**
  * [[122]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const regexExpression: RuleDef<'regexExpression'> = {
-  name: 'regexExpression',
-  impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.builtIn.regex);
-    CONSUME(l.symbols.LParen);
-    SUBRULE1(expression);
-    CONSUME1(l.symbols.comma);
-    SUBRULE2(expression);
-    OPTION(() => {
-      CONSUME2(l.symbols.comma);
-      SUBRULE3(expression);
-    });
-    CONSUME(l.symbols.RParen);
-  },
-};
+export const regexExpression = funcExpr2or3(l.builtIn.regex);
 
 /**
  * [[123]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const substringExpression: RuleDef<'substringExpression'> = {
-  name: 'substringExpression',
-  impl: ({ CONSUME1, CONSUME2, SUBRULE3, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.builtIn.substr);
-    CONSUME(l.symbols.LParen);
-    SUBRULE1(expression);
-    CONSUME1(l.symbols.comma);
-    SUBRULE2(expression);
-    OPTION(() => {
-      CONSUME2(l.symbols.comma);
-      SUBRULE3(expression);
-    });
-    CONSUME(l.symbols.RParen);
-  },
-};
+export const substringExpression = funcExpr2or3(l.builtIn.substr);
 
 /**
  * [[124]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const strReplaceExpression: RuleDef<'strReplaceExpression'> = {
-  name: 'strReplaceExpression',
-  impl: ({ CONSUME1, CONSUME2, CONSUME3, SUBRULE3, SUBRULE4, CONSUME, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    CONSUME(l.builtIn.replace);
-    CONSUME(l.symbols.LParen);
-    SUBRULE1(expression);
-    CONSUME1(l.symbols.comma);
-    SUBRULE2(expression);
-    CONSUME2(l.symbols.comma);
-    SUBRULE3(expression);
-    OPTION(() => {
-      CONSUME3(l.symbols.comma);
-      SUBRULE4(expression);
-    });
-    CONSUME(l.symbols.RParen);
-  },
-};
+export const strReplaceExpression = funcExpr3or4(l.builtIn.replace);
 
 /**
  * [[125]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const existsFunc: RuleDef<'existsFunc'> = {
-  name: 'existsFunc',
-  impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.builtIn.exists);
-    SUBRULE(groupGraphPattern);
-  },
-};
+export const existsFunc = funcGroupGraphPattern(l.builtIn.exists);
 
 /**
  * [[126]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const notExistsFunc: RuleDef<'notExistsFunc'> = {
-  name: 'notExistsFunc',
-  impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.builtIn.notexists);
-    SUBRULE(groupGraphPattern);
-  },
-};
+export const notExistsFunc = funcGroupGraphPattern(l.builtIn.notexists);
 
 export const aggregateCount = baseAggregateFunc(l.builtIn.count);
 export const aggregateSum = baseAggregateFunc(l.builtIn.sum);
@@ -228,7 +174,7 @@ export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.buil
     SUBRULE(expression);
     OPTION2(() => {
       CONSUME(l.symbols.semi);
-      CONSUME(l.builtIn.separator);
+      CONSUME(l.separator);
       CONSUME(l.symbols.equal);
       SUBRULE(string);
     });

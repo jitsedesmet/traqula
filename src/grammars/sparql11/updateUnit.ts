@@ -1,6 +1,7 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import { iri, prologue, triplesTemplate, varOrIri } from './general';
+import { prologue, triplesTemplate, varOrIri } from './general';
+import { iri } from './literals';
 import { groupGraphPattern } from './whereClause';
 
 /**
