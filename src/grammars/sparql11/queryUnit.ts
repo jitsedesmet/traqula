@@ -1,6 +1,6 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import type { Query, ValuePatternRow } from '../sparqlJSTypes';
+import type { Query, ValuesPattern } from '../sparqlJSTypes';
 import { datasetClause } from './dataSetClause';
 import { expression } from './expression';
 import { prologue, triplesSameSubject, triplesTemplate, var_, varOrIri } from './general';
@@ -168,14 +168,16 @@ export const askQuery: RuleDef<'askQuery'> = {
 /**
  * [[28]](https://www.w3.org/TR/sparql11-query/#rValuesClause)
  */
-export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[]> = {
+export const valuesClause: RuleDef<'valuesClause', ValuesPattern | undefined> = {
   name: 'valuesClause',
-  impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
-    OPTION(() => {
-      CONSUME(l.values);
-      SUBRULE(dataBlock);
-    });
-  },
+  impl: ({ SUBRULE, CONSUME, OPTION }) => () => OPTION(() => {
+    CONSUME(l.values);
+    const values = SUBRULE(dataBlock);
+    return {
+      type: 'values',
+      values,
+    };
+  }),
 };
 
 /**

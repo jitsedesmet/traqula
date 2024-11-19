@@ -1,5 +1,6 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+import type { BlankTerm, IriTerm, LiteralTerm, ValuePatternRow, VariableTerm } from '../sparqlJSTypes';
 import { builtInCall } from './builtIn';
 import { argList, brackettedExpression, expression, type IExpression } from './expression';
 import { var_, varOrIri } from './general';
@@ -156,98 +157,106 @@ export const inlineData: RuleDef<'inlineData'> = {
 /**
  * [[62]](https://www.w3.org/TR/sparql11-query/#rDataBlock)
  */
-export const dataBlock: RuleDef<'dataBlock'> = {
+export const dataBlock: RuleDef<'dataBlock', ValuePatternRow[]> = {
   name: 'dataBlock',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      {
-        ALT: () => {
-          SUBRULE(inlineDataOneVar);
-        },
-      },
-      {
-        ALT: () => {
-          SUBRULE(inlineDataFull);
-        },
-      },
-    ]);
-  },
+  impl: ({ SUBRULE, OR }) => () => OR([
+    { ALT: () => SUBRULE(inlineDataOneVar) },
+    { ALT: () => SUBRULE(inlineDataFull) },
+  ]),
 };
 
 /**
  * [[63]](https://www.w3.org/TR/sparql11-query/#rInlineDataOneVar)
  */
-export const inlineDataOneVar: RuleDef<'inlineDataOneVar'> = {
+export const inlineDataOneVar: RuleDef<'inlineDataOneVar', ValuePatternRow[]> = {
   name: 'inlineDataOneVar',
   impl: ({ SUBRULE, CONSUME, MANY }) => () => {
-    SUBRULE(var_);
+    const res: ValuePatternRow[] = [];
+    const varVal = SUBRULE(var_);
     CONSUME(l.symbols.LCurly);
     MANY(() => {
-      SUBRULE(dataBlockValue);
+      const value = SUBRULE(dataBlockValue);
+      res.push({
+        [varVal.value]: value,
+      });
     });
     CONSUME(l.symbols.RCurly);
+    return res;
   },
 };
 
 /**
  * [[64]](https://www.w3.org/TR/sparql11-query/#rInlineDataFull)
  */
-export const inlineDataFull: RuleDef<'inlineDataFull'> = {
+export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
   name: 'inlineDataFull',
-  impl: ({ SUBRULE, CONSUME, MANY1, MANY2, OR1, OR2, CONSUME1, MANY3, CONSUME2 }) => () => {
-    OR1([
-      {
-        ALT: () => {
-          CONSUME1(l.terminals.nil);
-        },
+  impl: ({ OR, MANY, SUBRULE, CONSUME }) => () => OR([
+    // Grammar rule 64 together with note 11 learns us that a nil should be followed by a nil in DataBlock.
+    {
+      ALT: () => {
+        const res: ValuePatternRow[] = [];
+        CONSUME(l.terminals.nil);
+        CONSUME(l.symbols.LCurly);
+        MANY(() => {
+          CONSUME(l.terminals.nil);
+          res.push({});
+        });
+        CONSUME(l.symbols.RCurly);
+        return res;
       },
-      {
-        ALT: () => {
-          CONSUME1(l.symbols.LParen);
-          MANY1(() => {
-            SUBRULE(var_);
+    },
+    {
+      ALT: () => {
+        const res: ValuePatternRow[] = [];
+        const vars: VariableTerm[] = [];
+
+        CONSUME(l.symbols.LParen);
+        MANY(() => {
+          vars.push(SUBRULE(var_));
+        });
+        CONSUME(l.symbols.RParen);
+
+        CONSUME(l.symbols.LCurly);
+        MANY(() => {
+          const varBinds: ValuePatternRow[string][] = [];
+          CONSUME(l.symbols.LParen);
+          MANY(() => {
+            varBinds.push(SUBRULE(dataBlockValue));
           });
-          CONSUME1(l.symbols.RParen);
-        },
+          CONSUME(l.symbols.RParen);
+
+          if (varBinds.length !== vars.length) {
+            throw new Error('Number of dataBlockValues does not match number of variables.');
+          }
+          const row: ValuePatternRow = {};
+          for (const [ index, varVal ] of vars.entries()) {
+            row[varVal.value] = varBinds[index];
+          }
+          res.push(row);
+        });
+        CONSUME(l.symbols.RCurly);
+        return res;
       },
-    ]);
-    CONSUME(l.symbols.LCurly);
-    MANY2(() => {
-      OR2([
-        {
-          ALT: () => {
-            CONSUME2(l.symbols.LParen);
-            MANY3(() => {
-              SUBRULE(dataBlockValue);
-            });
-            CONSUME2(l.symbols.RParen);
-          },
-        },
-        {
-          ALT: () => {
-            CONSUME2(l.terminals.nil);
-          },
-        },
-      ]);
-    });
-    CONSUME(l.symbols.RCurly);
-  },
+    },
+  ]),
 };
 
 /**
  * [[65]](https://www.w3.org/TR/sparql11-query/#rDataBlockValue)
  */
-export const dataBlockValue: RuleDef<'dataBlockValue'> = {
+export const dataBlockValue: RuleDef<'dataBlockValue', IriTerm | BlankTerm | LiteralTerm | undefined> = {
   name: 'dataBlockValue',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(iri) },
-      { ALT: () => SUBRULE(rdfLiteral) },
-      { ALT: () => SUBRULE(numericLiteral) },
-      { ALT: () => SUBRULE(booleanLiteral) },
-      { ALT: () => CONSUME(l.undef) },
-    ]);
-  },
+  impl: ({ SUBRULE, CONSUME, OR }) => () => OR< IriTerm | BlankTerm | LiteralTerm | undefined>([
+    { ALT: () => SUBRULE(iri) },
+    { ALT: () => SUBRULE(rdfLiteral) },
+    { ALT: () => SUBRULE(numericLiteral) },
+    { ALT: () => SUBRULE(booleanLiteral) },
+    { ALT: () => {
+      CONSUME(l.undef);
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      return undefined;
+    } },
+  ]),
 };
 
 /**
