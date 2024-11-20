@@ -427,7 +427,11 @@ export class Builder<T extends string > {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
-        super(tokenVocabulary);
+        super(tokenVocabulary, {
+          // TODO: enable these and test correctness again!
+          // maxLookahead: 1,
+          // skipValidations: true,
+        });
         const selfRef: CstDef = {
           CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),
           CONSUME1: (tokenType, option) => this.CONSUME1(tokenType, option),

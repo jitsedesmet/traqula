@@ -189,6 +189,7 @@ export const aggregate: RuleDef<'aggregate'> = {
   name: 'aggregate',
   impl: ({ SUBRULE, OR }) => () => {
     OR([
+      // TODO: Enable https://chevrotain.io/docs/guide/performance.html#caching-arrays-of-alternatives
       { ALT: () => SUBRULE(aggregateCount) },
       { ALT: () => SUBRULE(aggregateSum) },
       { ALT: () => SUBRULE(aggregateMin) },

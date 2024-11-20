@@ -1,8 +1,8 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import type { BlankTerm, IriTerm, LiteralTerm, ValuePatternRow, VariableTerm } from '../sparqlJSTypes';
+import type { BlankTerm, IriTerm, LiteralTerm, Pattern, ValuePatternRow, VariableTerm } from '../sparqlJSTypes';
 import { builtInCall } from './builtIn';
-import { argList, brackettedExpression, expression, type IExpression } from './expression';
+import { argList, brackettedExpression, expression } from './expression';
 import { var_, varOrIri } from './general';
 import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
 import { subSelect } from './queryUnit';
@@ -11,35 +11,36 @@ import { triplesBlock } from './tripleBlock';
 /**
  * [[17]](https://www.w3.org/TR/sparql11-query/#rWhereClause)
  */
-export const whereClause: RuleDef<'whereClause'> = {
+export const whereClause: RuleDef<'whereClause', Pattern[]> = {
   name: 'whereClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
       CONSUME(l.where);
     });
-    SUBRULE(groupGraphPattern);
+    return SUBRULE(groupGraphPattern);
   },
 };
 
 /**
  * [[53]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPattern)
  */
-export const groupGraphPattern: RuleDef<'groupGraphPattern', IExpression> = {
+export const groupGraphPattern: RuleDef<'groupGraphPattern', Pattern[]> = {
   name: 'groupGraphPattern',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.symbols.LCurly);
-    OR([
-      { ALT: () => SUBRULE(subSelect) },
+    const result = OR([
+      { ALT: () => [ SUBRULE(subSelect) ]},
       { ALT: () => SUBRULE(groupGraphPatternSub) },
     ]);
     CONSUME(l.symbols.RCurly);
+    return result;
   },
 };
 
 /**
  * [[54]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPatternSub)
  */
-export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub'> = {
+export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = {
   name: 'groupGraphPatternSub',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     OPTION1(() => {
@@ -220,11 +221,15 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
         MANY(() => {
           const varBinds: ValuePatternRow[string][] = [];
           CONSUME(l.symbols.LParen);
-          MANY(() => {
-            varBinds.push(SUBRULE(dataBlockValue));
+          MANY({
+            GATE: () => vars.length > varBinds.length,
+            DEF: () => {
+              varBinds.push(SUBRULE(dataBlockValue));
+            },
           });
           CONSUME(l.symbols.RParen);
 
+          // TODO: what happens when I throw this error?
           if (varBinds.length !== vars.length) {
             throw new Error('Number of dataBlockValues does not match number of variables.');
           }

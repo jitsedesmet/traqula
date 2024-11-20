@@ -5,7 +5,7 @@ import type { BaseQuery, IriTerm, Term, VariableTerm } from '../sparqlJSTypes';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
 
 const factory = new DataFactory();
-;const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)

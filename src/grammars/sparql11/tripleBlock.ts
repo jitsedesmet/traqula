@@ -1,41 +1,42 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
+import type { BgpPattern, PropertyPath, Triple, VariableTerm } from '../sparqlJSTypes';
 import { objectList, var_, varOrTerm } from './general';
 import { path } from './propertyPaths';
 
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)
  */
-export const triplesBlock: RuleDef<'triplesBlock'> = {
+export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
   name: 'triplesBlock',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    SUBRULE(triplesSameSubjectPath);
-    OPTION1(() => {
+    const triples = SUBRULE(triplesSameSubjectPath);
+    const pattern = OPTION1(() => {
       CONSUME(l.symbols.dot);
-      OPTION2(() => {
-        SUBRULE(triplesBlock);
-      });
+      return OPTION2(() => SUBRULE(triplesBlock));
     });
+    return {
+      type: 'bgp',
+      triples: [ ...triples, ...(pattern?.triples ?? []) ],
+    };
   },
 };
 
 /**
  * [[81]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubjectPath)
  */
-export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath'> = {
+export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath', Triple[]> = {
   name: 'triplesSameSubjectPath',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => {
-        SUBRULE(varOrTerm);
-        SUBRULE(propertyListPathNotEmpty);
-      } },
-      { ALT: () => {
-        SUBRULE(triplesNodePath);
-        SUBRULE(propertyListPath);
-      } },
-    ]);
-  },
+  impl: ({ SUBRULE, OR }) => () => OR([
+    { ALT: () => {
+      const subject = SUBRULE(varOrTerm);
+      SUBRULE(propertyListPathNotEmpty);
+    } },
+    { ALT: () => {
+      SUBRULE(triplesNodePath);
+      SUBRULE(propertyListPath);
+    } },
+  ]),
 };
 
 /**
@@ -53,10 +54,10 @@ export const propertyListPath: RuleDef<'propertyListPath'> = {
 /**
  * [[83]](https://www.w3.org/TR/sparql11-query/#rPropertyListPathNotEmpty)
  */
-export const propertyListPathNotEmpty: RuleDef<'propertyListPathNotEmpty'> = {
+export const propertyListPathNotEmpty: RuleDef<'propertyListPathNotEmpty', Pick<Triple, 'predicate' | 'subject'>[]> = {
   name: 'propertyListPathNotEmpty',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => () => {
-    OR1([
+    const property = OR1([
       { ALT: () => SUBRULE1(verbPath) },
       { ALT: () => SUBRULE1(verbSimple) },
     ]);
@@ -77,21 +78,17 @@ export const propertyListPathNotEmpty: RuleDef<'propertyListPathNotEmpty'> = {
 /**
  * [[84]](https://www.w3.org/TR/sparql11-query/#rVerbPath)
  */
-export const verbPath: RuleDef<'verbPath'> = {
+export const verbPath: RuleDef<'verbPath', PropertyPath> = {
   name: 'verbPath',
-  impl: ({ SUBRULE }) => () => {
-    SUBRULE(path);
-  },
+  impl: ({ SUBRULE }) => () => SUBRULE(path),
 };
 
 /**
  * [[85]](https://www.w3.org/TR/sparql11-query/#rVerbSimple)
  */
-export const verbSimple: RuleDef<'verbSimple'> = {
+export const verbSimple: RuleDef<'verbSimple', VariableTerm> = {
   name: 'verbSimple',
-  impl: ({ SUBRULE }) => () => {
-    SUBRULE(var_);
-  },
+  impl: ({ SUBRULE }) => () => SUBRULE(var_),
 };
 
 /**

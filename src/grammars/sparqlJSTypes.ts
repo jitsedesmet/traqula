@@ -269,7 +269,7 @@ export interface ValuesPattern {
 export type ValuePatternRow = Record<string, IriTerm | BlankTerm | LiteralTerm | undefined>;
 
 export interface Triple {
-  subject: IriTerm | BlankTerm | VariableTerm | QuadTerm;
+  subject: Term;
   predicate: IriTerm | VariableTerm | PropertyPath;
   object: Term;
 }

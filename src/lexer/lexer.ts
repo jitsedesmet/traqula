@@ -118,4 +118,7 @@ export const allTokens: TokenType[] = [
   ...allSymbols,
 ];
 
-export const ChevSparqlLexer = new Lexer(allTokens, { positionTracking: 'onlyOffset' });
+export const ChevSparqlLexer = new Lexer(allTokens, {
+  positionTracking: 'onlyOffset',
+  ensureOptimizations: true,
+});
