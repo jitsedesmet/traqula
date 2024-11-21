@@ -152,15 +152,15 @@ import {
   solutionModifier,
 } from './solutionModifier';
 import {
-  blankNodePropertyListPath,
-  collectionPath,
-  graphNodePath,
-  objectListPath,
-  objectPath,
+  blankNodePropertyList,
+  collection,
+  graphNode,
+  objectList,
+  object,
   propertyListPath,
   propertyListPathNotEmpty,
   triplesBlock,
-  triplesNodePath,
+  triplesNode,
   triplesSameSubjectPath,
   verbPath,
   verbSimple,
@@ -300,8 +300,8 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(propertyListPathNotEmpty)
   .addRule(verbPath)
   .addRule(verbSimple)
-  .addRule(objectListPath)
-  .addRule(objectPath)
+  .addRule(objectList)
+  .addRule(object)
   .addRule(path)
   .addRule(pathAlternative)
   .addRule(pathSequence)
@@ -313,12 +313,12 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(pathOneInPropertySet)
   .addRule(triplesNode)
   .addRule(blankNodePropertyList)
-  .addRule(triplesNodePath)
-  .addRule(blankNodePropertyListPath)
+  .addRule(triplesNode)
+  .addRule(blankNodePropertyList)
   .addRule(collection)
-  .addRule(collectionPath)
+  .addRule(collection)
   .addRule(graphNode)
-  .addRule(graphNodePath)
+  .addRule(graphNode)
   .addRule(varOrTerm)
   .addRule(varOrIri)
   .addRule(var_)

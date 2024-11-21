@@ -17,6 +17,11 @@ import {
   EmbeddedActionsParser,
 } from 'chevrotain';
 
+type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
+  cstDef: RuleDef<T, U, ARGS>,
+  ...argument: ARGS
+) => U;
+
 export interface CstDef {
   /**
    *
@@ -360,21 +365,21 @@ export interface CstDef {
   AT_LEAST_ONE_SEP7: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP8: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP9: (options: AtLeastOneSepMethodOpts<any>) => void;
-  SUBRULE: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE1: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE2: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE3: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE4: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE5: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE6: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE7: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE8: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
-  SUBRULE9: <T extends string, U = any>(cstDef: RuleDef<T, U>) => U;
+  SUBRULE: SubRuleFunc;
+  SUBRULE1: SubRuleFunc;
+  SUBRULE2: SubRuleFunc;
+  SUBRULE3: SubRuleFunc;
+  SUBRULE4: SubRuleFunc;
+  SUBRULE5: SubRuleFunc;
+  SUBRULE6: SubRuleFunc;
+  SUBRULE7: SubRuleFunc;
+  SUBRULE8: SubRuleFunc;
+  SUBRULE9: SubRuleFunc;
 }
 
-export type RuleDef<T extends string = string, U = unknown> = {
-  name: T;
-  impl: (def: CstDef) => () => U;
+export type RuleDef<NameType extends string = string, ReturnType = unknown, ParamType extends any[] = []> = {
+  name: NameType;
+  impl: (def: CstDef) => (...args: ParamType) => ReturnType;
 };
 
 export class Builder<T extends string > {
@@ -503,110 +508,110 @@ export class Builder<T extends string > {
           AT_LEAST_ONE_SEP7: options => this.AT_LEAST_ONE_SEP7(options),
           AT_LEAST_ONE_SEP8: options => this.AT_LEAST_ONE_SEP8(options),
           AT_LEAST_ONE_SEP9: options => this.AT_LEAST_ONE_SEP9(options),
-          SUBRULE: (cstDef: RuleDef<any>) => {
+          SUBRULE: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE(this[cstDef.name]);
+              return this.SUBRULE(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE1: (cstDef: RuleDef<any>) => {
+          SUBRULE1: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE1(this[cstDef.name]);
+              return this.SUBRULE1(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE2: (cstDef: RuleDef) => {
+          SUBRULE2: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE2(this[cstDef.name]);
+              return this.SUBRULE2(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE3: (cstDef: RuleDef) => {
+          SUBRULE3: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE3(this[cstDef.name]);
+              return this.SUBRULE3(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE4: (cstDef: RuleDef) => {
+          SUBRULE4: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE4(this[cstDef.name]);
+              return this.SUBRULE4(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE5: (cstDef: RuleDef) => {
+          SUBRULE5: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE5(this[cstDef.name]);
+              return this.SUBRULE5(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE6: (cstDef: RuleDef) => {
+          SUBRULE6: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE6(this[cstDef.name]);
+              return this.SUBRULE6(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE7: (cstDef: RuleDef) => {
+          SUBRULE7: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE7(this[cstDef.name]);
+              return this.SUBRULE7(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE8: (cstDef: RuleDef) => {
+          SUBRULE8: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE8(this[cstDef.name]);
+              return this.SUBRULE8(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
-          SUBRULE9: (cstDef: RuleDef) => {
+          SUBRULE9: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
-              return this.SUBRULE9(this[cstDef.name]);
+              return this.SUBRULE9(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
               console.error(`Error with subrule: ${cstDef.name}`);

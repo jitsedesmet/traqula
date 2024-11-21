@@ -43,9 +43,7 @@ export const groupGraphPattern: RuleDef<'groupGraphPattern', Pattern[]> = {
 export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = {
   name: 'groupGraphPatternSub',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
-    OPTION1(() => {
-      SUBRULE1(triplesBlock);
-    });
+    const bgpPattern = OPTION1(() => SUBRULE1(triplesBlock));
     MANY(() => {
       SUBRULE(graphPatternNotTriples);
       OPTION2(() => {

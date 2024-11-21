@@ -3,6 +3,7 @@ import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import type { BaseQuery, IriTerm, Term, VariableTerm } from '../sparqlJSTypes';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
+import { type IPropertyListPathNotEmpty, objectList } from './tripleBlock';
 
 const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -111,16 +112,17 @@ export const propertyList: RuleDef<'propertyList'> = {
 /**
  * [[77]](https://www.w3.org/TR/sparql11-query/#rPropertyListNotEmpty)
  */
-export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty'> = {
+// TODO, all these rules just differ on how they full circle to the rule
+export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListPathNotEmpty> = {
   name: 'propertyListNotEmpty',
   impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION }) => () => {
     SUBRULE1(verb);
-    SUBRULE1(objectList);
+    SUBRULE1(objectList, { allowPaths: false });
     MANY(() => {
       CONSUME(l.symbols.semi);
       OPTION(() => {
         SUBRULE2(verb);
-        SUBRULE2(objectList);
+        SUBRULE2(objectList, { allowPaths: false });
       });
     });
   },
@@ -137,80 +139,6 @@ export const verb: RuleDef<'verb'> = {
       { ALT: () => CONSUME(l.a) },
     ]);
   },
-};
-
-/**
- * [[79]](https://www.w3.org/TR/sparql11-query/#rObjectList)
- */
-export const objectList: RuleDef<'objectList'> = {
-  name: 'objectList',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
-    SUBRULE1(object);
-    MANY(() => {
-      CONSUME(l.symbols.comma);
-      SUBRULE2(object);
-    });
-  },
-};
-
-/**
- * [[80]](https://www.w3.org/TR/sparql11-query/#rObject)
- */
-export const object: RuleDef<'object'> = {
-  name: 'object',
-  impl: ({ SUBRULE }) => () => {
-    SUBRULE(graphNode);
-  },
-};
-
-/**
- * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
- */
-export const triplesNode: RuleDef<'triplesNode'> = {
-  name: 'triplesNode',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(collection) },
-      { ALT: () => SUBRULE(blankNodePropertyList) },
-    ]);
-  },
-};
-
-/**
- * [[99]](https://www.w3.org/TR/sparql11-query/#rBlankNodePropertyList)
- */
-export const blankNodePropertyList: RuleDef<'blankNodePropertyList'> = {
-  name: 'blankNodePropertyList',
-  impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.symbols.LSquare);
-    SUBRULE(propertyListNotEmpty);
-    CONSUME(l.symbols.RSquare);
-  },
-};
-
-/**
- * [[102]](https://www.w3.org/TR/sparql11-query/#rCollection)
- */
-export const collection: RuleDef<'collection'> = {
-  name: 'collection',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
-    CONSUME(l.symbols.LParen);
-    AT_LEAST_ONE(() => {
-      SUBRULE(graphNode);
-    });
-    CONSUME(l.symbols.RParen);
-  },
-};
-
-/**
- * [[103]](https://www.w3.org/TR/sparql11-query/#rGraphNode)
- */
-export const graphNode: RuleDef<'graphNode', Term> = {
-  name: 'graphNode',
-  impl: ({ SUBRULE, OR }) => () => OR([
-    { ALT: () => SUBRULE(varOrTerm) },
-    { ALT: () => SUBRULE(triplesNode) },
-  ]),
 };
 
 /**

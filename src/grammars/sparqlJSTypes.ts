@@ -269,6 +269,7 @@ export interface ValuesPattern {
 export type ValuePatternRow = Record<string, IriTerm | BlankTerm | LiteralTerm | undefined>;
 
 export interface Triple {
+  // TODO: I changed this type. It was incorrect (tested it, literals are also allowed). deal with this...
   subject: Term;
   predicate: IriTerm | VariableTerm | PropertyPath;
   object: Term;
