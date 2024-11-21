@@ -349,12 +349,14 @@ export const primaryExpression: RuleDef<'primaryExpression'> = {
 /**
  * [[120]](https://www.w3.org/TR/sparql11-query/#rBrackettedExpression)
  */
-export const brackettedExpression: RuleDef<'brackettedExpression'> = {
+export const brackettedExpression: RuleDef<'brackettedExpression', Expression> = {
   name: 'brackettedExpression',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
-    SUBRULE(expression);
+    const expr = SUBRULE(expression);
     CONSUME(l.symbols.RParen);
+
+    return expr;
   },
 };
 

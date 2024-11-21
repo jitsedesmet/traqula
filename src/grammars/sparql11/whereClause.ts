@@ -4,7 +4,9 @@ import type {
   BindPattern,
   BlankTerm,
   BlockPattern,
+  Expression,
   FilterPattern,
+  FunctionCallExpression,
   GraphPattern,
   GroupPattern,
   IriTerm,
@@ -369,24 +371,26 @@ export const filter: RuleDef<'filter', FilterPattern> = {
 /**
  * [[69]](https://www.w3.org/TR/sparql11-query/#rConstraint)
  */
-export const constraint: RuleDef<'constraint'> = {
+export const constraint: RuleDef<'constraint', Expression> = {
   name: 'constraint',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(brackettedExpression) },
-      { ALT: () => SUBRULE(builtInCall) },
-      { ALT: () => SUBRULE(functionCall) },
-    ]);
-  },
+  impl: ({ SUBRULE, OR }) => () => OR([
+    { ALT: () => SUBRULE(brackettedExpression) },
+    { ALT: () => SUBRULE(builtInCall) },
+    { ALT: () => SUBRULE(functionCall) },
+  ]),
 };
 
 /**
  * [[70]](https://www.w3.org/TR/sparql11-query/#rFunctionCall)
  */
-export const functionCall: RuleDef<'functionCall'> = {
+export const functionCall: RuleDef<'functionCall', FunctionCallExpression> = {
   name: 'functionCall',
   impl: ({ SUBRULE }) => () => {
-    SUBRULE(iri);
-    SUBRULE(argList);
+    const func = SUBRULE(iri);
+    const args = SUBRULE(argList);
+    return {
+      ...args,
+      function: func,
+    };
   },
 };

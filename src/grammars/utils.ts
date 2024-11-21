@@ -5,6 +5,7 @@ import { expression, expressionList } from './sparql11/expression';
 import { type IVar, var_ } from './sparql11/general';
 import { groupGraphPattern } from './sparql11/whereClause';
 import type { Expression } from './sparqlJSTypes';
+import { Wildcard } from './Wildcard';
 
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
@@ -213,11 +214,6 @@ RuleDefExpressionFunctionX<
   };
 }
 
-export interface Wildcard {
-  termType: 'Wildcard';
-  value: '*';
-}
-
 export interface IExpressionAggregator<T extends string> {
   type: 'aggregate';
   expression: Expression | Wildcard;
@@ -236,11 +232,11 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
         CONSUME(l.distinct);
         return true;
       }) ?? false;
-      const arg = OR<Expression | '*'>([
+      const expressionVal = OR<Expression | Wildcard>([
         {
           ALT: () => {
             CONSUME(l.symbols.star);
-            return '*';
+            return new Wildcard();
           },
         },
         { ALT: () => SUBRULE(expression) },
@@ -248,9 +244,10 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
       CONSUME(l.symbols.RParen);
       return {
         type: 'aggregate',
-        operator: unCapitalize(func.name),
-        arg,
+        aggregation: unCapitalize(func.name),
+        expression: expressionVal,
         distinct,
+        separator: undefined,
       };
     },
   };

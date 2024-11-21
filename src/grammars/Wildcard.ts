@@ -1,7 +1,9 @@
+import type { Wildcard as IWildcard } from './sparqlJSTypes';
+
 // Wildcard constructor
-export class Wildcard {
-  public value = '*';
-  public termType = 'Wildcard';
+export class Wildcard implements IWildcard {
+  public value = <const> '*';
+  public termType = <const> 'Wildcard';
   public constructor() {
     // eslint-disable-next-line no-constructor-return
     return WILDCARD || this;

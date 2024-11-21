@@ -62,7 +62,7 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
     MANY(() => {
       datasetClauses.push(SUBRULE(datasetClause));
     });
-    SUBRULE(whereClause);
+    const wherePatterns = SUBRULE(whereClause);
     SUBRULE(solutionModifier);
   },
 };
