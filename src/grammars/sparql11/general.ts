@@ -3,7 +3,7 @@ import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import type { BaseQuery, IriTerm, Term, VariableTerm } from '../sparqlJSTypes';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
-import { type IPropertyListPathNotEmpty, objectList } from './tripleBlock';
+import { triplesSameSubject } from './tripleBlock';
 
 const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -64,7 +64,7 @@ export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
 export const triplesTemplate: RuleDef<'triplesTemplate'> = {
   name: 'triplesTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    SUBRULE(triplesSameSubject);
+    SUBRULE(triplesSameSubject, { allowPaths: false });
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {
@@ -75,70 +75,17 @@ export const triplesTemplate: RuleDef<'triplesTemplate'> = {
 };
 
 /**
- * [[75]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubject)
- */
-export const triplesSameSubject: RuleDef<'triplesSameSubject'> = {
-  name: 'triplesSameSubject',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      {
-        ALT: () => {
-          SUBRULE(varOrTerm);
-          SUBRULE(propertyListNotEmpty);
-        },
-      },
-      {
-        ALT: () => {
-          SUBRULE(triplesNode);
-          SUBRULE(propertyList);
-        },
-      },
-    ]);
-  },
-};
-
-/**
- * [[76]](https://www.w3.org/TR/sparql11-query/#rPropertyList)
- */
-export const propertyList: RuleDef<'propertyList'> = {
-  name: 'propertyList',
-  impl: ({ SUBRULE, OPTION }) => () => {
-    OPTION(() => {
-      SUBRULE(propertyListNotEmpty);
-    });
-  },
-};
-
-/**
- * [[77]](https://www.w3.org/TR/sparql11-query/#rPropertyListNotEmpty)
- */
-// TODO, all these rules just differ on how they full circle to the rule
-export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListPathNotEmpty> = {
-  name: 'propertyListNotEmpty',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION }) => () => {
-    SUBRULE1(verb);
-    SUBRULE1(objectList, { allowPaths: false });
-    MANY(() => {
-      CONSUME(l.symbols.semi);
-      OPTION(() => {
-        SUBRULE2(verb);
-        SUBRULE2(objectList, { allowPaths: false });
-      });
-    });
-  },
-};
-
-/**
  * [[78]](https://www.w3.org/TR/sparql11-query/#rVerb)
  */
-export const verb: RuleDef<'verb'> = {
+export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
   name: 'verb',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(varOrIri) },
-      { ALT: () => CONSUME(l.a) },
-    ]);
-  },
+  impl: ({ SUBRULE, CONSUME, OR }) => () => OR([
+    { ALT: () => SUBRULE(varOrIri) },
+    { ALT: () => {
+      CONSUME(l.a);
+      return factory.namedNode(`${RDF}type`);
+    } },
+  ]),
 };
 
 /**

@@ -157,11 +157,11 @@ import {
   graphNode,
   objectList,
   object,
-  propertyListPath,
-  propertyListPathNotEmpty,
+  propertyList,
+  propertyListNotEmpty,
   triplesBlock,
   triplesNode,
-  triplesSameSubjectPath,
+  triplesSameSubject,
   verbPath,
   verbSimple,
 } from './tripleBlock';
@@ -295,9 +295,9 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(verb)
   .addRule(objectList)
   .addRule(object)
-  .addRule(triplesSameSubjectPath)
-  .addRule(propertyListPath)
-  .addRule(propertyListPathNotEmpty)
+  .addRule(triplesSameSubject)
+  .addRule(propertyList)
+  .addRule(propertyListNotEmpty)
   .addRule(verbPath)
   .addRule(verbSimple)
   .addRule(objectList)

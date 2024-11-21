@@ -2,7 +2,7 @@ import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
 import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes';
-import { propertyListNotEmpty, var_, varOrTerm } from './general';
+import { var_, varOrTerm, verb } from './general';
 import { path } from './propertyPaths';
 
 const factory = new DataFactory();
@@ -14,7 +14,7 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
   name: 'triplesBlock',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    const triples = SUBRULE(triplesSameSubjectPath);
+    const triples = SUBRULE(triplesSameSubject, { allowPaths: true });
     const pattern = OPTION1(() => {
       CONSUME(l.symbols.dot);
       return OPTION2(() => SUBRULE(triplesBlock));
@@ -27,14 +27,15 @@ export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
 };
 
 /**
+ * [[75]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubject)
  * [[81]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubjectPath)
  */
-export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath', Triple[]> = {
-  name: 'triplesSameSubjectPath',
-  impl: ({ SUBRULE, OR }) => () => OR<Triple[]>([
+export const triplesSameSubject: RuleDef<'triplesSameSubject', Triple[], [BlankNodePropertyListArgs]> = {
+  name: 'triplesSameSubject',
+  impl: ({ SUBRULE, OR }) => (...args) => OR<Triple[]>([
     { ALT: () => {
       const subject = SUBRULE(varOrTerm);
-      const { partialTriples, additionalTriples } = SUBRULE(propertyListPathNotEmpty);
+      const { partialTriples, additionalTriples } = SUBRULE(propertyListNotEmpty, ...args);
 
       return [
         ...additionalTriples,
@@ -46,8 +47,8 @@ export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath', Triple[]>
       ];
     } },
     { ALT: () => {
-      const { object: subject, additionalTriples: triples1 } = SUBRULE(triplesNode, { allowPaths: true });
-      const { partialTriples, additionalTriples: triples2 } = SUBRULE(propertyListPath);
+      const { object: subject, additionalTriples: triples1 } = SUBRULE(triplesNode, ...args);
+      const { partialTriples, additionalTriples: triples2 } = SUBRULE(propertyList, ...args);
       return [
         ...triples1,
         ...triples2,
@@ -62,12 +63,13 @@ export const triplesSameSubjectPath: RuleDef<'triplesSameSubjectPath', Triple[]>
 };
 
 /**
+ * [[76]](https://www.w3.org/TR/sparql11-query/#rPropertyList)
  * [[82]](https://www.w3.org/TR/sparql11-query/#rPropertyListPath)
  */
-export const propertyListPath: RuleDef<'propertyListPath', IPropertyListPathNotEmpty> = {
-  name: 'propertyListPath',
-  impl: ({ SUBRULE, OPTION }) => () => {
-    const partials = OPTION(() => SUBRULE(propertyListPathNotEmpty));
+export const propertyList: RuleDef<'propertyList', IPropertyListNotEmpty, [BlankNodePropertyListArgs]> = {
+  name: 'propertyList',
+  impl: ({ SUBRULE, OPTION }) => (...args) => {
+    const partials = OPTION(() => SUBRULE(propertyListNotEmpty, ...args));
     return partials ?? {
       additionalTriples: [],
       partialTriples: [],
@@ -76,58 +78,64 @@ export const propertyListPath: RuleDef<'propertyListPath', IPropertyListPathNotE
 };
 
 /**
+ * [[77]](https://www.w3.org/TR/sparql11-query/#rPropertyListNotEmpty)
  * [[83]](https://www.w3.org/TR/sparql11-query/#rPropertyListPathNotEmpty)
  */
-export interface IPropertyListPathNotEmpty {
+export interface IPropertyListNotEmpty {
   partialTriples: Pick<Triple, 'predicate' | 'object'>[];
   additionalTriples: Triple[];
 }
 
-export const propertyListPathNotEmpty: RuleDef<'propertyListPathNotEmpty', IPropertyListPathNotEmpty> = {
-  name: 'propertyListPathNotEmpty',
-  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => () => {
-    const tripleConstructor: { predicate: Triple['predicate']; objects: IObjectList }[] = [];
+export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListNotEmpty, [BlankNodePropertyListArgs]> =
+  {
+    name: 'propertyListNotEmpty',
+    impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => ({ allowPaths }) => {
+      const tripleConstructor: { predicate: Triple['predicate']; objects: IObjectList }[] = [];
 
-    const firstProperty = OR1<IriTerm | VariableTerm | PropertyPath>([
-      { ALT: () => SUBRULE1(verbPath) },
-      { ALT: () => SUBRULE1(verbSimple) },
-    ]);
-    const firstObjects = SUBRULE(objectList, { allowPaths: true });
-    tripleConstructor.push({ predicate: firstProperty, objects: firstObjects });
+      const firstProperty = allowPaths ?
+        OR1<IriTerm | VariableTerm | PropertyPath>([
+          { ALT: () => SUBRULE1(verbPath) },
+          { ALT: () => SUBRULE1(verbSimple) },
+        ]) :
+        SUBRULE1(verb);
+      const firstObjects = SUBRULE(objectList, { allowPaths });
+      tripleConstructor.push({ predicate: firstProperty, objects: firstObjects });
 
-    MANY(() => {
-      CONSUME(l.symbols.semi);
-      OPTION(() => {
-        const predicate = OR2<IriTerm | VariableTerm | PropertyPath>([
-          { ALT: () => SUBRULE2(verbPath) },
-          { ALT: () => SUBRULE2(verbSimple) },
-        ]);
+      MANY(() => {
+        CONSUME(l.symbols.semi);
+        OPTION(() => {
+          const predicate = allowPaths ?
+            OR2<IriTerm | VariableTerm | PropertyPath>([
+              { ALT: () => SUBRULE2(verbPath) },
+              { ALT: () => SUBRULE2(verbSimple) },
+            ]) :
+            SUBRULE2(verb);
 
-        const objects = SUBRULE(objectList, { allowPaths: false });
-        tripleConstructor.push({ predicate, objects });
+          const objects = SUBRULE(objectList, { allowPaths });
+          tripleConstructor.push({ predicate, objects });
+        });
       });
-    });
 
-    // Extract all partial triples
-    const partialTriples: IPropertyListPathNotEmpty['partialTriples'] = [];
-    const additionalTriples: Triple[] = [];
+      // Extract all partial triples
+      const partialTriples: IPropertyListNotEmpty['partialTriples'] = [];
+      const additionalTriples: Triple[] = [];
 
-    for (const { predicate, objects } of tripleConstructor) {
-      const { objects: innerObject, additionalTriples: innerAdditionalTriples } = objects;
-      additionalTriples.push(...innerAdditionalTriples);
-      partialTriples.push(
-        ...innerObject.map(object => ({
-          predicate,
-          object,
-        })),
-      );
-    }
-    return {
-      partialTriples,
-      additionalTriples,
-    };
-  },
-};
+      for (const { predicate, objects } of tripleConstructor) {
+        const { objects: innerObject, additionalTriples: innerAdditionalTriples } = objects;
+        additionalTriples.push(...innerAdditionalTriples);
+        partialTriples.push(
+          ...innerObject.map(object => ({
+            predicate,
+            object,
+          })),
+        );
+      }
+      return {
+        partialTriples,
+        additionalTriples,
+      };
+    },
+  };
 
 /**
  * [[84]](https://www.w3.org/TR/sparql11-query/#rVerbPath)
@@ -209,11 +217,9 @@ export interface BlankNodePropertyListArgs {
 
 export const blankNodePropertyList: RuleDef<'blankNodePropertyList', IObject, [BlankNodePropertyListArgs]> = {
   name: 'blankNodePropertyList',
-  impl: ({ SUBRULE, CONSUME }) => (arg) => {
+  impl: ({ SUBRULE, CONSUME }) => (...args) => {
     CONSUME(l.symbols.LSquare);
-    const { additionalTriples, partialTriples } = SUBRULE(
-      arg.allowPaths ? propertyListPathNotEmpty : propertyListNotEmpty,
-    );
+    const { additionalTriples, partialTriples } = SUBRULE(propertyListNotEmpty, ...args);
     CONSUME(l.symbols.RSquare);
 
     const subject = factory.blankNode();
