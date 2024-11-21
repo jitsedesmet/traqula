@@ -191,10 +191,12 @@ export const modify: RuleDef<'modify'> = {
       SUBRULE(iri);
     });
     OR([
-      { ALT: () => {
-        SUBRULE(deleteClause);
-        OPTION2(() => SUBRULE1(insertClause));
-      } },
+      {
+        ALT: () => {
+          SUBRULE(deleteClause);
+          OPTION2(() => SUBRULE1(insertClause));
+        },
+      },
       { ALT: () => SUBRULE2(insertClause) },
     ]);
     MANY(() => SUBRULE(usingClause));

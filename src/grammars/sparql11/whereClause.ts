@@ -1,6 +1,23 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import type { BlankTerm, IriTerm, LiteralTerm, Pattern, ValuePatternRow, VariableTerm } from '../sparqlJSTypes';
+import type {
+  BindPattern,
+  BlankTerm,
+  BlockPattern,
+  FilterPattern,
+  GraphPattern,
+  GroupPattern,
+  IriTerm,
+  LiteralTerm,
+  MinusPattern,
+  OptionalPattern,
+  Pattern,
+  ServicePattern,
+  UnionPattern,
+  ValuePatternRow,
+  ValuesPattern,
+  VariableTerm,
+} from '../sparqlJSTypes';
 import { builtInCall } from './builtIn';
 import { argList, brackettedExpression, expression } from './expression';
 import { var_, varOrIri } from './general';
@@ -43,113 +60,166 @@ export const groupGraphPattern: RuleDef<'groupGraphPattern', Pattern[]> = {
 export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = {
   name: 'groupGraphPatternSub',
   impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
-    const bgpPattern = OPTION1(() => SUBRULE1(triplesBlock));
+    const patterns: Pattern[] = [];
+
+    const bgpPattern = OPTION1(() => [ SUBRULE1(triplesBlock) ]) ?? [];
+    patterns.push(...bgpPattern);
     MANY(() => {
-      SUBRULE(graphPatternNotTriples);
-      OPTION2(() => {
-        CONSUME(l.symbols.dot);
-      });
-      OPTION3(() => {
-        SUBRULE2(triplesBlock);
-      });
+      const notTriples = SUBRULE(graphPatternNotTriples);
+      patterns.push(notTriples);
+      OPTION2(() => CONSUME(l.symbols.dot));
+
+      const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
+      patterns.push(...moreTriples);
     });
+
+    return patterns;
   },
 };
 
 /**
  * [[56]](https://www.w3.org/TR/sparql11-query/#rGraphPatternNotTriples)
  */
-export const graphPatternNotTriples: RuleDef<'graphPatternNotTriples'> = {
+type GraphPatternNotTriplesReturn = ValuesPattern | BindPattern | FilterPattern | BlockPattern;
+export const graphPatternNotTriples:
+RuleDef<'graphPatternNotTriples', GraphPatternNotTriplesReturn> = {
   name: 'graphPatternNotTriples',
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(groupOrUnionGraphPattern) },
-      { ALT: () => SUBRULE(optionalGraphPattern) },
-      { ALT: () => SUBRULE(minusGraphPattern) },
-      { ALT: () => SUBRULE(graphGraphPattern) },
-      { ALT: () => SUBRULE(serviceGraphPattern) },
-      { ALT: () => SUBRULE(filter) },
-      { ALT: () => SUBRULE(bind) },
-      { ALT: () => SUBRULE(inlineData) },
-    ]);
-  },
+  impl: ({ SUBRULE, OR }) => () => OR<GraphPatternNotTriplesReturn>([
+    { ALT: () => SUBRULE(groupOrUnionGraphPattern) },
+    { ALT: () => SUBRULE(optionalGraphPattern) },
+    { ALT: () => SUBRULE(minusGraphPattern) },
+    { ALT: () => SUBRULE(graphGraphPattern) },
+    { ALT: () => SUBRULE(serviceGraphPattern) },
+    { ALT: () => SUBRULE(filter) },
+    { ALT: () => SUBRULE(bind) },
+    { ALT: () => SUBRULE(inlineData) },
+  ]),
 };
 
 /**
  * [[57]](https://www.w3.org/TR/sparql11-query/#rOptionalGraphPattern)
  */
-export const optionalGraphPattern: RuleDef<'optionalGraphPattern'> = {
+export const optionalGraphPattern: RuleDef<'optionalGraphPattern', OptionalPattern> = {
   name: 'optionalGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.optional);
-    SUBRULE(groupGraphPattern);
+    const patterns = SUBRULE(groupGraphPattern);
+
+    return {
+      type: 'optional',
+      patterns,
+    };
   },
 };
 
 /**
  * [[67]](https://www.w3.org/TR/sparql11-query/#rGroupOrUnionGraphPattern)
  */
-export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern'> = {
+export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', GroupPattern | UnionPattern> = {
   name: 'groupOrUnionGraphPattern',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2 }) => () => {
-    SUBRULE1(groupGraphPattern);
-    MANY(() => {
-      CONSUME(l.union);
-      SUBRULE2(groupGraphPattern);
+  impl: ({ AT_LEAST_ONE_SEP, SUBRULE }) => () => {
+    const patterns: Pattern[] = [];
+
+    AT_LEAST_ONE_SEP({
+      DEF: () => {
+        const subPatterns = SUBRULE(groupGraphPattern);
+        if (subPatterns.length === 1) {
+          patterns.push(subPatterns[0]);
+        } else {
+          patterns.push({
+            type: 'group',
+            patterns: subPatterns,
+          });
+        }
+      },
+      SEP: l.union,
     });
+
+    return patterns.length === 1 ?
+    // TODO: This cast might not be correct! (Test it)
+        <GroupPattern> patterns[0] :
+        {
+          type: 'union',
+          patterns,
+        };
   },
 };
 
 /**
  * [[58]](https://www.w3.org/TR/sparql11-query/#rGraphGraphPattern)
  */
-export const graphGraphPattern: RuleDef<'graphGraphPattern'> = {
+export const graphGraphPattern: RuleDef<'graphGraphPattern', GraphPattern> = {
   name: 'graphGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
-    SUBRULE(varOrIri);
-    SUBRULE(groupGraphPattern);
+    const name = SUBRULE(varOrIri);
+    const patterns = SUBRULE(groupGraphPattern);
+
+    return {
+      type: 'graph',
+      name,
+      patterns,
+    };
   },
 };
 
 /**
  * [[59]](https://www.w3.org/TR/sparql11-query/#rServiceGraphPattern)
  */
-export const serviceGraphPattern: RuleDef<'serviceGraphPattern'> = {
+export const serviceGraphPattern: RuleDef<'serviceGraphPattern', ServicePattern> = {
   name: 'serviceGraphPattern',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.service);
-    OPTION(() => {
+    const silent = OPTION(() => {
       CONSUME(l.silent);
-    });
-    SUBRULE(varOrIri);
-    SUBRULE(groupGraphPattern);
+      return true;
+    }) ?? false;
+    const name = SUBRULE(varOrIri);
+    const patterns = SUBRULE(groupGraphPattern);
+
+    return {
+      type: 'service',
+      name,
+      silent,
+      patterns,
+    };
   },
 };
 
 /**
  * [[60]](https://www.w3.org/TR/sparql11-query/#rBind)
  */
-export const bind: RuleDef<'bind'> = {
+export const bind: RuleDef<'bind', BindPattern> = {
   name: 'bind',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.bind);
     CONSUME(l.symbols.LParen);
-    SUBRULE(expression);
+    const expressionVal = SUBRULE(expression);
     CONSUME(l.as);
-    SUBRULE(var_);
+    const variable = SUBRULE(var_);
     CONSUME(l.symbols.RParen);
+
+    return {
+      type: 'bind',
+      variable,
+      expression: expressionVal,
+    };
   },
 };
 
 /**
  * [[61]](https://www.w3.org/TR/sparql11-query/#rInlineData)
  */
-export const inlineData: RuleDef<'inlineData'> = {
+export const inlineData: RuleDef<'inlineData', ValuesPattern> = {
   name: 'inlineData',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.values);
-    SUBRULE(dataBlock);
+    const values = SUBRULE(dataBlock);
+
+    return {
+      type: 'values',
+      values,
+    };
   },
 };
 
@@ -254,33 +324,45 @@ export const dataBlockValue: RuleDef<'dataBlockValue', IriTerm | BlankTerm | Lit
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
     { ALT: () => SUBRULE(booleanLiteral) },
-    { ALT: () => {
-      CONSUME(l.undef);
-      // eslint-disable-next-line unicorn/no-useless-undefined
-      return undefined;
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.undef);
+        // eslint-disable-next-line unicorn/no-useless-undefined
+        return undefined;
+      },
+    },
   ]),
 };
 
 /**
  * [[66]](https://www.w3.org/TR/sparql11-query/#rMinusGraphPattern)
  */
-export const minusGraphPattern: RuleDef<'minusGraphPattern'> = {
+export const minusGraphPattern: RuleDef<'minusGraphPattern', MinusPattern> = {
   name: 'minusGraphPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.minus);
-    SUBRULE(groupGraphPattern);
+    const patterns = SUBRULE(groupGraphPattern);
+
+    return {
+      type: 'minus',
+      patterns,
+    };
   },
 };
 
 /**
  * [[68]](https://www.w3.org/TR/sparql11-query/#rFilter)
  */
-export const filter: RuleDef<'filter'> = {
+export const filter: RuleDef<'filter', FilterPattern> = {
   name: 'filter',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.filter);
-    SUBRULE(constraint);
+    const expression = SUBRULE(constraint);
+
+    return {
+      type: 'filter',
+      expression,
+    };
   },
 };
 

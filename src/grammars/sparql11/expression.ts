@@ -42,14 +42,16 @@ export interface IExpression {
 export const argList: RuleDef<'argList', IArgList> = {
   name: 'argList',
   impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR([
-    { ALT: () => {
-      CONSUME(l.terminals.nil);
-      return {
-        type: 'functionCall',
-        args: [],
-        distinct: false,
-      };
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.terminals.nil);
+        return {
+          type: 'functionCall',
+          args: [],
+          distinct: false,
+        };
+      },
+    },
     {
       ALT: () => {
         const args: Expression[] = [];
@@ -78,10 +80,12 @@ export const argList: RuleDef<'argList', IArgList> = {
 export const expressionList: RuleDef<'expressionList', Expression[]> = {
   name: 'expressionList',
   impl: ({ CONSUME, SUBRULE, MANY_SEP, OR }) => () => OR([
-    { ALT: () => {
-      CONSUME(l.terminals.nil);
-      return [];
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.terminals.nil);
+        return [];
+      },
+    },
     {
       ALT: () => {
         const args: Expression[] = [];

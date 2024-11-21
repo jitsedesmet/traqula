@@ -33,32 +33,36 @@ export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
 export const triplesSameSubject: RuleDef<'triplesSameSubject', Triple[], [BlankNodePropertyListArgs]> = {
   name: 'triplesSameSubject',
   impl: ({ SUBRULE, OR }) => (...args) => OR<Triple[]>([
-    { ALT: () => {
-      const subject = SUBRULE(varOrTerm);
-      const { partialTriples, additionalTriples } = SUBRULE(propertyListNotEmpty, ...args);
+    {
+      ALT: () => {
+        const subject = SUBRULE(varOrTerm);
+        const { partialTriples, additionalTriples } = SUBRULE(propertyListNotEmpty, ...args);
 
-      return [
-        ...additionalTriples,
-        ...partialTriples.map(({ predicate, object }) => ({
-          subject,
-          predicate,
-          object,
-        })),
-      ];
-    } },
-    { ALT: () => {
-      const { object: subject, additionalTriples: triples1 } = SUBRULE(triplesNode, ...args);
-      const { partialTriples, additionalTriples: triples2 } = SUBRULE(propertyList, ...args);
-      return [
-        ...triples1,
-        ...triples2,
-        ...partialTriples.map(({ predicate, object }) => ({
-          subject,
-          predicate,
-          object,
-        })),
-      ];
-    } },
+        return [
+          ...additionalTriples,
+          ...partialTriples.map(({ predicate, object }) => ({
+            subject,
+            predicate,
+            object,
+          })),
+        ];
+      },
+    },
+    {
+      ALT: () => {
+        const { object: subject, additionalTriples: triples1 } = SUBRULE(triplesNode, ...args);
+        const { partialTriples, additionalTriples: triples2 } = SUBRULE(propertyList, ...args);
+        return [
+          ...triples1,
+          ...triples2,
+          ...partialTriples.map(({ predicate, object }) => ({
+            subject,
+            predicate,
+            object,
+          })),
+        ];
+      },
+    },
   ]),
 };
 
@@ -298,13 +302,15 @@ export const collection: RuleDef<'collection', IObject, [BlankNodePropertyListAr
 export const graphNode: RuleDef<'graphNode', IObject, [BlankNodePropertyListArgs]> = {
   name: 'graphNode',
   impl: ({ SUBRULE, OR }) => (...args) => OR<IObject>([
-    { ALT: () => {
-      const val = SUBRULE(varOrTerm);
-      return {
-        object: val,
-        additionalTriples: [],
-      };
-    } },
+    {
+      ALT: () => {
+        const val = SUBRULE(varOrTerm);
+        return {
+          object: val,
+          additionalTriples: [],
+        };
+      },
+    },
     { ALT: () => SUBRULE(triplesNode, ...args) },
   ]),
 };

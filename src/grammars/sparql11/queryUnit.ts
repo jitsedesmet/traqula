@@ -143,26 +143,30 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
   impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
     OR([
-      { ALT: () => {
-        SUBRULE(constructTemplate);
-        MANY1(() => {
-          SUBRULE1(datasetClause);
-        });
-        SUBRULE(whereClause);
-        SUBRULE1(solutionModifier);
-      } },
-      { ALT: () => {
-        MANY2(() => {
-          SUBRULE2(datasetClause);
-        });
-        CONSUME(l.where);
-        CONSUME(l.symbols.LCurly);
-        OPTION(() => {
-          SUBRULE(triplesTemplate);
-        });
-        CONSUME(l.symbols.RCurly);
-        SUBRULE2(solutionModifier);
-      } },
+      {
+        ALT: () => {
+          SUBRULE(constructTemplate);
+          MANY1(() => {
+            SUBRULE1(datasetClause);
+          });
+          SUBRULE(whereClause);
+          SUBRULE1(solutionModifier);
+        },
+      },
+      {
+        ALT: () => {
+          MANY2(() => {
+            SUBRULE2(datasetClause);
+          });
+          CONSUME(l.where);
+          CONSUME(l.symbols.LCurly);
+          OPTION(() => {
+            SUBRULE(triplesTemplate);
+          });
+          CONSUME(l.symbols.RCurly);
+          SUBRULE2(solutionModifier);
+        },
+      },
     ]);
   },
 };

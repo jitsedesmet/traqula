@@ -18,13 +18,17 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
     const prefixes: Record<string, string> = {};
     MANY(() => {
       OR([
-        { ALT: () => {
-          base = SUBRULE(baseDecl);
-        } },
-        { ALT: () => {
-          const [ name, value ] = SUBRULE(prefixDecl);
-          prefixes[name] = value;
-        } },
+        {
+          ALT: () => {
+            base = SUBRULE(baseDecl);
+          },
+        },
+        {
+          ALT: () => {
+            const [ name, value ] = SUBRULE(prefixDecl);
+            prefixes[name] = value;
+          },
+        },
       ]);
     });
     return {
@@ -81,10 +85,12 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
   name: 'verb',
   impl: ({ SUBRULE, CONSUME, OR }) => () => OR([
     { ALT: () => SUBRULE(varOrIri) },
-    { ALT: () => {
-      CONSUME(l.a);
-      return factory.namedNode(`${RDF}type`);
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.a);
+        return factory.namedNode(`${RDF}type`);
+      },
+    },
   ]),
 };
 
@@ -132,9 +138,11 @@ export const graphTerm: RuleDef<'graphTerm', Term> = {
     { ALT: () => SUBRULE(numericLiteral) },
     { ALT: () => SUBRULE(booleanLiteral) },
     { ALT: () => SUBRULE(blankNode) },
-    { ALT: () => {
-      CONSUME(l.terminals.nil);
-      return factory.namedNode(`${RDF}nil`);
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.terminals.nil);
+        return factory.namedNode(`${RDF}nil`);
+      },
+    },
   ]),
 };

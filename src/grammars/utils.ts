@@ -86,16 +86,20 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [] | [Expression]> {
     impl: ({ CONSUME, OR, SUBRULE }) => () => {
       CONSUME(func);
       const args = OR<[] | [Expression]>([
-        { ALT: () => {
-          CONSUME(l.symbols.LParen);
-          const arg = SUBRULE(expression);
-          CONSUME(l.symbols.RParen);
-          return [ arg ];
-        } },
-        { ALT: () => {
-          CONSUME(l.terminals.nil);
-          return [];
-        } },
+        {
+          ALT: () => {
+            CONSUME(l.symbols.LParen);
+            const arg = SUBRULE(expression);
+            CONSUME(l.symbols.RParen);
+            return [ arg ];
+          },
+        },
+        {
+          ALT: () => {
+            CONSUME(l.terminals.nil);
+            return [];
+          },
+        },
       ]);
       return {
         type: 'operation',
@@ -233,10 +237,12 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
         return true;
       }) ?? false;
       const arg = OR<Expression | '*'>([
-        { ALT: () => {
-          CONSUME(l.symbols.star);
-          return '*';
-        } },
+        {
+          ALT: () => {
+            CONSUME(l.symbols.star);
+            return '*';
+          },
+        },
         { ALT: () => SUBRULE(expression) },
       ]);
       CONSUME(l.symbols.RParen);

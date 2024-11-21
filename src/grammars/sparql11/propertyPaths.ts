@@ -103,18 +103,24 @@ export const pathElt: RuleDef<'pathElt', PropertyPath | IriTerm> = {
 export const pathMod: RuleDef<'pathMod', '*' | '+' | '?'> = {
   name: 'pathMod',
   impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => {
-      CONSUME(l.symbols.question);
-      return '?';
-    } },
-    { ALT: () => {
-      CONSUME(l.symbols.star);
-      return '*';
-    } },
-    { ALT: () => {
-      CONSUME(l.symbols.plus);
-      return '+';
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.symbols.question);
+        return '?';
+      },
+    },
+    {
+      ALT: () => {
+        CONSUME(l.symbols.star);
+        return '*';
+      },
+    },
+    {
+      ALT: () => {
+        CONSUME(l.symbols.plus);
+        return '+';
+      },
+    },
   ]),
 };
 
@@ -125,10 +131,12 @@ export const pathPrimary: RuleDef<'pathPrimary', PropertyPath | IriTerm> = {
   name: 'pathPrimary',
   impl: ({ SUBRULE, CONSUME, OR }) => () => OR<PropertyPath | IriTerm>([
     { ALT: () => SUBRULE(iri) },
-    { ALT: () => {
-      CONSUME(l.a);
-      return factory.namedNode(`${RDF}type`);
-    } },
+    {
+      ALT: () => {
+        CONSUME(l.a);
+        return factory.namedNode(`${RDF}type`);
+      },
+    },
     {
       ALT: () => {
         CONSUME(l.symbols.exclamation);
