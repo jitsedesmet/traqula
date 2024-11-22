@@ -16,13 +16,13 @@ export const solutionModifier: RuleDef<'solutionModifier', ISolutionModifier> = 
     const group = OPTION1(() => SUBRULE(groupClause));
     const having = OPTION2(() => SUBRULE(havingClause));
     const order = OPTION3(() => SUBRULE(orderClause));
-    const limit = OPTION4(() => SUBRULE(limitOffsetClauses));
+    const limitAndOffset = OPTION4(() => SUBRULE(limitOffsetClauses));
 
     return {
+      ...limitAndOffset,
       group,
       having,
       order,
-      limit,
     };
   },
 };

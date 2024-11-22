@@ -1,7 +1,7 @@
 import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import type { BaseQuery, IriTerm, Term, VariableTerm } from '../sparqlJSTypes';
+import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJSTypes';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
 import { triplesSameSubject } from './tripleBlock';
 
@@ -65,16 +65,20 @@ export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
 /**
  * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
  */
-export const triplesTemplate: RuleDef<'triplesTemplate'> = {
+export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
   name: 'triplesTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    SUBRULE(triplesSameSubject, { allowPaths: false });
+    const triples: Triple[][] = [];
+
+    triples.push(SUBRULE(triplesSameSubject, { allowPaths: false }));
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {
-        SUBRULE(triplesTemplate);
+        triples.push(SUBRULE(triplesTemplate));
       });
     });
+
+    return triples.flat(1);
   },
 };
 
