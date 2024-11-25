@@ -1,6 +1,6 @@
 import * as l from '../../lexer/index';
 import type { CstDef, RuleDef } from '../buildExample';
-import type { Expression, FunctionCallExpression, IriTerm } from '../sparqlJSTypes';
+import type { Expression, IriTerm } from '../sparqlJSTypes';
 import { builtInCall } from './builtIn';
 import {
   var_,
@@ -19,7 +19,7 @@ import {
  */
 export interface IArgList {
   type: 'functionCall';
-  args: any[];
+  args: Expression[];
   distinct: boolean;
 }
 
@@ -457,17 +457,15 @@ export const brackettedExpression: RuleDef<'brackettedExpression', Expression> =
 /**
  * [[128]](https://www.w3.org/TR/sparql11-query/#ririOrFunction)
  */
-export const iriOrFunction: RuleDef<'iriOrFunction', IriTerm | FunctionCallExpression> = {
+export const iriOrFunction: RuleDef<'iriOrFunction', IriTerm | (IArgList & { function: IriTerm })> = {
   name: 'iriOrFunction',
   impl: ({ SUBRULE, OPTION }) => () => {
     const iriVal = SUBRULE(iri);
     const args = OPTION(() => SUBRULE(argList));
-    // TODO: are the types correct here? Where did the distinct check go???
     return args ?
         {
-          type: 'functionCall',
+          ...args,
           function: iriVal,
-          args: args.args,
         } :
       iriVal;
   },

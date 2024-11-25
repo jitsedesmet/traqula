@@ -382,6 +382,8 @@ export type RuleDef<NameType extends string = string, ReturnType = unknown, Para
   impl: (def: CstDef) => (...args: ParamType) => ReturnType;
 };
 
+export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
+
 export class Builder<T extends string > {
   public static createBuilder(): Builder<''> {
     return new Builder<''>();

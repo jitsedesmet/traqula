@@ -1,7 +1,8 @@
 import type { TokenType } from 'chevrotain';
-import { createToken, Lexer } from 'chevrotain';
+import { Lexer } from 'chevrotain';
 import { allBuiltInCalls } from './BuildinCalls';
 import { allGraphTokens } from './graph';
+import { createToken } from './helpers';
 import { allSymbols } from './symbols';
 import { allTerminals } from './terminals';
 
