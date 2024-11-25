@@ -93,7 +93,8 @@ export interface IPropertyListNotEmpty {
 export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListNotEmpty, [BlankNodePropertyListArgs]> =
   {
     name: 'propertyListNotEmpty',
-    impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => ({ allowPaths }) => {
+    impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => (arg) => {
+      const allowPaths = arg?.allowPaths;
       const tripleConstructor: { predicate: Triple['predicate']; objects: IObjectList }[] = [];
 
       const firstProperty = allowPaths ?

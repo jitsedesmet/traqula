@@ -378,9 +378,16 @@ export interface CstDef {
   SUBRULE9: SubRuleFunc;
 }
 
-export type RuleDef<NameType extends string = string, ReturnType = unknown, ParamType extends any[] = []> = {
+export type ArrayElementsUndefinable<ArrayType extends any[]> =
+  ArrayType extends [infer First, ...infer Rest] ? [First | undefined, ...ArrayElementsUndefinable<Rest>] : [];
+
+export type RuleDef<
+  NameType extends string = string,
+  ReturnType = unknown,
+  ParamType extends any[] = [],
+> = {
   name: NameType;
-  impl: (def: CstDef) => (...args: ParamType) => ReturnType;
+  impl: (def: CstDef) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
 };
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;

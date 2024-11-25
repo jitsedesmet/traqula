@@ -176,7 +176,7 @@ export const valueLogical: RuleDef<'valueLogical', Expression> = {
  */
 export const relationalExpression: RuleDef<'relationalExpression', Expression> = {
   name: 'relationalExpression',
-  impl: ({ CONSUME, SUBRULE1, SUBRULE2, OPTION, OR, SUBRULE3, SUBRULE4, SUBRULE5, SUBRULE6, SUBRULE7 }) => () => {
+  impl: ({ ACTION, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR, SUBRULE3, SUBRULE4, SUBRULE5, SUBRULE6, SUBRULE7 }) => () => {
     const args1 = SUBRULE1(numericExpression);
     const arg2 = OPTION(() => OR<{ operator: RelationalOperator; args: Expression[] }>([
       {
@@ -239,11 +239,11 @@ export const relationalExpression: RuleDef<'relationalExpression', Expression> =
     if (!arg2) {
       return args1;
     }
-    return {
+    return ACTION(() => ({
       type: 'operation',
       operator: arg2.operator,
       args: [ args1, ...arg2.args ],
-    };
+    }));
   },
 };
 
@@ -311,7 +311,7 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
               },
             ]);
             const expr = constructLeftDeep(
-              () => args[0],
+              () => ACTION(() => args[0]),
               () => OR3<{ expr: Expression; operator: string }>([
                 {
                   ALT: () => {
