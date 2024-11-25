@@ -82,26 +82,7 @@ import {
   unaryExpression,
   valueLogical,
 } from './expression';
-import {
-  baseDecl,
-  blankNodePropertyList,
-  collection,
-  graphNode,
-  graphTerm,
-  object,
-  objectList,
-  prefixDecl,
-  prologue,
-  propertyList,
-  propertyListNotEmpty,
-  triplesNode,
-  triplesSameSubject,
-  triplesTemplate,
-  var_,
-  varOrIri,
-  varOrTerm,
-  verb,
-} from './general';
+import { baseDecl, graphTerm, prefixDecl, prologue, triplesTemplate, var_, varOrIri, varOrTerm, verb } from './general';
 import {
   blankNode,
   booleanLiteral,
@@ -137,7 +118,6 @@ import {
   selectQuery,
   subSelect,
   valuesClause,
-
 } from './queryUnit';
 import {
   groupClause,
@@ -155,8 +135,8 @@ import {
   blankNodePropertyList,
   collection,
   graphNode,
-  objectList,
   object,
+  objectList,
   propertyList,
   propertyListNotEmpty,
   triplesBlock,
@@ -295,13 +275,8 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(verb)
   .addRule(objectList)
   .addRule(object)
-  .addRule(triplesSameSubject)
-  .addRule(propertyList)
-  .addRule(propertyListNotEmpty)
   .addRule(verbPath)
   .addRule(verbSimple)
-  .addRule(objectList)
-  .addRule(object)
   .addRule(path)
   .addRule(pathAlternative)
   .addRule(pathSequence)
@@ -313,11 +288,7 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(pathOneInPropertySet)
   .addRule(triplesNode)
   .addRule(blankNodePropertyList)
-  .addRule(triplesNode)
-  .addRule(blankNodePropertyList)
   .addRule(collection)
-  .addRule(collection)
-  .addRule(graphNode)
   .addRule(graphNode)
   .addRule(varOrTerm)
   .addRule(varOrIri)

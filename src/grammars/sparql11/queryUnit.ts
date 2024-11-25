@@ -34,7 +34,7 @@ export const queryUnit: RuleDef<'queryUnit', Query> = {
  */
 export const query: RuleDef<'query', Query> = {
   name: 'query',
-  impl: ({ SUBRULE, OR }) => () => {
+  impl: ({ ACTION, SUBRULE, OR }) => () => {
     const prologueValues = SUBRULE(prologue);
     OR<Omit<Query, HandledByBase>>([
       { ALT: () => SUBRULE(selectQuery) },
@@ -44,34 +44,36 @@ export const query: RuleDef<'query', Query> = {
     ]);
     const values = SUBRULE(valuesClause);
 
-    return <Query> {
+    return ACTION(() => (<Query>{
       ...prologueValues,
       type: 'query',
       values,
-    };
+    }));
   },
 };
 
 type HandledByBase = 'values' | 'type' | 'base' | 'prefixes';
 
-function extractFromOfDataSetClauses(MANY: CstDef['MANY'], SUBRULE: CstDef['SUBRULE']):
+function extractFromOfDataSetClauses(ACTION: CstDef['ACTION'], MANY: CstDef['MANY'], SUBRULE: CstDef['SUBRULE']):
 { default: IriTerm[]; named: IriTerm[] } {
   const datasetClauses: IDatasetClause[] = [];
   MANY(() => {
     datasetClauses.push(SUBRULE(datasetClause));
   });
-  const from: { default: IriTerm[]; named: IriTerm[] } = {
-    default: [],
-    named: [],
-  };
-  for (const datasetClause of datasetClauses) {
-    if (datasetClause.type === 'default') {
-      from.default.push(datasetClause.value);
-    } else {
-      from.named.push(datasetClause.value);
+  return ACTION(() => {
+    const from: { default: IriTerm[]; named: IriTerm[] } = {
+      default: [],
+      named: [],
+    };
+    for (const datasetClause of datasetClauses) {
+      if (datasetClause.type === 'default') {
+        from.default.push(datasetClause.value);
+      } else {
+        from.named.push(datasetClause.value);
+      }
     }
-  }
-  return from;
+    return from;
+  });
 }
 
 /**
@@ -79,9 +81,9 @@ function extractFromOfDataSetClauses(MANY: CstDef['MANY'], SUBRULE: CstDef['SUBR
  */
 export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase>> = {
   name: 'selectQuery',
-  impl: ({ SUBRULE, MANY }) => () => {
+  impl: ({ ACTION, SUBRULE, MANY }) => () => {
     const { variables, distinct, reduced } = SUBRULE(selectClause);
-    const from = extractFromOfDataSetClauses(MANY, SUBRULE);
+    const from = extractFromOfDataSetClauses(ACTION, MANY, SUBRULE);
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
@@ -102,22 +104,23 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
  */
 export const subSelect: RuleDef<'subSelect', SelectQuery> = {
   name: 'subSelect',
-  impl: ({ SUBRULE }) => () => {
-    const { variables, distinct, reduced } = SUBRULE(selectClause);
+  impl: ({ ACTION, SUBRULE }) => () => {
+    const clause = SUBRULE(selectClause);
     const where = SUBRULE(whereClause);
     const modifiers = SUBRULE(solutionModifier);
     const values = SUBRULE(valuesClause);
-    return {
+
+    return ACTION(() => ({
       ...modifiers,
       type: 'query',
       queryType: 'SELECT',
-      variables,
-      distinct,
-      reduced,
+      variables: clause.variables,
+      distinct: clause.distinct,
+      reduced: clause.reduced,
       where,
       values: values?.values,
       prefixes: {},
-    };
+    }));
   },
 };
 
@@ -181,39 +184,39 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = {
  */
 export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, HandledByBase>> = {
   name: 'constructQuery',
-  impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
     return OR([
       {
         ALT: () => {
           const template = SUBRULE(constructTemplate);
-          const from = extractFromOfDataSetClauses(MANY1, SUBRULE1);
+          const from = extractFromOfDataSetClauses(ACTION, MANY1, SUBRULE1);
           const where = SUBRULE(whereClause);
           const modifiers = SUBRULE1(solutionModifier);
-          return {
+          return ACTION(() => ({
             ...modifiers,
             queryType: 'CONSTRUCT',
             template,
             from,
             where,
-          };
+          }));
         },
       },
       {
         ALT: () => {
-          const from = extractFromOfDataSetClauses(MANY2, SUBRULE2);
+          const from = extractFromOfDataSetClauses(ACTION, MANY2, SUBRULE2);
           CONSUME(l.where);
           CONSUME(l.symbols.LCurly);
           const template = OPTION(() => SUBRULE(triplesTemplate));
           CONSUME(l.symbols.RCurly);
           const modifiers = SUBRULE2(solutionModifier);
 
-          return {
+          return ACTION(() => ({
             ...modifiers,
             queryType: 'CONSTRUCT',
             from,
             template,
-          };
+          }));
         },
       },
     ]);
@@ -225,7 +228,7 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
  */
 export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, HandledByBase>> = {
   name: 'describeQuery',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, MANY, OPTION, OR }) => () => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, MANY, OPTION, OR }) => () => {
     CONSUME(l.describe);
     const variables = OR<DescribeQuery['variables']>([
       { ALT: () => {
@@ -240,16 +243,16 @@ export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, Handled
         return [ new Wildcard() ];
       } },
     ]);
-    const from = extractFromOfDataSetClauses(MANY, SUBRULE);
+    const from = extractFromOfDataSetClauses(ACTION, MANY, SUBRULE);
     const where = OPTION(() => SUBRULE(whereClause));
     const modifiers = SUBRULE(solutionModifier);
-    return {
+    return ACTION(() => ({
       ...modifiers,
       queryType: 'DESCRIBE',
       variables,
       from,
       where,
-    };
+    }));
   },
 };
 
@@ -258,17 +261,17 @@ export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, Handled
  */
 export const askQuery: RuleDef<'askQuery', Omit<AskQuery, HandledByBase>> = {
   name: 'askQuery',
-  impl: ({ SUBRULE, CONSUME, MANY }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, MANY }) => () => {
     CONSUME(l.ask);
-    const from = extractFromOfDataSetClauses(MANY, SUBRULE);
+    const from = extractFromOfDataSetClauses(ACTION, MANY, SUBRULE);
     const where = SUBRULE(whereClause);
     const modifiers = SUBRULE(solutionModifier);
-    return {
+    return ACTION(() => ({
       ...modifiers,
       queryType: 'ASK',
       from,
       where,
-    };
+    }));
   },
 };
 

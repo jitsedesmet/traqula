@@ -2,21 +2,21 @@ import type { TokenType } from 'chevrotain';
 import * as l from '../lexer/index';
 import type { RuleDef } from './buildExample';
 import { expression, expressionList } from './sparql11/expression';
-import { type IVar, var_ } from './sparql11/general';
+import { var_ } from './sparql11/general';
 import { groupGraphPattern } from './sparql11/whereClause';
-import type { Expression } from './sparqlJSTypes';
+import type { Expression, Pattern, VariableTerm } from './sparqlJSTypes';
 import { Wildcard } from './Wildcard';
 
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
 }
 
-export interface IExpressionFunctionX<T extends string, U extends Expression[]> {
+export interface IExpressionFunctionX<T extends string, U extends (Expression | Pattern)[]> {
   type: 'operation';
   operator: T;
   args: U;
 }
-export type RuleDefExpressionFunctionX<T extends string, U extends Expression[]>
+export type RuleDefExpressionFunctionX<T extends string, U extends (Expression | Pattern)[]>
   = RuleDef<T, IExpressionFunctionX<T, U>>;
 
 export function funcExpr1<T extends string>(func: TokenType & { name: T }):
@@ -57,13 +57,8 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression]> {
   };
 }
 
-export interface IVarFunctionX<T extends string, U extends IVar[]> {
-  type: 'operation';
-  operator: T;
-  args: U;
-}
 export function funcVar1<T extends string>(func: TokenType & { name: T }):
-RuleDefExpressionFunctionX<Uncapitalize<T>, [IVar]> {
+RuleDefExpressionFunctionX<Uncapitalize<T>, [VariableTerm]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
@@ -198,17 +193,17 @@ RuleDefExpressionFunctionX<
 export function funcGroupGraphPattern<T extends string>(func: TokenType & { name: T }):
 RuleDefExpressionFunctionX<
     Uncapitalize<T>,
-    [Expression]
+    Pattern[]
   > {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
       CONSUME(l.builtIn.exists);
-      const arg = SUBRULE(groupGraphPattern);
+      const args = SUBRULE(groupGraphPattern);
       return {
         type: 'operation',
         operator: unCapitalize(func.name),
-        args: [ arg ],
+        args,
       };
     },
   };
@@ -228,10 +223,7 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
     impl: ({ CONSUME, SUBRULE, OPTION, OR }) => () => {
       CONSUME(func);
       CONSUME(l.symbols.LParen);
-      const distinct = OPTION(() => {
-        CONSUME(l.distinct);
-        return true;
-      }) ?? false;
+      const distinct = Boolean(OPTION(() => CONSUME(l.distinct)));
       const expressionVal = OR<Expression | Wildcard>([
         {
           ALT: () => {

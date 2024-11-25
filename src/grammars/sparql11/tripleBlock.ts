@@ -13,16 +13,16 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
  */
 export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
   name: 'triplesBlock',
-  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples = SUBRULE(triplesSameSubject, { allowPaths: true });
     const pattern = OPTION1(() => {
       CONSUME(l.symbols.dot);
       return OPTION2(() => SUBRULE(triplesBlock));
     });
-    return {
+    return ACTION(() => ({
       type: 'bgp',
       triples: [ ...triples, ...(pattern?.triples ?? []) ],
-    };
+    }));
   },
 };
 
@@ -32,35 +32,35 @@ export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
  */
 export const triplesSameSubject: RuleDef<'triplesSameSubject', Triple[], [BlankNodePropertyListArgs]> = {
   name: 'triplesSameSubject',
-  impl: ({ SUBRULE, OR }) => (...args) => OR<Triple[]>([
+  impl: ({ ACTION, SUBRULE, OR }) => (...args) => OR<Triple[]>([
     {
       ALT: () => {
         const subject = SUBRULE(varOrTerm);
-        const { partialTriples, additionalTriples } = SUBRULE(propertyListNotEmpty, ...args);
+        const propNotEmpty = SUBRULE(propertyListNotEmpty, ...args);
 
-        return [
-          ...additionalTriples,
-          ...partialTriples.map(({ predicate, object }) => ({
+        return ACTION(() => [
+          ...propNotEmpty.additionalTriples,
+          ...propNotEmpty.partialTriples.map(({ predicate, object }) => ({
             subject,
             predicate,
             object,
           })),
-        ];
+        ]);
       },
     },
     {
       ALT: () => {
-        const { object: subject, additionalTriples: triples1 } = SUBRULE(triplesNode, ...args);
-        const { partialTriples, additionalTriples: triples2 } = SUBRULE(propertyList, ...args);
-        return [
-          ...triples1,
-          ...triples2,
-          ...partialTriples.map(({ predicate, object }) => ({
-            subject,
+        const subjectNode = SUBRULE(triplesNode, ...args);
+        const restNode = SUBRULE(propertyList, ...args);
+        return ACTION(() => [
+          ...subjectNode.additionalTriples,
+          ...restNode.additionalTriples,
+          ...restNode.partialTriples.map(({ predicate, object }) => ({
+            subject: subjectNode.object,
             predicate,
             object,
           })),
-        ];
+        ]);
       },
     },
   ]),
@@ -93,7 +93,7 @@ export interface IPropertyListNotEmpty {
 export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListNotEmpty, [BlankNodePropertyListArgs]> =
   {
     name: 'propertyListNotEmpty',
-    impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => ({ allowPaths }) => {
+    impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => ({ allowPaths }) => {
       const tripleConstructor: { predicate: Triple['predicate']; objects: IObjectList }[] = [];
 
       const firstProperty = allowPaths ?
@@ -124,20 +124,22 @@ export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyList
       const partialTriples: IPropertyListNotEmpty['partialTriples'] = [];
       const additionalTriples: Triple[] = [];
 
-      for (const { predicate, objects } of tripleConstructor) {
-        const { objects: innerObject, additionalTriples: innerAdditionalTriples } = objects;
-        additionalTriples.push(...innerAdditionalTriples);
-        partialTriples.push(
-          ...innerObject.map(object => ({
-            predicate,
-            object,
-          })),
-        );
-      }
-      return {
-        partialTriples,
-        additionalTriples,
-      };
+      return ACTION(() => {
+        for (const { predicate, objects } of tripleConstructor) {
+          const { objects: innerObject, additionalTriples: innerAdditionalTriples } = objects;
+          additionalTriples.push(...innerAdditionalTriples);
+          partialTriples.push(
+            ...innerObject.map(object => ({
+              predicate,
+              object,
+            })),
+          );
+        }
+        return {
+          partialTriples,
+          additionalTriples,
+        };
+      });
     },
   };
 
@@ -168,14 +170,16 @@ export interface IObjectList {
 
 export const objectList: RuleDef<'objectList', IObjectList, [BlankNodePropertyListArgs]> = {
   name: 'objectList',
-  impl: ({ SUBRULE1, AT_LEAST_ONE_SEP }) => (...args) => {
+  impl: ({ ACTION, SUBRULE1, AT_LEAST_ONE_SEP }) => (...args) => {
     const objects: Term[] = [];
     const moreTriples: Triple[][] = [];
     AT_LEAST_ONE_SEP({
       DEF: () => {
-        const { object: objectVal, additionalTriples } = SUBRULE1(object, ...args);
-        objects.push(objectVal);
-        moreTriples.push(additionalTriples);
+        const objectVal = SUBRULE1(object, ...args);
+        ACTION(() => {
+          objects.push(objectVal.object);
+          moreTriples.push(objectVal.additionalTriples);
+        });
       },
       SEP: l.symbols.comma,
     });
@@ -221,23 +225,23 @@ export interface BlankNodePropertyListArgs {
 
 export const blankNodePropertyList: RuleDef<'blankNodePropertyList', IObject, [BlankNodePropertyListArgs]> = {
   name: 'blankNodePropertyList',
-  impl: ({ SUBRULE, CONSUME }) => (...args) => {
+  impl: ({ ACTION, SUBRULE, CONSUME }) => (...args) => {
     CONSUME(l.symbols.LSquare);
-    const { additionalTriples, partialTriples } = SUBRULE(propertyListNotEmpty, ...args);
+    const propList = SUBRULE(propertyListNotEmpty, ...args);
     CONSUME(l.symbols.RSquare);
 
     const subject = factory.blankNode();
-    return {
+    return ACTION(() => ({
       object: subject,
       additionalTriples: [
-        ...additionalTriples,
-        ...partialTriples.map(({ predicate, object }) => ({
+        ...propList.additionalTriples,
+        ...propList.partialTriples.map(({ predicate, object }) => ({
           subject,
           predicate,
           object,
         })),
       ],
-    };
+    }));
   },
 };
 
@@ -247,7 +251,7 @@ export const blankNodePropertyList: RuleDef<'blankNodePropertyList', IObject, [B
  */
 export const collection: RuleDef<'collection', IObject, [BlankNodePropertyListArgs]> = {
   name: 'collection',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => (...args) => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME }) => (...args) => {
     // Construct a [cons list](https://en.wikipedia.org/wiki/Cons#Lists),
     // here called a [RDF collection](https://www.w3.org/TR/sparql11-query/#collections).
     const terms: IObject[] = [];
@@ -257,41 +261,43 @@ export const collection: RuleDef<'collection', IObject, [BlankNodePropertyListAr
     });
     CONSUME(l.symbols.RParen);
 
-    const additionalTriples: Triple[] = terms.flatMap(x => x.additionalTriples);
-    const listHead = factory.blankNode();
-    let iterHead = listHead;
-    for (const [ index, term ] of terms.entries()) {
-      const linkTriple: Triple = {
-        subject: iterHead,
-        predicate: factory.namedNode(`${RDF}first`),
-        object: term.object,
-      };
-      additionalTriples.push(linkTriple);
-
-      // If not the last, create new iterHead, otherwise, close list
-      if (index === terms.length - 1) {
-        const nilTriple: Triple = {
-          subject: iterHead,
-          predicate: factory.namedNode(`${RDF}rest`),
-          object: factory.namedNode(`${RDF}nil`),
-        };
-        additionalTriples.push(nilTriple);
-      } else {
-        const tail = factory.blankNode();
+    return ACTION(() => {
+      const additionalTriples: Triple[] = terms.flatMap(x => x.additionalTriples);
+      const listHead = factory.blankNode();
+      let iterHead = listHead;
+      for (const [ index, term ] of terms.entries()) {
         const linkTriple: Triple = {
           subject: iterHead,
-          predicate: factory.namedNode(`${RDF}rest`),
-          object: tail,
+          predicate: factory.namedNode(`${RDF}first`),
+          object: term.object,
         };
-        iterHead = tail;
         additionalTriples.push(linkTriple);
-      }
-    }
 
-    return {
-      object: listHead,
-      additionalTriples,
-    };
+        // If not the last, create new iterHead, otherwise, close list
+        if (index === terms.length - 1) {
+          const nilTriple: Triple = {
+            subject: iterHead,
+            predicate: factory.namedNode(`${RDF}rest`),
+            object: factory.namedNode(`${RDF}nil`),
+          };
+          additionalTriples.push(nilTriple);
+        } else {
+          const tail = factory.blankNode();
+          const linkTriple: Triple = {
+            subject: iterHead,
+            predicate: factory.namedNode(`${RDF}rest`),
+            object: tail,
+          };
+          iterHead = tail;
+          additionalTriples.push(linkTriple);
+        }
+      }
+
+      return {
+        object: listHead,
+        additionalTriples,
+      };
+    });
   },
 };
 

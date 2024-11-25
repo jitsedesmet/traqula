@@ -61,18 +61,20 @@ export const groupGraphPattern: RuleDef<'groupGraphPattern', Pattern[]> = {
  */
 export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = {
   name: 'groupGraphPatternSub',
-  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     const patterns: Pattern[] = [];
 
     const bgpPattern = OPTION1(() => [ SUBRULE1(triplesBlock) ]) ?? [];
-    patterns.push(...bgpPattern);
+    ACTION(() => patterns.push(...bgpPattern));
     MANY(() => {
       const notTriples = SUBRULE(graphPatternNotTriples);
       patterns.push(notTriples);
       OPTION2(() => CONSUME(l.symbols.dot));
 
-      const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
-      patterns.push(...moreTriples);
+      ACTION(() => {
+        const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
+        patterns.push(...moreTriples);
+      });
     });
 
     return patterns;
@@ -172,10 +174,7 @@ export const serviceGraphPattern: RuleDef<'serviceGraphPattern', ServicePattern>
   name: 'serviceGraphPattern',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.service);
-    const silent = OPTION(() => {
-      CONSUME(l.silent);
-      return true;
-    }) ?? false;
+    const silent = Boolean(OPTION(() => CONSUME(l.silent)));
     const name = SUBRULE(varOrIri);
     const patterns = SUBRULE(groupGraphPattern);
 
@@ -241,15 +240,16 @@ export const dataBlock: RuleDef<'dataBlock', ValuePatternRow[]> = {
  */
 export const inlineDataOneVar: RuleDef<'inlineDataOneVar', ValuePatternRow[]> = {
   name: 'inlineDataOneVar',
-  impl: ({ SUBRULE, CONSUME, MANY }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, MANY }) => () => {
     const res: ValuePatternRow[] = [];
     const varVal = SUBRULE(var_);
     CONSUME(l.symbols.LCurly);
     MANY(() => {
       const value = SUBRULE(dataBlockValue);
-      res.push({
+
+      ACTION(() => res.push({
         [varVal.value]: value,
-      });
+      }));
     });
     CONSUME(l.symbols.RCurly);
     return res;
@@ -261,7 +261,7 @@ export const inlineDataOneVar: RuleDef<'inlineDataOneVar', ValuePatternRow[]> = 
  */
 export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
   name: 'inlineDataFull',
-  impl: ({ OR, MANY, SUBRULE, CONSUME }) => () => OR([
+  impl: ({ ACTION, OR, MANY, SUBRULE, CONSUME }) => () => OR([
     // Grammar rule 64 together with note 11 learns us that a nil should be followed by a nil in DataBlock.
     {
       ALT: () => {
@@ -299,15 +299,17 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
           });
           CONSUME(l.symbols.RParen);
 
-          // TODO: what happens when I throw this error?
-          if (varBinds.length !== vars.length) {
-            throw new Error('Number of dataBlockValues does not match number of variables.');
-          }
-          const row: ValuePatternRow = {};
-          for (const [ index, varVal ] of vars.entries()) {
-            row[varVal.value] = varBinds[index];
-          }
-          res.push(row);
+          ACTION(() => {
+            // TODO: what happens when I throw this error?
+            if (varBinds.length !== vars.length) {
+              throw new Error('Number of dataBlockValues does not match number of variables.');
+            }
+            const row: ValuePatternRow = {};
+            for (const [ index, varVal ] of vars.entries()) {
+              row[varVal.value] = varBinds[index];
+            }
+            res.push(row);
+          });
         });
         CONSUME(l.symbols.RCurly);
         return res;
@@ -385,12 +387,12 @@ export const constraint: RuleDef<'constraint', Expression> = {
  */
 export const functionCall: RuleDef<'functionCall', FunctionCallExpression> = {
   name: 'functionCall',
-  impl: ({ SUBRULE }) => () => {
+  impl: ({ ACTION, SUBRULE }) => () => {
     const func = SUBRULE(iri);
     const args = SUBRULE(argList);
-    return {
+    return ACTION(() => ({
       ...args,
       function: func,
-    };
+    }));
   },
 };

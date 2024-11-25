@@ -105,7 +105,7 @@ export const allBaseTokens: TokenType[] = [
   false_,
   in_,
   notIn,
-  separator,,
+  separator,
 ];
 
 /**
@@ -121,5 +121,5 @@ export const allTokens: TokenType[] = [
 
 export const ChevSparqlLexer = new Lexer(allTokens, {
   positionTracking: 'onlyOffset',
-  ensureOptimizations: true,
+  // EnsureOptimizations: true,
 });

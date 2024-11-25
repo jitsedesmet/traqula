@@ -13,7 +13,7 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
  */
 export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>> = {
   name: 'prologue',
-  impl: ({ SUBRULE, MANY, OR }) => () => {
+  impl: ({ ACTION, SUBRULE, MANY, OR }) => () => {
     let base: undefined | string;
     const prefixes: Record<string, string> = {};
     MANY(() => {
@@ -25,8 +25,11 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
         },
         {
           ALT: () => {
-            const [ name, value ] = SUBRULE(prefixDecl);
-            prefixes[name] = value;
+            const pref = SUBRULE(prefixDecl);
+            ACTION(() => {
+              const [ name, value ] = pref;
+              prefixes[name] = value;
+            });
           },
         },
       ]);

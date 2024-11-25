@@ -12,18 +12,18 @@ import { constraint, functionCall } from './whereClause';
 export type ISolutionModifier = Pick<SelectQuery, 'group' | 'having' | 'order' | 'limit' | 'offset'>;
 export const solutionModifier: RuleDef<'solutionModifier', ISolutionModifier> = {
   name: 'solutionModifier',
-  impl: ({ SUBRULE, OPTION1, OPTION2, OPTION3, OPTION4 }) => () => {
+  impl: ({ ACTION, SUBRULE, OPTION1, OPTION2, OPTION3, OPTION4 }) => () => {
     const group = OPTION1(() => SUBRULE(groupClause));
     const having = OPTION2(() => SUBRULE(havingClause));
     const order = OPTION3(() => SUBRULE(orderClause));
     const limitAndOffset = OPTION4(() => SUBRULE(limitOffsetClauses));
 
-    return {
+    return ACTION(() => ({
       ...limitAndOffset,
       group,
       having,
       order,
-    };
+    }));
   },
 };
 

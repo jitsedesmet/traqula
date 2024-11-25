@@ -365,6 +365,7 @@ export interface CstDef {
   AT_LEAST_ONE_SEP7: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP8: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP9: (options: AtLeastOneSepMethodOpts<any>) => void;
+  ACTION: <T>(impl: () => T) => T;
   SUBRULE: SubRuleFunc;
   SUBRULE1: SubRuleFunc;
   SUBRULE2: SubRuleFunc;
@@ -395,7 +396,7 @@ export class Builder<T extends string > {
     this.rules = [];
   }
 
-  public addRule<U extends string>(rule: RuleDef & { name: U }): Builder<T | U> {
+  public addRule<U extends string>(rule: RuleDef<U, any, any>): Builder<T | U> {
     this.rules.push(rule);
     return <Builder<T | U>> this;
   }
@@ -510,6 +511,7 @@ export class Builder<T extends string > {
           AT_LEAST_ONE_SEP7: options => this.AT_LEAST_ONE_SEP7(options),
           AT_LEAST_ONE_SEP8: options => this.AT_LEAST_ONE_SEP8(options),
           AT_LEAST_ONE_SEP9: options => this.AT_LEAST_ONE_SEP9(options),
+          ACTION: func => this.ACTION(func),
           SUBRULE: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment

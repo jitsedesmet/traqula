@@ -151,9 +151,9 @@ export const pathPrimary: RuleDef<'pathPrimary', PropertyPath | IriTerm> = {
     {
       ALT: () => {
         CONSUME(l.symbols.LParen);
-        const resRecusive = SUBRULE(path);
+        const resRecursive = SUBRULE(path);
         CONSUME(l.symbols.RParen);
-        return resRecusive;
+        return resRecursive;
       },
     },
   ]),

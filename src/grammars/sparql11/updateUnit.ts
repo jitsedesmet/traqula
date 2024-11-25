@@ -23,9 +23,10 @@ import { groupGraphPattern } from './whereClause';
  */
 export const updateUnit: RuleDef<'updateUnit', Update> = {
   name: 'updateUnit',
-  impl: ({ SUBRULE }) => () => {
+  impl: ({ ACTION, SUBRULE }) => () => {
     const data = SUBRULE(update);
-    data.updates.reverse();
+
+    ACTION(() => data.updates.reverse());
     return data;
   },
 };
@@ -35,36 +36,41 @@ export const updateUnit: RuleDef<'updateUnit', Update> = {
  */
 export const update: RuleDef<'update', Update> = {
   name: 'update',
-  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    const { base, prefixes } = SUBRULE(prologue);
+  impl: ({ ACTION, SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
+    const prologValue = SUBRULE(prologue);
     const optionalResult = OPTION1<Update>(() => {
       const updateOperation = SUBRULE(update1);
       const recursiveRes = OPTION2(() => {
         CONSUME(l.symbols.semi);
         return SUBRULE(update);
       });
-      if (recursiveRes) {
-        recursiveRes.updates.push(updateOperation);
+
+      return ACTION(() => {
+        if (recursiveRes) {
+          recursiveRes.updates.push(updateOperation);
+          return {
+            type: 'update',
+            base: recursiveRes.base ?? prologValue.base,
+            prefixes: recursiveRes.prefixes ?
+                { ...prologValue.prefixes, ...recursiveRes.prefixes } :
+              prologValue.prefixes,
+            updates: recursiveRes.updates,
+          };
+        }
         return {
           type: 'update',
-          base: recursiveRes.base ?? base,
-          prefixes: recursiveRes.prefixes ? { ...prefixes, ...recursiveRes.prefixes } : prefixes,
-          updates: recursiveRes.updates,
+          base: prologValue.base,
+          prefixes: prologValue.prefixes,
+          updates: [ updateOperation ],
         };
-      }
-      return {
-        type: 'update',
-        base,
-        prefixes,
-        updates: [ updateOperation ],
-      };
+      });
     });
-    return optionalResult ?? {
+    return ACTION(() => optionalResult ?? {
       type: 'update',
-      base,
-      prefixes,
+      base: prologValue.base,
+      prefixes: prologValue.prefixes,
       updates: [],
-    };
+    });
   },
 };
 
@@ -249,7 +255,7 @@ export const deleteWhere: RuleDef<'deleteWhere', InsertDeleteOperation> = {
  */
 export const modify: RuleDef<'modify', UpdateOperation> = {
   name: 'modify',
-  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OR }) => () => {
     const graph = OPTION1(() => {
       CONSUME(l.modifyWith);
       return SUBRULE(iri);
@@ -267,30 +273,33 @@ export const modify: RuleDef<'modify', UpdateOperation> = {
         return { insert, delete: []};
       } },
     ]);
-    const usingArr: RuleDefReturn<typeof usingClause>[] = [];
-    MANY(() => {
-      usingArr.push(SUBRULE(usingClause));
-    });
-    CONSUME(l.where);
-    const where = SUBRULE(groupGraphPattern);
 
-    const def: IriTerm[] = [];
-    const named: IriTerm[] = [];
-    for (const { value, type } of usingArr) {
-      if (type === 'default') {
-        def.push(value);
-      } else {
-        named.push(value);
+    return ACTION(() => {
+      const usingArr: RuleDefReturn<typeof usingClause>[] = [];
+      MANY(() => {
+        usingArr.push(SUBRULE(usingClause));
+      });
+      CONSUME(l.where);
+      const where = SUBRULE(groupGraphPattern);
+
+      const def: IriTerm[] = [];
+      const named: IriTerm[] = [];
+      for (const { value, type } of usingArr) {
+        if (type === 'default') {
+          def.push(value);
+        } else {
+          named.push(value);
+        }
       }
-    }
-    return {
-      updateType: 'insertdelete',
-      graph,
-      insert,
-      delete: del,
-      using: usingArr.length > 0 ? { default: def, named } : undefined,
-      where,
-    };
+      return {
+        updateType: 'insertdelete',
+        graph,
+        insert,
+        delete: del,
+        using: usingArr.length > 0 ? { default: def, named } : undefined,
+        where,
+      };
+    });
   },
 };
 

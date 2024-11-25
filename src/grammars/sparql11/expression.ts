@@ -55,10 +55,7 @@ export const argList: RuleDef<'argList', IArgList> = {
       ALT: () => {
         const args: Expression[] = [];
         CONSUME(l.symbols.LParen);
-        const distinct = OPTION(() => {
-          CONSUME(l.distinct);
-          return true;
-        }) ?? false;
+        const distinct = Boolean(OPTION(() => CONSUME(l.distinct)));
 
         MANY_SEP({
           DEF: () => args.push(SUBRULE1(expression)),
@@ -117,18 +114,21 @@ interface LeftDeepBuildArgs<T extends string = string> {
 
 function constructLeftDeep<T extends string = string>(
   startGenerator: () => Expression,
-  MANY: CstDef['MANY'],
   restGenerator: () => LeftDeepBuildArgs<T>,
+  ACTION: CstDef['ACTION'],
+  MANY: CstDef['MANY'],
 ): Expression {
 // By using iterExpression, we avoid creating unnecessary arrays
   let iterExpr = startGenerator();
   MANY(() => {
-    const { expr, operator } = restGenerator();
-    iterExpr = {
-      type: 'operation',
-      operator,
-      args: [ iterExpr, expr ],
-    };
+    const res = restGenerator();
+    ACTION(() => {
+      iterExpr = {
+        type: 'operation',
+        operator: res.operator,
+        args: [ iterExpr, res.expr ],
+      };
+    });
   });
   return iterExpr;
 }
@@ -138,18 +138,14 @@ function constructLeftDeep<T extends string = string>(
  */
 export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Expression> = {
   name: 'conditionalOrExpression',
-  impl: ({ MANY, CONSUME, SUBRULE1, SUBRULE2 }) => () =>
-    constructLeftDeep(
-      () => SUBRULE1(conditionalAndExpression),
-      MANY,
-      () => {
-        CONSUME(l.symbols.logicOr);
-        return {
-          expr: SUBRULE2(conditionalAndExpression),
-          operator: '||',
-        };
-      },
-    )
+  impl: ({ ACTION, MANY, CONSUME, SUBRULE1, SUBRULE2 }) => () =>
+    constructLeftDeep(() => SUBRULE1(conditionalAndExpression), () => {
+      CONSUME(l.symbols.logicOr);
+      return {
+        expr: SUBRULE2(conditionalAndExpression),
+        operator: '||',
+      };
+    }, ACTION, MANY)
   ,
 };
 
@@ -158,17 +154,13 @@ export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Express
  */
 export const conditionalAndExpression: RuleDef<'conditionalAndExpression', Expression> = {
   name: 'conditionalAndExpression',
-  impl: ({ MANY, SUBRULE, CONSUME }) => () => constructLeftDeep(
-    () => SUBRULE(valueLogical),
-    MANY,
-    () => {
-      CONSUME(l.symbols.logicAnd);
-      return {
-        expr: SUBRULE(valueLogical),
-        operator: '&&',
-      };
-    },
-  ),
+  impl: ({ ACTION, MANY, SUBRULE, CONSUME }) => () => constructLeftDeep(() => SUBRULE(valueLogical), () => {
+    CONSUME(l.symbols.logicAnd);
+    return {
+      expr: SUBRULE(valueLogical),
+      operator: '&&',
+    };
+  }, ACTION, MANY),
 };
 
 /**
@@ -268,84 +260,93 @@ export const numericExpression: RuleDef<'numericExpression', Expression> = {
  */
 export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
   name: 'additiveExpression',
-  impl: ({ SUBRULE, CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, MANY1, MANY2, OR1, OR2, OR3 }) => () => constructLeftDeep(
-    () => SUBRULE1(multiplicativeExpression),
-    MANY1,
-    () => OR1([
-      {
-        ALT: () => {
-          CONSUME(l.symbols.plus);
-          return {
-            operator: '+',
-            expr: SUBRULE2(multiplicativeExpression),
-          };
+  impl: ({ ACTION, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, MANY1, MANY2, OR1, OR2, OR3 }) => () =>
+    constructLeftDeep(
+      () => SUBRULE1(multiplicativeExpression),
+      () => OR1([
+        {
+          ALT: () => {
+            CONSUME(l.symbols.plus);
+            return {
+              operator: '+',
+              expr: SUBRULE2(multiplicativeExpression),
+            };
+          },
         },
-      },
-      {
-        ALT: () => {
-          CONSUME(l.symbols.minus_);
-          return {
-            operator: '-',
-            expr: SUBRULE3(multiplicativeExpression),
-          };
+        {
+          ALT: () => {
+            CONSUME(l.symbols.minus_);
+            return {
+              operator: '-',
+              expr: SUBRULE3(multiplicativeExpression),
+            };
+          },
         },
-      },
-      {
-        ALT: () => {
-          // The operator of this alternative is actually parsed as part of the signed numeric literal. (note #6)
-          const { operator, args } = OR2([
-            { ALT: () => {
-              // Note #6. No spaces are allowed between the sign and a number.
-              // In this rule however, we do not want to care about this.
-              const integer = SUBRULE(numericLiteralPositive);
-              return {
-                operator: '+',
-                args: [ integer ],
-              };
-            } },
-            { ALT: () => {
-              const integer = SUBRULE(numericLiteralNegative);
-              integer.value = integer.value.replace(/^(-)/u, '');
-              return {
-                operator: '-',
-                args: [ integer ],
-              };
-            } },
-          ]);
-          const expr = constructLeftDeep(
-            () => args[0],
-            MANY2,
-            () => OR3<{ expr: Expression; operator: string }>([
+        {
+          ALT: () => {
+            // The operator of this alternative is actually parsed as part of the signed numeric literal. (note #6)
+            const { operator, args } = OR2([
               {
                 ALT: () => {
-                  CONSUME(l.symbols.star);
-                  const expr = SUBRULE1(unaryExpression);
+                  // Note #6. No spaces are allowed between the sign and a number.
+                  // In this rule however, we do not want to care about this.
+                  const integer = SUBRULE(numericLiteralPositive);
                   return {
-                    operator: '*',
-                    expr,
+                    operator: '+',
+                    args: [ integer ],
                   };
                 },
               },
               {
                 ALT: () => {
-                  CONSUME(l.symbols.slash);
-                  const expr = SUBRULE2(unaryExpression);
-                  return {
-                    operator: '/',
-                    expr,
-                  };
+                  const integer = SUBRULE(numericLiteralNegative);
+                  return ACTION(() => {
+                    integer.value = integer.value.replace(/^(-)/u, '');
+                    return {
+                      operator: '-',
+                      args: [ integer ],
+                    };
+                  });
                 },
               },
-            ]),
-          );
-          return {
-            operator,
-            expr,
-          };
+            ]);
+            const expr = constructLeftDeep(
+              () => args[0],
+              () => OR3<{ expr: Expression; operator: string }>([
+                {
+                  ALT: () => {
+                    CONSUME(l.symbols.star);
+                    const expr = SUBRULE1(unaryExpression);
+                    return {
+                      operator: '*',
+                      expr,
+                    };
+                  },
+                },
+                {
+                  ALT: () => {
+                    CONSUME(l.symbols.slash);
+                    const expr = SUBRULE2(unaryExpression);
+                    return {
+                      operator: '/',
+                      expr,
+                    };
+                  },
+                },
+              ]),
+              ACTION,
+              MANY2,
+            );
+            return {
+              operator,
+              expr,
+            };
+          },
         },
-      },
-    ]),
-  ),
+      ]),
+      ACTION,
+      MANY1,
+    ),
 };
 
 /**
@@ -353,9 +354,8 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
  */
 export const multiplicativeExpression: RuleDef<'multiplicativeExpression', Expression> = {
   name: 'multiplicativeExpression',
-  impl: ({ CONSUME, MANY, SUBRULE1, SUBRULE2, SUBRULE3, OR }) => () => constructLeftDeep(
+  impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, SUBRULE3, OR }) => () => constructLeftDeep(
     () => SUBRULE1(unaryExpression),
-    MANY,
     () => OR<LeftDeepBuildArgs>([
       {
         ALT: () => {
@@ -378,6 +378,8 @@ export const multiplicativeExpression: RuleDef<'multiplicativeExpression', Expre
         },
       },
     ]),
+    ACTION,
+    MANY,
   ),
 };
 

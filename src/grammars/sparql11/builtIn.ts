@@ -1,6 +1,6 @@
 import * as l from '../../lexer/index';
 import type { RuleDef } from '../buildExample';
-import type { Expression } from '../sparqlJSTypes';
+import type { AggregateExpression, Expression } from '../sparqlJSTypes';
 import {
   baseAggregateFunc,
   funcExpr1,
@@ -162,22 +162,28 @@ export const aggregateMin = baseAggregateFunc(l.builtIn.min);
 export const aggregateMax = baseAggregateFunc(l.builtIn.max);
 export const aggregateAvg = baseAggregateFunc(l.builtIn.avg);
 export const aggregateSample = baseAggregateFunc(l.builtIn.sample);
-export const aggregateGroup_concat: RuleDef & { name: Uncapitalize<typeof l.builtIn.groupConcat.name> } = {
+export const aggregateGroup_concat: RuleDef< Uncapitalize<typeof l.builtIn.groupConcat.name>, AggregateExpression> = {
   name: unCapitalize(l.builtIn.groupConcat.name),
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
     CONSUME(l.builtIn.groupConcat);
     CONSUME(l.symbols.LParen);
-    OPTION1(() => {
-      CONSUME(l.distinct);
-    });
-    SUBRULE(expression);
-    OPTION2(() => {
+    const distinct = Boolean(OPTION1(() => CONSUME(l.distinct)));
+    const expr = SUBRULE(expression);
+    const separator = OPTION2(() => {
       CONSUME(l.symbols.semi);
       CONSUME(l.separator);
       CONSUME(l.symbols.equal);
-      SUBRULE(string);
+      return SUBRULE(string);
     });
     CONSUME(l.symbols.RParen);
+
+    return {
+      type: 'aggregate',
+      aggregation: 'group_concat',
+      expression: expr,
+      distinct,
+      separator,
+    };
   },
 };
 
