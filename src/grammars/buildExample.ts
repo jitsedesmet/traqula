@@ -443,10 +443,11 @@ export class Builder<T extends string > {
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
         super(tokenVocabulary, {
-          recoveryEnabled: true,
+          // RecoveryEnabled: true,
           // TODO: enable these and test correctness again!
-          // maxLookahead: 1,
-          // skipValidations: true,
+          // Spec states we have an LL(1) grammar.
+          maxLookahead: 1,
+          // SkipValidations: true,
         });
         const selfRef: CstDef = {
           CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),
