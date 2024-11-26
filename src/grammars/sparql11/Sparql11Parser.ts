@@ -385,10 +385,10 @@ export function trySparql12(): void {
   const parser = sparql12Builder.consume(allTokens);
 
   // Const lexResult = lexer.tokenize('SELECT * WHERE { ?s ?p ?o }');
-  const lexResult = lexer.tokenize('SELECT (LANGMATCHES(?S, ?P) AS ?adjusted) WHERE { ?s ?p ?o }');
+  const lexResult = lexer.tokenize('select (LANGMATCHES(?S, ?P) AS ?adjusted) WHERE { ?s ?p ?o }');
 
   parser.input = lexResult.tokens;
-  console.log(parser.queryUnit());
+  console.log(JSON.stringify(parser.queryUnit(), null, 2));
   // eslint-disable-next-line no-console
   console.log(parser.errors.join('\n'));
 }

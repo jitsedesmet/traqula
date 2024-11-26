@@ -198,7 +198,7 @@ RuleDefExpressionFunctionX<
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
-      CONSUME(l.builtIn.exists);
+      CONSUME(func);
       const args = SUBRULE(groupGraphPattern);
       return {
         type: 'operation',

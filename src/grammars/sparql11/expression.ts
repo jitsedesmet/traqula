@@ -154,13 +154,18 @@ export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Express
  */
 export const conditionalAndExpression: RuleDef<'conditionalAndExpression', Expression> = {
   name: 'conditionalAndExpression',
-  impl: ({ ACTION, MANY, SUBRULE, CONSUME }) => () => constructLeftDeep(() => SUBRULE(valueLogical), () => {
-    CONSUME(l.symbols.logicAnd);
-    return {
-      expr: SUBRULE(valueLogical),
-      operator: '&&',
-    };
-  }, ACTION, MANY),
+  impl: ({ ACTION, MANY, SUBRULE1, SUBRULE2, CONSUME }) => () => constructLeftDeep(
+    () => SUBRULE1(valueLogical),
+    () => {
+      CONSUME(l.symbols.logicAnd);
+      return {
+        expr: SUBRULE2(valueLogical),
+        operator: '&&',
+      };
+    },
+    ACTION,
+    MANY,
+  ),
 };
 
 /**

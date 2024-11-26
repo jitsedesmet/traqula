@@ -443,6 +443,7 @@ export class Builder<T extends string > {
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
         super(tokenVocabulary, {
+          recoveryEnabled: true,
           // TODO: enable these and test correctness again!
           // maxLookahead: 1,
           // skipValidations: true,

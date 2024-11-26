@@ -93,30 +93,29 @@ export interface IPropertyListNotEmpty {
 export const propertyListNotEmpty: RuleDef<'propertyListNotEmpty', IPropertyListNotEmpty, [BlankNodePropertyListArgs]> =
   {
     name: 'propertyListNotEmpty',
-    impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => (arg) => {
+    impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => (arg) => {
       const allowPaths = arg?.allowPaths;
       const tripleConstructor: { predicate: Triple['predicate']; objects: IObjectList }[] = [];
 
-      const firstProperty = allowPaths ?
-        OR1<IriTerm | VariableTerm | PropertyPath>([
-          { ALT: () => SUBRULE1(verbPath) },
-          { ALT: () => SUBRULE1(verbSimple) },
-        ]) :
-        SUBRULE1(verb);
-      const firstObjects = SUBRULE(objectList, { allowPaths });
+      const firstProperty = OR1<IriTerm | VariableTerm | PropertyPath>([
+        { GATE: () => Boolean(allowPaths), ALT: () => SUBRULE1(verbPath) },
+        { GATE: () => Boolean(allowPaths), ALT: () => SUBRULE1(verbSimple) },
+        { GATE: () => !allowPaths, ALT: () => SUBRULE1(verb) },
+      ]);
+
+      const firstObjects = SUBRULE1(objectList, { allowPaths });
       tripleConstructor.push({ predicate: firstProperty, objects: firstObjects });
 
       MANY(() => {
         CONSUME(l.symbols.semi);
         OPTION(() => {
-          const predicate = allowPaths ?
-            OR2<IriTerm | VariableTerm | PropertyPath>([
-              { ALT: () => SUBRULE2(verbPath) },
-              { ALT: () => SUBRULE2(verbSimple) },
-            ]) :
-            SUBRULE2(verb);
+          const predicate = OR2<IriTerm | VariableTerm | PropertyPath>([
+            { GATE: () => Boolean(allowPaths), ALT: () => SUBRULE2(verbPath) },
+            { GATE: () => Boolean(allowPaths), ALT: () => SUBRULE2(verbSimple) },
+            { GATE: () => !allowPaths, ALT: () => SUBRULE2(verb) },
+          ]);
 
-          const objects = SUBRULE(objectList, { allowPaths });
+          const objects = SUBRULE2(objectList, { allowPaths });
           tripleConstructor.push({ predicate, objects });
         });
       });

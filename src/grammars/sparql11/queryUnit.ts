@@ -36,7 +36,7 @@ export const query: RuleDef<'query', Query> = {
   name: 'query',
   impl: ({ ACTION, SUBRULE, OR }) => () => {
     const prologueValues = SUBRULE(prologue);
-    OR<Omit<Query, HandledByBase>>([
+    const queryType = OR<Omit<Query, HandledByBase>>([
       { ALT: () => SUBRULE(selectQuery) },
       { ALT: () => SUBRULE(constructQuery) },
       { ALT: () => SUBRULE(describeQuery) },
@@ -46,6 +46,7 @@ export const query: RuleDef<'query', Query> = {
 
     return ACTION(() => (<Query>{
       ...prologueValues,
+      ...queryType,
       type: 'query',
       values,
     }));

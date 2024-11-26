@@ -261,18 +261,18 @@ export const inlineDataOneVar: RuleDef<'inlineDataOneVar', ValuePatternRow[]> = 
  */
 export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
   name: 'inlineDataFull',
-  impl: ({ ACTION, OR, MANY, SUBRULE, CONSUME }) => () => OR([
+  impl: ({ ACTION, OR, MANY1, MANY2, MANY3, MANY4, SUBRULE, CONSUME1, CONSUME2 }) => () => OR([
     // Grammar rule 64 together with note 11 learns us that a nil should be followed by a nil in DataBlock.
     {
       ALT: () => {
         const res: ValuePatternRow[] = [];
-        CONSUME(l.terminals.nil);
-        CONSUME(l.symbols.LCurly);
-        MANY(() => {
-          CONSUME(l.terminals.nil);
+        CONSUME1(l.terminals.nil);
+        CONSUME1(l.symbols.LCurly);
+        MANY1(() => {
+          CONSUME2(l.terminals.nil);
           res.push({});
         });
-        CONSUME(l.symbols.RCurly);
+        CONSUME1(l.symbols.RCurly);
         return res;
       },
     },
@@ -281,23 +281,23 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
         const res: ValuePatternRow[] = [];
         const vars: VariableTerm[] = [];
 
-        CONSUME(l.symbols.LParen);
-        MANY(() => {
+        CONSUME1(l.symbols.LParen);
+        MANY2(() => {
           vars.push(SUBRULE(var_));
         });
-        CONSUME(l.symbols.RParen);
+        CONSUME1(l.symbols.RParen);
 
-        CONSUME(l.symbols.LCurly);
-        MANY(() => {
+        CONSUME2(l.symbols.LCurly);
+        MANY3(() => {
           const varBinds: ValuePatternRow[string][] = [];
-          CONSUME(l.symbols.LParen);
-          MANY({
+          CONSUME2(l.symbols.LParen);
+          MANY4({
             GATE: () => vars.length > varBinds.length,
             DEF: () => {
               varBinds.push(SUBRULE(dataBlockValue));
             },
           });
-          CONSUME(l.symbols.RParen);
+          CONSUME2(l.symbols.RParen);
 
           ACTION(() => {
             // TODO: what happens when I throw this error?
@@ -311,7 +311,7 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
             res.push(row);
           });
         });
-        CONSUME(l.symbols.RCurly);
+        CONSUME2(l.symbols.RCurly);
         return res;
       },
     },
