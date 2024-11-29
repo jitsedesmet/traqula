@@ -154,6 +154,7 @@ import {
   verbPath,
   verbSimple,
 } from './tripleBlock';
+import { updateParser } from './updateUnit/updateNoModifyParser';
 import {
   add,
   clear,
@@ -399,6 +400,7 @@ export const sparql12Builder = Builder.createBuilder(false)
   .addRule(blankNode);
 
 export function trySparql12(): void {
+  console.log(updateParser);
   const lexer = ChevSparqlLexer;
   const parser = sparql12Builder.consume(allTokens);
 

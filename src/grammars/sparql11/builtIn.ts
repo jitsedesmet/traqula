@@ -1,5 +1,6 @@
+import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../../lexer/index';
-import type { RuleDef } from '../buildExample';
+import type { CstDef, RuleDef } from '../buildExample';
 import type { AggregateExpression, Expression } from '../sparqlJSTypes';
 import {
   baseAggregateFunc,
@@ -67,12 +68,8 @@ export const builtInIsblank = funcExpr1(l.builtIn.isblank);
 export const builtInIsliteral = funcExpr1(l.builtIn.isliteral);
 export const builtInIsnumeric = funcExpr1(l.builtIn.isnumeric);
 
-/**
- * [[121]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
- */
-export const builtInCall: RuleDef<'builtInCall', Expression> = {
-  name: 'builtInCall',
-  impl: ({ OR, SUBRULE }) => () => OR<Expression>([
+export function builtInCallList(SUBRULE: CstDef['SUBRULE']): IOrAlt<Expression>[] {
+  return [
     { ALT: () => SUBRULE(aggregate) },
     { ALT: () => SUBRULE(builtInStr) },
     { ALT: () => SUBRULE(builtInLang) },
@@ -128,7 +125,15 @@ export const builtInCall: RuleDef<'builtInCall', Expression> = {
     { ALT: () => SUBRULE(regexExpression) },
     { ALT: () => SUBRULE(existsFunc) },
     { ALT: () => SUBRULE(notExistsFunc) },
-  ]),
+  ];
+}
+
+/**
+ * [[121]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
+ */
+export const builtInCall: RuleDef<'builtInCall', Expression> = {
+  name: 'builtInCall',
+  impl: ({ OR, SUBRULE }) => () => OR<Expression>(builtInCallList(SUBRULE)),
 };
 
 /**

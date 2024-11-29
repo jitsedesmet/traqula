@@ -24,6 +24,8 @@ import {
   rdfLiteral,
   string,
 } from '../literals';
+import { objectListBuilder } from '../queryUnit/objectListParser';
+import { subSelectParserBuilder } from '../queryUnit/subSelectParser';
 import {
   blankNodePropertyList,
   collection,
@@ -35,19 +37,23 @@ import {
   triplesNode,
   triplesSameSubject,
 } from '../tripleBlock';
+import { groupGraphPattern } from '../whereClause';
 import {
   add,
   clear,
   copy,
   create,
+  deleteClause,
   deleteData,
   deleteWhere,
   drop,
   graphOrDefault,
   graphRef,
   graphRefAll,
+  insertClause,
   insertData,
   load,
+  modify,
   move,
   quadData,
   quadPattern,
@@ -56,6 +62,7 @@ import {
   update,
   update1,
   updateUnit,
+  usingClause,
 } from './updateUnit';
 
 export const updateNoModifyParserBuilder = Builder.createBuilder(false)
@@ -121,3 +128,25 @@ export const updateNoModifyParserBuilder = Builder.createBuilder(false)
   .addRule(quadPattern);
 
 export const updateNoModifyParser = updateNoModifyParserBuilder.consume(allTokens);
+
+export const updateParserBuilder = Builder.createBuilder(false).merge(updateNoModifyParserBuilder)
+  .patchRule('update1', update1.impl)
+  .addRule(modify)
+  .addRule(iri)
+  .addRule(deleteClause)
+  .addRule(insertClause)
+  .addRule(usingClause)
+  .addRule(groupGraphPattern)
+  .addRule(quadPattern)
+  .addRule(quads)
+  .addRule(triplesTemplate)
+  .addRule(quadsNotTriples)
+  .addRule(triplesSameSubject)
+  .addRule(varOrTerm)
+  // This substitutes all of propertyListNotEmpty
+  .merge(objectListBuilder)
+  .addRule(triplesNode)
+  .addRule(propertyList)
+  .merge(subSelectParserBuilder);
+
+export const updateParser = updateParserBuilder.consume(allTokens);

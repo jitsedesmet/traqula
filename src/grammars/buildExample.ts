@@ -443,9 +443,15 @@ export class Builder<T extends string > {
           res.rules.push(overridingRule);
           existingRules.delete(rule.name);
         } else {
-          // Need to be explicit about overriding since the name of a rule is the key,
-          // but you don't necessarily know the keys used in the grammars you are extending
-          throw new Error(`Rule ${rule.name} already exists, if this was intended, provide the rule to overridingRules`);
+          const myRule = this.rules.find(myRule => myRule.name === rule.name);
+          if (myRule === rule) {
+            res.rules.push(rule);
+            existingRules.delete(rule.name);
+          } else {
+            // Need to be explicit about overriding since the name of a rule is the key,
+            // but you don't necessarily know the keys used in the grammars you are extending
+            throw new Error(`Rule ${rule.name} already exists, if this was intended, provide the rule to overridingRules`);
+          }
         }
       } else {
         res.rules.push(rule);
