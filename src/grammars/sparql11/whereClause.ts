@@ -24,7 +24,7 @@ import { builtInCall } from './builtIn';
 import { argList, brackettedExpression, expression } from './expression';
 import { var_, varOrIri } from './general';
 import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
-import { subSelect } from './queryUnit';
+import { subSelect } from './queryUnit/queryUnit';
 import { triplesBlock } from './tripleBlock';
 
 /**

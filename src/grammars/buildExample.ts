@@ -393,24 +393,48 @@ export type RuleDef<
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
 
 export class Builder<T extends string > {
-  public static createBuilder(): Builder<''> {
-    return new Builder<''>();
+  public static createBuilder(productionBuild: boolean): Builder<''> {
+    return new Builder<''>(productionBuild);
   }
 
-  private readonly rules: RuleDef[];
+  private rules: RuleDef[];
 
-  private constructor() {
+  private constructor(private readonly productionBuild: boolean) {
     this.rules = [];
   }
 
-  public addRule<U extends string>(rule: RuleDef<U, any, any>): Builder<T | U> {
+  public patchRule<U extends T>(ruleName: U, patch: RuleDef['impl']): Builder<T> {
+    let changed = false;
+    this.rules = this.rules.map((r) => {
+      if (r.name === ruleName) {
+        changed = true;
+        return { ...r, impl: patch };
+      }
+      return r;
+    });
+    if (!changed) {
+      throw new Error(`Rule ${ruleName} does not exist`);
+    }
+    return this;
+  }
+
+  public addRule<U extends string>(rule: RuleDef<U, any, any>, terminals: TokenType[] = []): Builder<T | U> {
     this.rules.push(rule);
     return <Builder<T | U>> this;
   }
 
+  public deleteRule<U extends T>(ruleName: U): Builder<Exclude<T, U>> {
+    const newRules = this.rules.filter(rule => rule.name !== ruleName);
+    if (this.rules.length === newRules.length) {
+      throw new Error(`Rule ${ruleName} does not exist`);
+    }
+    this.rules = newRules;
+    return this;
+  }
+
   public merge<U extends string>(builder: Builder<U>, overridingRules: RuleDef[] = []): Builder<T | U> {
     const existingRules: Set<string> = new Set(this.rules.map(rule => rule.name));
-    const res = Builder.createBuilder();
+    const res = Builder.createBuilder(this.productionBuild);
 
     for (const rule of builder.rules) {
       if (existingRules.has(rule.name)) {

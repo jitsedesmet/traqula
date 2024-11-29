@@ -1,6 +1,6 @@
 import type { TokenType } from 'chevrotain';
-import * as l from '../../lexer/index';
-import type { RuleDef, RuleDefReturn } from '../buildExample';
+import * as l from '../../../lexer/index';
+import type { RuleDef, RuleDefReturn } from '../../buildExample';
 import type {
   ClearDropOperation,
   GraphOrDefault,
@@ -12,11 +12,11 @@ import type {
   Quads,
   Update,
   UpdateOperation,
-} from '../sparqlJSTypes';
-import { unCapitalize } from '../utils';
-import { prologue, triplesTemplate, varOrIri } from './general';
-import { iri } from './literals';
-import { groupGraphPattern } from './whereClause';
+} from '../../sparqlJSTypes';
+import { unCapitalize } from '../../utils';
+import { prologue, triplesTemplate, varOrIri } from '../general';
+import { iri } from '../literals';
+import { groupGraphPattern } from '../whereClause';
 
 /**
  * [[3]](https://www.w3.org/TR/sparql11-query/#rUpdateUnit)

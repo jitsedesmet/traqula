@@ -118,7 +118,7 @@ import {
   selectQuery,
   subSelect,
   valuesClause,
-} from './queryUnit';
+} from './queryUnit/queryUnit';
 import {
   groupClause,
   groupCondition,
@@ -133,15 +133,24 @@ import {
 } from './solutionModifier';
 import {
   blankNodePropertyList,
+  blankNodePropertyListPath,
   collection,
+  collectionPath,
   graphNode,
+  graphNodePath,
   object,
   objectList,
+  objectListPath,
+  objectPath,
   propertyList,
   propertyListNotEmpty,
+  propertyListPath,
+  propertyListPathNotEmpty,
   triplesBlock,
   triplesNode,
+  triplesNodePath,
   triplesSameSubject,
+  triplesSameSubjectPath,
   verbPath,
   verbSimple,
 } from './tripleBlock';
@@ -170,7 +179,7 @@ import {
   update1,
   updateUnit,
   usingClause,
-} from './updateUnit';
+} from './updateUnit/updateUnit';
 import {
   bind,
   constraint,
@@ -194,7 +203,7 @@ import {
 
 // [97]: unused
 
-export const sparql12Builder = Builder.createBuilder()
+export const sparql12Builder = Builder.createBuilder(false)
   .addRule(queryUnit)
   .addRule(query)
   .addRule(updateUnit)
@@ -250,6 +259,15 @@ export const sparql12Builder = Builder.createBuilder()
   .addRule(groupGraphPattern)
   .addRule(groupGraphPatternSub)
   .addRule(triplesBlock)
+  .addRule(triplesSameSubjectPath)
+  .addRule(propertyListPathNotEmpty)
+  .addRule(propertyListPath)
+  .addRule(objectListPath)
+  .addRule(objectPath)
+  .addRule(graphNodePath)
+  .addRule(triplesNodePath)
+  .addRule(collectionPath)
+  .addRule(blankNodePropertyListPath)
   .addRule(graphPatternNotTriples)
   .addRule(optionalGraphPattern)
   .addRule(graphGraphPattern)

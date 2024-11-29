@@ -42,7 +42,7 @@ const existingBuildInCall: RuleDef<'existingBuildInCall'> = {
   impl: builtInCall.impl,
 };
 
-const adjustBuilder = Builder.createBuilder()
+const adjustBuilder = Builder.createBuilder(false)
   .addRule(builtInAdjust)
   .addRule(_builtInCall)
   .addRule(existingBuildInCall)

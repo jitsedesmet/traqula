@@ -1,5 +1,5 @@
-import * as l from '../../lexer/index';
-import type { CstDef, RuleDef } from '../buildExample';
+import * as l from '../../../lexer/index';
+import type { CstDef, RuleDef } from '../../buildExample';
 import type {
   AskQuery,
   ConstructQuery,
@@ -12,14 +12,14 @@ import type {
   Variable,
   VariableExpression,
   VariableTerm,
-} from '../sparqlJSTypes';
-import { Wildcard } from '../Wildcard';
-import { datasetClause, type IDatasetClause } from './dataSetClause';
-import { expression } from './expression';
-import { prologue, triplesTemplate, var_, varOrIri } from './general';
-import { solutionModifier } from './solutionModifier';
-import { triplesSameSubject } from './tripleBlock';
-import { dataBlock, whereClause } from './whereClause';
+} from '../../sparqlJSTypes';
+import { Wildcard } from '../../Wildcard';
+import { datasetClause, type IDatasetClause } from '../dataSetClause';
+import { expression } from '../expression';
+import { prologue, triplesTemplate, var_, varOrIri } from '../general';
+import { solutionModifier } from '../solutionModifier';
+import { triplesSameSubject } from '../tripleBlock';
+import { dataBlock, whereClause } from '../whereClause';
 
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)
@@ -311,7 +311,7 @@ export const constructTriples: RuleDef<'constructTriples', Triple[]> = {
   name: 'constructTriples',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];
-    triples.push(SUBRULE(triplesSameSubject, { allowPaths: false }));
+    triples.push(SUBRULE(triplesSameSubject));
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {

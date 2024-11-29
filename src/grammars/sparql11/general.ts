@@ -73,7 +73,7 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];
 
-    triples.push(SUBRULE(triplesSameSubject, { allowPaths: false }));
+    triples.push(SUBRULE(triplesSameSubject));
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {
