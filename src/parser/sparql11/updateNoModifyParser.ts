@@ -1,13 +1,13 @@
-import { Builder } from '../../grammar/parserBuilder';
+import { Builder } from '../../grammar/parserBuilder.js';
 import {
   baseDecl,
   prefixDecl,
   prologue,
-} from '../../grammar/sparql11/general';
+} from '../../grammar/sparql11/general.js';
 import {
   iri,
   prefixedName,
-} from '../../grammar/sparql11/literals';
+} from '../../grammar/sparql11/literals.js';
 import {
   add,
   clear,
@@ -29,11 +29,11 @@ import {
   update,
   update1,
   updateUnit,
-} from '../../grammar/sparql11/updateUnit/updateUnit';
+} from '../../grammar/sparql11/updateUnit/updateUnit.js';
 import {
   triplesTemplateParserBuilder,
   type TriplesTemplateParserArgs,
-} from './triplesTemplateParserBuilder';
+} from './triplesTemplateParserBuilder.js';
 
 export type UpdateUnitBuilderArgs = '' |
   'updateUnit' |

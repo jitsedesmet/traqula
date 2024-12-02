@@ -1,15 +1,15 @@
-import { Builder } from '../../grammar/parserBuilder';
+import { Builder } from '../../grammar/parserBuilder.js';
 import {
   deleteClause,
   insertClause,
   modify,
   update1,
   usingClause,
-} from '../../grammar/sparql11/updateUnit/updateUnit';
-import { groupGraphPattern } from '../../grammar/sparql11/whereClause';
-import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser';
-import { subSelectParserBuilder, type SubSelectParserBuilderArgs } from './subSelectParser';
-import { updateNoModifyParserBuilder, type UpdateUnitBuilderArgs } from './updateNoModifyParser';
+} from '../../grammar/sparql11/updateUnit/updateUnit.js';
+import { groupGraphPattern } from '../../grammar/sparql11/whereClause.js';
+import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser.js';
+import { subSelectParserBuilder, type SubSelectParserBuilderArgs } from './subSelectParser.js';
+import { updateNoModifyParserBuilder, type UpdateUnitBuilderArgs } from './updateNoModifyParser.js';
 
 export type UpdateBuilderArgs =
   UpdateUnitBuilderArgs |

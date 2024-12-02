@@ -1,8 +1,8 @@
-import * as l from '../../lexer/sparql11/index';
-import type { RuleDef } from '../parserBuilder';
+import * as l from '../../lexer/sparql11/index.js';
+import type { RuleDef } from '../parserBuilder.js';
 
-import type { IriTerm } from '../sparqlJSTypes';
-import { iri } from './literals';
+import type { IriTerm } from '../sparqlJSTypes.js';
+import { iri } from './literals.js';
 
 /**
  * [[13]](https://www.w3.org/TR/sparql11-query/#rDatasetClause)

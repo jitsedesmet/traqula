@@ -1,7 +1,7 @@
-import { Builder } from '../../grammar/parserBuilder';
-import { builtInAdjust, existingBuildInCall } from '../../grammar/sparql11+adjust/builtIn';
-import type { Expression } from '../../grammar/sparqlJSTypes';
-import { sparqlParserBuilder } from '../sparql11/SparqlParser';
+import { Builder } from '../../grammar/parserBuilder.js';
+import { builtInAdjust, existingBuildInCall } from '../../grammar/sparql11+adjust/builtIn.js';
+import type { Expression } from '../../grammar/sparqlJSTypes.js';
+import { sparqlParserBuilder } from '../sparql11/SparqlParser.js';
 
 export const adjustBuilder = Builder.createBuilder(false)
   .merge(sparqlParserBuilder)

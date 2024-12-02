@@ -1,10 +1,10 @@
-import * as l from '../../lexer/sparql11/index';
-import type { CstDef, RuleDef } from '../parserBuilder';
-import type { Expression, IriTerm } from '../sparqlJSTypes';
-import { builtInCall } from './builtIn';
+import * as l from '../../lexer/sparql11/index.js';
+import type { CstDef, RuleDef } from '../parserBuilder.js';
+import type { Expression, IriTerm } from '../sparqlJSTypes.js';
+import { builtInCall } from './builtIn.js';
 import {
   var_,
-} from './general';
+} from './general.js';
 import {
   booleanLiteral,
   iri,
@@ -12,7 +12,7 @@ import {
   numericLiteralNegative,
   numericLiteralPositive,
   rdfLiteral,
-} from './literals';
+} from './literals.js';
 
 /**
  * [[71]](https://www.w3.org/TR/sparql11-query/#rArgList)

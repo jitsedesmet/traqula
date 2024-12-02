@@ -1,10 +1,10 @@
 import type { TokenType } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
-import * as l from '../../lexer/sparql11/index';
-import type { RuleDef } from '../parserBuilder';
+import * as l from '../../lexer/sparql11/index.js';
+import type { RuleDef } from '../parserBuilder.js';
 
-import type { IriTerm, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes';
-import { iri } from './literals';
+import type { IriTerm, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes.js';
+import { iri } from './literals.js';
 
 const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';

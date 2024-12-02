@@ -15,6 +15,7 @@ module.exports = config([
       // Default
       'unicorn/consistent-destructuring': 'off',
       'unicorn/no-array-callback-reference': 'off',
+      'import/extensions': 'off',
 
       // TODO: check if these can be enabled
       'ts/naming-convention': 'off',

@@ -1,6 +1,6 @@
-import * as l from '../../../lexer/sparql11/index';
-import { Wildcard } from '../../../misc/Wildcard';
-import type { CstDef, RuleDef } from '../../parserBuilder';
+import * as l from '../../../lexer/sparql11/index.js';
+import { Wildcard } from '../../../misc/Wildcard.js';
+import type { CstDef, RuleDef } from '../../parserBuilder.js';
 import type {
   AskQuery,
   ConstructQuery,
@@ -13,13 +13,13 @@ import type {
   Variable,
   VariableExpression,
   VariableTerm,
-} from '../../sparqlJSTypes';
-import { datasetClause, type IDatasetClause } from '../dataSetClause';
-import { expression } from '../expression';
-import { prologue, triplesTemplate, var_, varOrIri } from '../general';
-import { solutionModifier } from '../solutionModifier';
-import { triplesSameSubject } from '../tripleBlock';
-import { dataBlock, whereClause } from '../whereClause';
+} from '../../sparqlJSTypes.js';
+import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
+import { expression } from '../expression.js';
+import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
+import { solutionModifier } from '../solutionModifier.js';
+import { triplesSameSubject } from '../tripleBlock.js';
+import { dataBlock, whereClause } from '../whereClause.js';
 
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)

@@ -1,4 +1,3 @@
-/* eslint-disable ts/no-unsafe-argument */
 import type {
   AtLeastOneSepMethodOpts,
   DSLMethodOpts,
@@ -551,6 +550,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -562,6 +562,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE1(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -573,6 +574,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE2(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -584,6 +586,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE3(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -595,6 +598,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE4(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -606,6 +610,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE5(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -617,6 +622,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE6(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -628,6 +634,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE7(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -639,6 +646,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE8(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -650,6 +658,7 @@ export class Builder<T extends string > {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE9(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
               // eslint-disable-next-line no-console
@@ -662,6 +671,7 @@ export class Builder<T extends string > {
         for (const rule of Object.values(rules)) {
           // eslint-disable-next-line ts/ban-ts-comment
           // @ts-expect-error TS7053
+          // eslint-disable-next-line ts/no-unsafe-argument
           this[rule.name] = this.RULE(rule.name, rule.impl(selfRef));
         }
 
@@ -670,6 +680,6 @@ export class Builder<T extends string > {
     }
     const parser = <EmbeddedActionsParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> new MyParser();
 
-    return <EmbeddedActionsParser & Record<T, any>> parser;
+    return parser;
   }
 }

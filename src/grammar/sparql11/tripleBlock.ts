@@ -1,9 +1,9 @@
 import { DataFactory } from 'rdf-data-factory';
-import * as l from '../../lexer/sparql11/index';
-import type { RuleDef } from '../parserBuilder';
-import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes';
-import { var_, varOrTerm, verb } from './general';
-import { path } from './propertyPaths';
+import * as l from '../../lexer/sparql11/index.js';
+import type { RuleDef } from '../parserBuilder.js';
+import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes.js';
+import { var_, varOrTerm, verb } from './general.js';
+import { path } from './propertyPaths.js';
 
 const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';

@@ -1,7 +1,7 @@
 /* eslint-disable require-unicode-regexp */
 
 import type { TokenType } from 'chevrotain';
-import { createToken } from './helpers';
+import { createToken } from './helpers.js';
 
 export enum BuildInCalls {
   Str = 'builtInStr',

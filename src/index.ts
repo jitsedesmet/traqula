@@ -1,12 +1,12 @@
 import { Lexer } from 'chevrotain';
-import { BuiltInAdjust } from './grammar/sparql11+adjust/builtIn';
-import { allBaseTokens, allTokens, ChevSparqlLexer } from './lexer/sparql11';
-import { allBuiltInCalls } from './lexer/sparql11/BuildinCalls';
-import { allGraphTokens } from './lexer/sparql11/graph';
-import { allSymbols } from './lexer/sparql11/symbols';
-import { allTerminals } from './lexer/sparql11/terminals';
-import { sparqlParserBuilder } from './parser/sparql11/SparqlParser';
-import { adjustBuilder } from './parser/sparql11+adjust/Sparql11AdjustParser';
+import { BuiltInAdjust } from './grammar/sparql11+adjust/builtIn.js';
+import { allBuiltInCalls } from './lexer/sparql11/BuildinCalls.js';
+import { allGraphTokens } from './lexer/sparql11/graph.js';
+import { allBaseTokens, allTokens, ChevSparqlLexer } from './lexer/sparql11/index.js';
+import { allSymbols } from './lexer/sparql11/symbols.js';
+import { allTerminals } from './lexer/sparql11/terminals.js';
+import { sparqlParserBuilder } from './parser/sparql11/SparqlParser.js';
+import { adjustBuilder } from './parser/sparql11+adjust/Sparql11AdjustParser.js';
 
 function main(): void {
   const sparqlParser = sparqlParserBuilder.consume(allTokens);

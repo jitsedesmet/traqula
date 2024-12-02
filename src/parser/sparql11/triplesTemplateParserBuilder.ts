@@ -1,5 +1,5 @@
-import { Builder } from '../../grammar/parserBuilder';
-import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general';
+import { Builder } from '../../grammar/parserBuilder.js';
+import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general.js';
 import {
   blankNode,
   booleanLiteral,
@@ -11,7 +11,7 @@ import {
   prefixedName,
   rdfLiteral,
   string,
-} from '../../grammar/sparql11/literals';
+} from '../../grammar/sparql11/literals.js';
 import {
   blankNodePropertyList,
   collection,
@@ -22,7 +22,7 @@ import {
   propertyListNotEmpty,
   triplesNode,
   triplesSameSubject,
-} from '../../grammar/sparql11/tripleBlock';
+} from '../../grammar/sparql11/tripleBlock.js';
 
 export type TriplesTemplateParserArgs = '' |
   'triplesTemplate' |

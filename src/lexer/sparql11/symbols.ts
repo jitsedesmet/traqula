@@ -1,4 +1,4 @@
-import { createToken } from 'chevrotain';
+import { createToken } from './helpers.js';
 
 export const LCurly = createToken({ name: 'LCurly', pattern: '{', label: '{' });
 export const RCurly = createToken({ name: 'RCurly', pattern: '}', label: '}' });

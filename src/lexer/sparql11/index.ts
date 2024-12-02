@@ -1,5 +1,5 @@
-export * from './lexer';
-export * as graph from './graph';
-export * as builtIn from './BuildinCalls';
-export * as symbols from './symbols';
-export * as terminals from './terminals';
+export * from './lexer.js';
+export * as graph from './graph.js';
+export * as builtIn from './BuildinCalls.js';
+export * as symbols from './symbols.js';
+export * as terminals from './terminals.js';

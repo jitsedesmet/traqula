@@ -6,12 +6,19 @@
   "packageManager": "yarn@1.22.22",
   "description": "",
   "main": "src/index.ts",
+  "files": [
+    "out",
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map"
+  ],
   "scripts": {
     "build": "tsc && node esbuild.mjs",
     "clean": "git clean -dfx",
     "lint": "eslint . --cache",
     "lint-fix": "eslint . --fix",
-    "build & run": "yarn build && node out/index.cjs",
+    "build & run ESM": "yarn build && node src/index.js",
+    "build & run CJS": "yarn build && node out/index.cjs",
     "test": "jest"
   },
   "dependencies": {
@@ -19,6 +26,7 @@
     "rdf-data-factory": "^1.1.2"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.8",
     "@rdfjs/types": "^1.1.2",
     "@rubensworks/eslint-config": "^3.0.0",
     "esbuild": "^0.24.0",

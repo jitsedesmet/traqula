@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder';
+import { Builder } from '../../grammar/parserBuilder.js';
 import {
   aggregate,
   aggregateAvg,
@@ -62,7 +62,7 @@ import {
   regexExpression,
   strReplaceExpression,
   substringExpression,
-} from '../../grammar/sparql11/builtIn';
+} from '../../grammar/sparql11/builtIn.js';
 import {
   additiveExpression,
   argList,
@@ -78,8 +78,8 @@ import {
   relationalExpression,
   unaryExpression,
   valueLogical,
-} from '../../grammar/sparql11/expression';
-import { var_ } from '../../grammar/sparql11/general';
+} from '../../grammar/sparql11/expression.js';
+import { var_ } from '../../grammar/sparql11/general.js';
 import {
   booleanLiteral,
   iri,
@@ -90,7 +90,7 @@ import {
   prefixedName,
   rdfLiteral,
   string,
-} from '../../grammar/sparql11/literals';
+} from '../../grammar/sparql11/literals.js';
 
 export type ExpressionParserBuilderArgs = '' |
   'expression' |

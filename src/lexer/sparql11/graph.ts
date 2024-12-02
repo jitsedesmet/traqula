@@ -1,5 +1,5 @@
 /* eslint-disable require-unicode-regexp */
-import { createToken } from 'chevrotain';
+import { createToken } from './helpers.js';
 
 export const named = createToken({ name: 'NamedGraph', pattern: /named/i, label: 'NAMED' });
 export const default_ = createToken({ name: 'DefaultGraph', pattern: /default/i, label: 'DEFAULT' });

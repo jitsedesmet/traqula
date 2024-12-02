@@ -1,7 +1,7 @@
 import type { IOrAlt } from '@chevrotain/types';
-import * as l from '../../lexer/sparql11/index';
-import type { CstDef, RuleDef } from '../parserBuilder';
-import type { AggregateExpression, Expression } from '../sparqlJSTypes';
+import * as l from '../../lexer/sparql11/index.js';
+import type { CstDef, RuleDef } from '../parserBuilder.js';
+import type { AggregateExpression, Expression } from '../sparqlJSTypes.js';
 import {
   baseAggregateFunc,
   funcExpr1,
@@ -14,9 +14,9 @@ import {
   unCapitalize,
   funcVar1,
   funcGroupGraphPattern,
-} from '../utils';
-import { expression } from './expression';
-import { string } from './literals';
+} from '../utils.js';
+import { expression } from './expression.js';
+import { string } from './literals.js';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
 export const builtInLang = funcExpr1(l.builtIn.lang);

@@ -1,5 +1,5 @@
-import * as l from '../../lexer/sparql11/index';
-import type { RuleDef } from '../parserBuilder';
+import * as l from '../../lexer/sparql11/index.js';
+import type { RuleDef } from '../parserBuilder.js';
 import type {
   BindPattern,
   BlankTerm,
@@ -19,13 +19,13 @@ import type {
   ValuePatternRow,
   ValuesPattern,
   VariableTerm,
-} from '../sparqlJSTypes';
-import { builtInCall } from './builtIn';
-import { argList, brackettedExpression, expression } from './expression';
-import { var_, varOrIri } from './general';
-import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
-import { subSelect } from './queryUnit/queryUnit';
-import { triplesBlock } from './tripleBlock';
+} from '../sparqlJSTypes.js';
+import { builtInCall } from './builtIn.js';
+import { argList, brackettedExpression, expression } from './expression.js';
+import { var_, varOrIri } from './general.js';
+import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
+import { subSelect } from './queryUnit/queryUnit.js';
+import { triplesBlock } from './tripleBlock.js';
 
 /**
  * [[17]](https://www.w3.org/TR/sparql11-query/#rWhereClause)
