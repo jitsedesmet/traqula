@@ -384,7 +384,7 @@ export type ArrayElementsUndefinable<ArrayType extends any[]> =
 export type RuleDef<
   NameType extends string = string,
   ReturnType = unknown,
-  ParamType extends any[] = [],
+  ParamType extends unknown[] = [],
 > = {
   name: NameType;
   impl: (def: CstDef) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
@@ -397,74 +397,60 @@ export class Builder<T extends string > {
     return new Builder<''>(productionBuild);
   }
 
-  private rules: RuleDef[];
+  private rules: Record<T, RuleDef<T, unknown, unknown[]>>;
 
   private constructor(private readonly productionBuild: boolean) {
-    this.rules = [];
+    this.rules = <Record<T, RuleDef<T>>> {};
   }
 
   public patchRule<U extends T>(ruleName: U, patch: RuleDef['impl']): Builder<T> {
-    let changed = false;
-    this.rules = this.rules.map((r) => {
-      if (r.name === ruleName) {
-        changed = true;
-        return { ...r, impl: patch };
-      }
-      return r;
-    });
-    if (!changed) {
-      throw new Error(`Rule ${ruleName} does not exist`);
-    }
+    this.rules[ruleName] = {
+      name: ruleName,
+      impl: patch,
+    };
     return this;
   }
 
   public addRule<U extends string>(rule: RuleDef<U, any, any>, terminals: TokenType[] = []): Builder<T | U> {
-    this.rules.push(rule);
+    const rules = <Record<string, RuleDef>> this.rules;
+    if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
+      throw new Error(`Rule ${rule.name} already exists in the builder`);
+    }
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error TS2536
+    this.rules[rule.name] = rule;
     return <Builder<T | U>> this;
   }
 
   public deleteRule<U extends T>(ruleName: U): Builder<Exclude<T, U>> {
-    const newRules = this.rules.filter(rule => rule.name !== ruleName);
-    if (this.rules.length === newRules.length) {
-      throw new Error(`Rule ${ruleName} does not exist`);
-    }
-    this.rules = newRules;
-    return this;
+    delete this.rules[ruleName];
+    return <Builder<Exclude<T, U>>><unknown> this;
   }
 
   public merge<U extends string>(builder: Builder<U>, overridingRules: RuleDef[] = []): Builder<T | U> {
-    const existingRules: Set<string> = new Set(this.rules.map(rule => rule.name));
-    const res = Builder.createBuilder(this.productionBuild);
+    const rules: Record<string, RuleDef> = { ...builder.rules };
 
-    for (const rule of builder.rules) {
-      if (existingRules.has(rule.name)) {
-        const overridingRule = overridingRules.find(overridingRule => overridingRule.name === rule.name);
-        if (overridingRule) {
-          res.rules.push(overridingRule);
-          existingRules.delete(rule.name);
-        } else {
-          const myRule = this.rules.find(myRule => myRule.name === rule.name);
-          if (myRule === rule) {
-            res.rules.push(rule);
-            existingRules.delete(rule.name);
+    for (const iter of Object.values(this.rules)) {
+      const rule = <RuleDef> iter;
+      if (rules[rule.name] === undefined) {
+        rules[rule.name] = rule;
+      } else {
+        const existingRule = rules[rule.name];
+        // If same rule, no issue, move on
+        if (existingRule !== rule) {
+          const override = overridingRules.find(r => r.name === rule.name);
+          // If override specified, take override, else, inform user that there is a conflict
+          if (override) {
+            rules[rule.name] = override;
           } else {
-            // Need to be explicit about overriding since the name of a rule is the key,
-            // but you don't necessarily know the keys used in the grammars you are extending
-            throw new Error(`Rule ${rule.name} already exists, if this was intended, provide the rule to overridingRules`);
+            throw new Error(`Rule ${rule.name} already exists in the builder, specify an override to resolve conflict`);
           }
         }
-      } else {
-        res.rules.push(rule);
       }
     }
-
-    for (const rule of this.rules) {
-      if (existingRules.has(rule.name)) {
-        res.rules.push(rule);
-      }
-    }
-
-    return <Builder<T | U>> res;
+    const res = new Builder<T | U>(this.productionBuild);
+    res.rules = <Record<T | U, RuleDef<T | U, unknown, unknown[]>>> rules;
+    return res;
   }
 
   public consume(tokenVocabulary: TokenVocabulary):
@@ -663,7 +649,7 @@ export class Builder<T extends string > {
           },
         };
 
-        for (const rule of rules) {
+        for (const rule of Object.values(rules)) {
           // eslint-disable-next-line ts/ban-ts-comment
           // @ts-expect-error TS7053
           this[rule.name] = this.RULE(rule.name, rule.impl(selfRef));
