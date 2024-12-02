@@ -1,7 +1,7 @@
 import type { TokenType } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
-import * as l from '../../lexer/index';
-import type { RuleDef } from '../buildExample';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../parserBuilder';
 
 import type { IriTerm, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes';
 import { iri } from './literals';

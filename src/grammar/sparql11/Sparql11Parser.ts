@@ -1,5 +1,5 @@
-import { ChevSparqlLexer } from '../../lexer';
-import { queryUnitParser } from './queryUnit/QueryUnitParser';
+import { ChevSparqlLexer } from '../../lexer/sparql11/index';
+import { queryUnitParser } from '../../parser/sparql11/queryUnitParser';
 
 export function trySparql12(): void {
   console.log(queryUnitParser);

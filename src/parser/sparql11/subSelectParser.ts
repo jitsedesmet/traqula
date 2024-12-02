@@ -1,6 +1,5 @@
-import { allTokens } from '../../../lexer';
-import { Builder } from '../../buildExample';
-
+import { Builder } from '../../grammar/parserBuilder';
+import { selectClause, subSelect, valuesClause } from '../../grammar/sparql11/queryUnit/queryUnit';
 import {
   groupClause,
   groupCondition,
@@ -12,8 +11,7 @@ import {
   orderClause,
   orderCondition,
   solutionModifier,
-} from '../solutionModifier';
-
+} from '../../grammar/sparql11/solutionModifier';
 import {
   bind,
   constraint,
@@ -33,9 +31,10 @@ import {
   optionalGraphPattern,
   serviceGraphPattern,
   whereClause,
-} from '../whereClause';
-import { expressionParserBuilder, type ExpressionParserBuilderArgs } from './ExpressionParser';
-import { selectClause, subSelect, valuesClause } from './queryUnit';
+} from '../../grammar/sparql11/whereClause';
+import { allTokens } from '../../lexer/sparql11/index';
+
+import { expressionParserBuilder, type ExpressionParserBuilderArgs } from './expressionParser';
 import { type TriplesBlockBuilderArgs, triplesBlockParserBuilder } from './triplesBlockParser';
 
 export type SubSelectParserBuilderArgs =

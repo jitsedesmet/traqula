@@ -1,15 +1,15 @@
 import { Lexer } from 'chevrotain';
-import { allBuiltInCalls } from '../../lexer/BuildinCalls';
-import { allGraphTokens } from '../../lexer/graph';
-import { createToken } from '../../lexer/helpers';
-import * as l from '../../lexer/index';
-import { allBaseTokens } from '../../lexer/index';
-import { allSymbols } from '../../lexer/symbols';
-import { allTerminals } from '../../lexer/terminals';
-import { Builder, type RuleDef } from '../buildExample';
-import { builtInCall } from '../sparql11/builtIn';
-import { expression } from '../sparql11/expression';
-import { queryUnitParserBuilder } from '../sparql11/queryUnit/QueryUnitParser';
+import { Builder, type RuleDef } from '../../grammar/parserBuilder';
+import { builtInCall } from '../../grammar/sparql11/builtIn';
+import { expression } from '../../grammar/sparql11/expression';
+import { allBuiltInCalls } from '../../lexer/sparql11/BuildinCalls';
+import { allGraphTokens } from '../../lexer/sparql11/graph';
+import { createToken } from '../../lexer/sparql11/helpers';
+import * as l from '../../lexer/sparql11/index';
+import { allBaseTokens } from '../../lexer/sparql11/index';
+import { allSymbols } from '../../lexer/sparql11/symbols';
+import { allTerminals } from '../../lexer/sparql11/terminals';
+import { queryUnitParserBuilder } from '../sparql11/queryUnitParser';
 
 const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 
@@ -25,26 +25,21 @@ const builtInAdjust: RuleDef<'builtInAdjust'> = {
   },
 };
 
-const _builtInCall: RuleDef<'builtInCall'> = {
-  name: builtInCall.name,
-  impl: ({ SUBRULE, OR }) => () => {
-    OR([
-      { ALT: () => SUBRULE(builtInAdjust) },
-      { ALT: () => SUBRULE(existingBuildInCall) },
-    ]);
-  },
-};
-
 const existingBuildInCall: RuleDef<'existingBuildInCall'> = {
   name: 'existingBuildInCall',
   impl: builtInCall.impl,
 };
 
 const adjustBuilder = Builder.createBuilder(false)
+  .merge(queryUnitParserBuilder)
   .addRule(builtInAdjust)
-  .addRule(_builtInCall)
   .addRule(existingBuildInCall)
-  .merge(queryUnitParserBuilder, [ _builtInCall ]);
+  .patchRule('builtInCall', ({ SUBRULE, OR }) => () => {
+    OR([
+      { ALT: () => SUBRULE(builtInAdjust) },
+      { ALT: () => SUBRULE(existingBuildInCall) },
+    ]);
+  });
 
 export function trySparqlAdjust(): void {
   const tokens = [

@@ -1,6 +1,6 @@
 import { DataFactory, type NamedNode } from 'rdf-data-factory';
-import * as l from '../../lexer/index';
-import type { RuleDef } from '../buildExample';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../parserBuilder';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes';
 
 const factory = new DataFactory();

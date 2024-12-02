@@ -1,6 +1,6 @@
 import { DataFactory } from 'rdf-data-factory';
-import * as l from '../../lexer/index';
-import type { RuleDef } from '../buildExample';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../parserBuilder';
 import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes';
 import { var_, varOrTerm, verb } from './general';
 import { path } from './propertyPaths';

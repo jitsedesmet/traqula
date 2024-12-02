@@ -1,5 +1,5 @@
-import { Builder } from '../../buildExample';
-import { graphTerm, var_, varOrIri, varOrTerm, verb } from '../general';
+import { Builder } from '../../grammar/parserBuilder';
+import { graphTerm, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general';
 import {
   blankNode,
   booleanLiteral,
@@ -11,7 +11,7 @@ import {
   prefixedName,
   rdfLiteral,
   string,
-} from '../literals';
+} from '../../grammar/sparql11/literals';
 import {
   blankNodePropertyList,
   collection,
@@ -20,7 +20,7 @@ import {
   objectList,
   propertyListNotEmpty,
   triplesNode,
-} from '../tripleBlock';
+} from '../../grammar/sparql11/tripleBlock';
 
 export type ObjectListBuilderArgs = '' |
   'objectList' |

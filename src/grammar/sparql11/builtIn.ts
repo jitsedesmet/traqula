@@ -1,6 +1,6 @@
 import type { IOrAlt } from '@chevrotain/types';
-import * as l from '../../lexer/index';
-import type { CstDef, RuleDef } from '../buildExample';
+import * as l from '../../lexer/sparql11/index';
+import type { CstDef, RuleDef } from '../parserBuilder';
 import type { AggregateExpression, Expression } from '../sparqlJSTypes';
 import {
   baseAggregateFunc,

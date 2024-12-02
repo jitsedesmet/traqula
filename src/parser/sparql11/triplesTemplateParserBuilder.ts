@@ -1,6 +1,5 @@
-import { allTokens } from '../../../lexer';
-import { Builder } from '../../buildExample';
-import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../general';
+import { Builder } from '../../grammar/parserBuilder';
+import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general';
 import {
   blankNode,
   booleanLiteral,
@@ -12,7 +11,7 @@ import {
   prefixedName,
   rdfLiteral,
   string,
-} from '../literals';
+} from '../../grammar/sparql11/literals';
 import {
   blankNodePropertyList,
   collection,
@@ -23,7 +22,8 @@ import {
   propertyListNotEmpty,
   triplesNode,
   triplesSameSubject,
-} from '../tripleBlock';
+} from '../../grammar/sparql11/tripleBlock';
+import { allTokens } from '../../lexer/sparql11/index';
 
 export type TriplesTemplateParserArgs = '' |
   'triplesTemplate' |

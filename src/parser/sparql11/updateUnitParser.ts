@@ -1,16 +1,16 @@
-import { allTokens } from '../../../lexer';
-import { Builder } from '../../buildExample';
-import { objectListBuilder, type ObjectListBuilderArgs } from '../queryUnit/ObjectListParser';
-import { subSelectParserBuilder, type SubSelectParserBuilderArgs } from '../queryUnit/subSelectParser';
-import { groupGraphPattern } from '../whereClause';
-import { updateNoModifyParserBuilder, type UpdateUnitBuilderArgs } from './updateNoModifyParser';
+import { Builder } from '../../grammar/parserBuilder';
 import {
   deleteClause,
   insertClause,
   modify,
   update1,
   usingClause,
-} from './updateUnit';
+} from '../../grammar/sparql11/updateUnit/updateUnit';
+import { groupGraphPattern } from '../../grammar/sparql11/whereClause';
+import { allTokens } from '../../lexer/sparql11/index';
+import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser';
+import { subSelectParserBuilder, type SubSelectParserBuilderArgs } from './subSelectParser';
+import { updateNoModifyParserBuilder, type UpdateUnitBuilderArgs } from './updateNoModifyParser';
 
 export type UpdateBuilderArgs =
   UpdateUnitBuilderArgs |

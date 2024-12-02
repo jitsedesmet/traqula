@@ -1,5 +1,6 @@
-import * as l from '../../../lexer/index';
-import type { CstDef, RuleDef } from '../../buildExample';
+import * as l from '../../../lexer/sparql11/index';
+import { Wildcard } from '../../../misc/Wildcard';
+import type { CstDef, RuleDef } from '../../parserBuilder';
 import type {
   AskQuery,
   ConstructQuery,
@@ -13,7 +14,6 @@ import type {
   VariableExpression,
   VariableTerm,
 } from '../../sparqlJSTypes';
-import { Wildcard } from '../../Wildcard';
 import { datasetClause, type IDatasetClause } from '../dataSetClause';
 import { expression } from '../expression';
 import { prologue, triplesTemplate, var_, varOrIri } from '../general';

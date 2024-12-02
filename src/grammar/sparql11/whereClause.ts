@@ -1,5 +1,5 @@
-import * as l from '../../lexer/index';
-import type { RuleDef } from '../buildExample';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../parserBuilder';
 import type {
   BindPattern,
   BlankTerm,

@@ -1,17 +1,13 @@
-import { Builder } from '../../buildExample';
+import { Builder } from '../../grammar/parserBuilder';
 import {
   baseDecl,
   prefixDecl,
   prologue,
-} from '../general';
+} from '../../grammar/sparql11/general';
 import {
   iri,
   prefixedName,
-} from '../literals';
-import {
-  triplesTemplateParserBuilder,
-  type TriplesTemplateParserArgs,
-} from '../queryUnit/TriplesTemplateParserBuilder';
+} from '../../grammar/sparql11/literals';
 import {
   add,
   clear,
@@ -33,7 +29,11 @@ import {
   update,
   update1,
   updateUnit,
-} from './updateUnit';
+} from '../../grammar/sparql11/updateUnit/updateUnit';
+import {
+  triplesTemplateParserBuilder,
+  type TriplesTemplateParserArgs,
+} from './triplesTemplateParserBuilder';
 
 export type UpdateUnitBuilderArgs = '' |
   'updateUnit' |

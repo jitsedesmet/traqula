@@ -1,11 +1,11 @@
-import { trySparql12 } from './grammars/sparql11/Sparql11Parser';
+import { trySparql12 } from './grammar/sparql11/Sparql11Parser';
 
 trySparql12();
 // TrySparqlAdjust();
 
 // Import * as fs from 'node:fs';
 // import { createSyntaxDiagramsCode } from 'chevrotain';
-// import { SparqlParser } from './grammars/grammars';
+// import { SparqlParser } from './grammar/grammar';
 // import { ChevSparqlLexer } from './lexer';
 //
 // const lexer = ChevSparqlLexer;

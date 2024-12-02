@@ -1,11 +1,11 @@
 import type { TokenType } from 'chevrotain';
-import * as l from '../lexer/index';
-import type { RuleDef } from './buildExample';
+import * as l from '../lexer/sparql11/index';
+import { Wildcard } from '../misc/Wildcard';
+import type { RuleDef } from './parserBuilder';
 import { expression, expressionList } from './sparql11/expression';
 import { var_ } from './sparql11/general';
 import { groupGraphPattern } from './sparql11/whereClause';
 import type { Expression, Pattern, VariableTerm } from './sparqlJSTypes';
-import { Wildcard } from './Wildcard';
 
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));

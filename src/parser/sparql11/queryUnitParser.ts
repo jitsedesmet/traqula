@@ -1,7 +1,11 @@
-import { allTokens } from '../../../lexer';
-import { Builder } from '../../buildExample';
-import { datasetClause, defaultGraphClause, namedGraphClause, sourceSelector } from '../dataSetClause';
-import { baseDecl, prefixDecl, prologue } from '../general';
+import { Builder } from '../../grammar/parserBuilder';
+import {
+  datasetClause,
+  defaultGraphClause,
+  namedGraphClause,
+  sourceSelector,
+} from '../../grammar/sparql11/dataSetClause';
+import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general';
 import {
   askQuery,
   constructQuery,
@@ -12,9 +16,10 @@ import {
   queryUnit,
   selectQuery,
   valuesClause,
-} from './queryUnit';
+} from '../../grammar/sparql11/queryUnit/queryUnit';
+import { allTokens } from '../../lexer/sparql11/index';
 import { subSelectParserBuilder } from './subSelectParser';
-import { triplesTemplateParserBuilder } from './TriplesTemplateParserBuilder';
+import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
 export const queryUnitParserBuilder = Builder.createBuilder(false)
   .addRule(queryUnit)

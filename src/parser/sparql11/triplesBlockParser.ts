@@ -1,4 +1,4 @@
-import { Builder } from '../../buildExample';
+import { Builder } from '../../grammar/parserBuilder';
 import {
   path,
   pathAlternative,
@@ -9,7 +9,7 @@ import {
   pathOneInPropertySet,
   pathPrimary,
   pathSequence,
-} from '../propertyPaths';
+} from '../../grammar/sparql11/propertyPaths';
 import {
   blankNodePropertyListPath,
   collectionPath,
@@ -23,8 +23,8 @@ import {
   triplesSameSubjectPath,
   verbPath,
   verbSimple,
-} from '../tripleBlock';
-import { objectListBuilder, type ObjectListBuilderArgs } from './ObjectListParser';
+} from '../../grammar/sparql11/tripleBlock';
+import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser';
 
 export type TriplesBlockBuilderArgs = '' |
   'triplesBlock' |
