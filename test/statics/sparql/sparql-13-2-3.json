@@ -1,0 +1,89 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "who"
+    },
+    {
+      "termType": "Variable",
+      "value": "g"
+    },
+    {
+      "termType": "Variable",
+      "value": "mbox"
+    }
+  ],
+  "from": {
+    "default": [
+      {
+        "termType": "NamedNode",
+        "value": "http://example.org/dft.ttl"
+      }
+    ],
+    "named": [
+      {
+        "termType": "NamedNode",
+        "value": "http://example.org/alice"
+      },
+      {
+        "termType": "NamedNode",
+        "value": "http://example.org/bob"
+      }
+    ]
+  },
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "g"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/dc/elements/1.1/publisher"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "who"
+          }
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "x"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://xmlns.com/foaf/0.1/mbox"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "mbox"
+              }
+            }
+          ]
+        }
+      ],
+      "name": {
+        "termType": "Variable",
+        "value": "g"
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "dc": "http://purl.org/dc/elements/1.1/"
+  }
+}

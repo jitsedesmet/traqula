@@ -1,0 +1,96 @@
+{
+  "type": "update",
+  "updates": [
+    {
+      "updateType": "insertdelete",
+      "delete": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "book"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "p"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "v"
+              }
+            }
+          ]
+        }
+      ],
+      "insert": [],
+      "where": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "book"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://purl.org/dc/elements/1.1/date"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "date"
+              }
+            }
+          ]
+        },
+        {
+          "type": "filter",
+          "expression": {
+            "type": "operation",
+            "operator": ">",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "date"
+              },
+              {
+                "termType": "Literal",
+                "value": "1970-01-01T00:00:00-02:00",
+                "language": "",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "book"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "p"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "v"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "prefixes": {
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  }
+}

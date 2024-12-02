@@ -1,0 +1,105 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "given"
+    },
+    {
+      "termType": "Variable",
+      "value": "family"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "annot"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/2000/10/annotation-ns#annotates"
+          },
+          "object": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/TR/rdf-sparql-query/"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "annot"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/dc/elements/1.1/creator"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "c"
+          }
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "c"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://xmlns.com/foaf/0.1/given"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "given"
+              }
+            },
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "c"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://xmlns.com/foaf/0.1/family"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "family"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "isblank",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "c"
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "a": "http://www.w3.org/2000/10/annotation-ns#",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  }
+}

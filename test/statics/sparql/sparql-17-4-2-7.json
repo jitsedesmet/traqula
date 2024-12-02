@@ -1,0 +1,77 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "name"
+    },
+    {
+      "termType": "Variable",
+      "value": "shoeSize"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/name"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "name"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://biometrics.example/ns#shoeSize"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "shoeSize"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "=",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "datatype",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "shoeSize"
+              }
+            ]
+          },
+          {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "eg": "http://biometrics.example/ns#"
+  }
+}

@@ -1,3 +1,4 @@
+/* eslint-disable ts/no-unsafe-argument */
 import type {
   AtLeastOneSepMethodOpts,
   DSLMethodOpts,

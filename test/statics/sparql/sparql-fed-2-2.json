@@ -1,0 +1,105 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "person"
+    },
+    {
+      "termType": "Variable",
+      "value": "interest"
+    },
+    {
+      "termType": "Variable",
+      "value": "known"
+    }
+  ],
+  "where": [
+    {
+      "type": "service",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "person"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://xmlns.com/foaf/0.1/name"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "name"
+              }
+            }
+          ]
+        },
+        {
+          "type": "optional",
+          "patterns": [
+            {
+              "type": "bgp",
+              "triples": [
+                {
+                  "subject": {
+                    "termType": "Variable",
+                    "value": "person"
+                  },
+                  "predicate": {
+                    "termType": "NamedNode",
+                    "value": "http://xmlns.com/foaf/0.1/interest"
+                  },
+                  "object": {
+                    "termType": "Variable",
+                    "value": "interest"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "service",
+              "patterns": [
+                {
+                  "type": "bgp",
+                  "triples": [
+                    {
+                      "subject": {
+                        "termType": "Variable",
+                        "value": "person"
+                      },
+                      "predicate": {
+                        "termType": "NamedNode",
+                        "value": "http://xmlns.com/foaf/0.1/knows"
+                      },
+                      "object": {
+                        "termType": "Variable",
+                        "value": "known"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "name": {
+                "termType": "NamedNode",
+                "value": "http://people2.example.org/sparql"
+              },
+              "silent": false
+            }
+          ]
+        }
+      ],
+      "name": {
+        "termType": "NamedNode",
+        "value": "http://people.example.org/sparql"
+      },
+      "silent": false
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  }
+}

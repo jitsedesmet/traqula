@@ -1,0 +1,152 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "aLabel1"
+    },
+    {
+      "termType": "Variable",
+      "value": "bLabel"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "a"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#label"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "aLabel"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "a"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#weight"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "aWeight"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "a"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#displacement"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "aDisp"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "b"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#label"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "bLabel"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "b"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#weight"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "bWeight"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "b"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.org/WMterms#displacement"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "bDisp"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "&&",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "sameterm",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "aWeight"
+              },
+              {
+                "termType": "Variable",
+                "value": "bWeight"
+              }
+            ]
+          },
+          {
+            "type": "operation",
+            "operator": "!",
+            "args": [
+              {
+                "type": "operation",
+                "operator": "sameterm",
+                "args": [
+                  {
+                    "termType": "Variable",
+                    "value": "aDisp"
+                  },
+                  {
+                    "termType": "Variable",
+                    "value": "bDisp"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://example.org/WMterms#",
+    "t": "http://example.org/types#"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "O12"
+    },
+    {
+      "expression": {
+        "expression": {
+          "termType": "Variable",
+          "value": "O1"
+        },
+        "type": "aggregate",
+        "aggregation": "count",
+        "distinct": false
+      },
+      "variable": {
+        "termType": "Variable",
+        "value": "C"
+      }
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "S"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.example.org/p"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "O1"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "S"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.example.org/q"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "O2"
+          }
+        }
+      ]
+    }
+  ],
+  "group": [
+    {
+      "expression": {
+        "type": "operation",
+        "operator": "+",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "O1"
+          },
+          {
+            "termType": "Variable",
+            "value": "O2"
+          }
+        ]
+      },
+      "variable": {
+        "termType": "Variable",
+        "value": "O12"
+      }
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "O12"
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://www.example.org/"
+  }
+}

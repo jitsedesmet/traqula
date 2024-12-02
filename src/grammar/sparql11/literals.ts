@@ -5,7 +5,6 @@ import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes';
 
 const factory = new DataFactory();
 const uriBooleanType = 'http://www.w3.org/2001/XMLSchema#boolean';
-const uriStringType = 'http://www.w3.org/2001/XMLSchema#string';
 const uriIntegerType = 'http://www.w3.org/2001/XMLSchema#integer';
 const uriDecimalType = 'http://www.w3.org/2001/XMLSchema#decimal';
 const uriDoubleType = 'http://www.w3.org/2001/XMLSchema#double';

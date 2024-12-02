@@ -1,0 +1,56 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Wildcard"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "s"
+          },
+          "predicate": {
+            "termType": "Variable",
+            "value": "p"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "o"
+          }
+        }
+      ]
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "type": "operation",
+        "operator": "+",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "o"
+          },
+          {
+            "termType": "Literal",
+            "value": "5",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#integer"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://example.org/ns#"
+  }
+}

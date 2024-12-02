@@ -1,0 +1,98 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "x"
+    },
+    {
+      "expression": {
+        "type": "operation",
+        "operator": "*",
+        "args": [
+          {
+            "expression": {
+              "termType": "Variable",
+              "value": "y"
+            },
+            "type": "aggregate",
+            "aggregation": "min",
+            "distinct": false
+          },
+          {
+            "termType": "Literal",
+            "value": "2",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#integer"
+            }
+          }
+        ]
+      },
+      "variable": {
+        "termType": "Variable",
+        "value": "min"
+      }
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/data/#p"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "y"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/data/#q"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "z"
+          }
+        }
+      ]
+    }
+  ],
+  "group": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "x"
+      }
+    },
+    {
+      "expression": {
+        "type": "operation",
+        "operator": "str",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "z"
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://example.com/data/#"
+  }
+}

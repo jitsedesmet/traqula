@@ -1,0 +1,278 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "title"
+    },
+    {
+      "termType": "Variable",
+      "value": "text"
+    },
+    {
+      "termType": "Variable",
+      "value": "reviewDate"
+    },
+    {
+      "termType": "Variable",
+      "value": "reviewer"
+    },
+    {
+      "termType": "Variable",
+      "value": "reviewerName"
+    },
+    {
+      "termType": "Variable",
+      "value": "rating1"
+    },
+    {
+      "termType": "Variable",
+      "value": "rating2"
+    },
+    {
+      "termType": "Variable",
+      "value": "rating3"
+    },
+    {
+      "termType": "Variable",
+      "value": "rating4"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "review"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/reviewFor"
+          },
+          "object": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/dataFromProducer16/Product783"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "review"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/dc/elements/1.1/title"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "title"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "review"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/stuff/rev#text"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "text"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "langmatches",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "lang",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "text"
+              }
+            ]
+          },
+          {
+            "termType": "Literal",
+            "value": "EN",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "review"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/reviewDate"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "reviewDate"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "review"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/stuff/rev#reviewer"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "reviewer"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "reviewer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/name"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "reviewerName"
+          }
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "review"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/rating1"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "rating1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "review"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/rating2"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "rating2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "review"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/rating3"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "rating3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "review"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/rating4"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "rating4"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "reviewDate"
+      },
+      "descending": true
+    }
+  ],
+  "limit": 20,
+  "type": "query",
+  "prefixes": {
+    "bsbm": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "rev": "http://purl.org/stuff/rev#",
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  }
+}

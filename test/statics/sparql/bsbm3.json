@@ -1,0 +1,107 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "product"
+    },
+    {
+      "termType": "Variable",
+      "value": "label"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "product"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/2000/01/rdf-schema#label"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "label"
+          }
+        }
+      ]
+    },
+    {
+      "type": "optional",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "product"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/productFeature"
+              },
+              "object": {
+                "termType": "NamedNode",
+                "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/ProductFeature1043"
+              }
+            },
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "product"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2000/01/rdf-schema#label"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "testVar"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "!",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "bound",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "testVar"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "label"
+      }
+    }
+  ],
+  "limit": 10,
+  "type": "query",
+  "prefixes": {
+    "bsbm-inst": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/",
+    "bsbm": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}

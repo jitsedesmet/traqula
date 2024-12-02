@@ -1,0 +1,44 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "name"
+    }
+  ],
+  "where": [
+    {
+      "type": "service",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "NamedNode",
+                "value": "http://example.org/people15"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://xmlns.com/foaf/0.1/name"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "name"
+              }
+            }
+          ]
+        }
+      ],
+      "name": {
+        "termType": "NamedNode",
+        "value": "http://people.example.org/sparql"
+      },
+      "silent": true
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  }
+}

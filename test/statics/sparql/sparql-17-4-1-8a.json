@@ -1,0 +1,123 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "name1"
+    },
+    {
+      "termType": "Variable",
+      "value": "name2"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/name"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "name1"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/mbox"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "mbox1"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "y"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/name"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "name2"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "y"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://xmlns.com/foaf/0.1/mbox"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "mbox2"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "&&",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "sameterm",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "mbox1"
+              },
+              {
+                "termType": "Variable",
+                "value": "mbox2"
+              }
+            ]
+          },
+          {
+            "type": "operation",
+            "operator": "!",
+            "args": [
+              {
+                "type": "operation",
+                "operator": "sameterm",
+                "args": [
+                  {
+                    "termType": "Variable",
+                    "value": "name1"
+                  },
+                  {
+                    "termType": "Variable",
+                    "value": "name2"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Wildcard"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example/p"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "n"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minus",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "x"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://example/q"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "m"
+              }
+            }
+          ]
+        },
+        {
+          "type": "filter",
+          "expression": {
+            "type": "operation",
+            "operator": "=",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "n"
+              },
+              {
+                "termType": "Variable",
+                "value": "m"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://example/"
+  }
+}

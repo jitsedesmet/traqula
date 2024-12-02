@@ -1,0 +1,79 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "expression": {
+        "expression": {
+          "termType": "Variable",
+          "value": "size"
+        },
+        "type": "aggregate",
+        "aggregation": "avg",
+        "distinct": false
+      },
+      "variable": {
+        "termType": "Variable",
+        "value": "asize"
+      }
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "x"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://data.example/size"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "size"
+          }
+        }
+      ]
+    }
+  ],
+  "group": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "x"
+      }
+    }
+  ],
+  "having": [
+    {
+      "type": "operation",
+      "operator": ">",
+      "args": [
+        {
+          "expression": {
+            "termType": "Variable",
+            "value": "size"
+          },
+          "type": "aggregate",
+          "aggregation": "avg",
+          "distinct": false
+        },
+        {
+          "termType": "Literal",
+          "value": "10",
+          "language": "",
+          "datatype": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ]
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://data.example/"
+  }
+}

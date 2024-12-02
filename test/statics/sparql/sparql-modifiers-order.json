@@ -1,0 +1,115 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "expression": {
+        "expression": {
+          "termType": "Variable",
+          "value": "lprice"
+        },
+        "type": "aggregate",
+        "aggregation": "sum",
+        "distinct": false
+      },
+      "variable": {
+        "termType": "Variable",
+        "value": "totalPrice"
+      }
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "org"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://books.example/affiliates"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "auth"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "auth"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://books.example/writesBook"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "book"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "book"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://books.example/price"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "lprice"
+          }
+        }
+      ]
+    }
+  ],
+  "group": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "org"
+      }
+    }
+  ],
+  "having": [
+    {
+      "type": "operation",
+      "operator": ">",
+      "args": [
+        {
+          "expression": {
+            "termType": "Variable",
+            "value": "lprice"
+          },
+          "type": "aggregate",
+          "aggregation": "sum",
+          "distinct": false
+        },
+        {
+          "termType": "Literal",
+          "value": "10",
+          "language": "",
+          "datatype": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ]
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "termType": "Variable",
+        "value": "totalPrice"
+      }
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "": "http://books.example/"
+  }
+}

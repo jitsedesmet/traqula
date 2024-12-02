@@ -1,0 +1,42 @@
+{
+  "type": "update",
+  "updates": [
+    {
+      "updateType": "insert",
+      "insert": [
+        {
+          "type": "graph",
+          "triples": [
+            {
+              "subject": {
+                "termType": "NamedNode",
+                "value": "http://example/book1"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://example.org/ns#price"
+              },
+              "object": {
+                "termType": "Literal",
+                "value": "42",
+                "language": "",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+              }
+            }
+          ],
+          "name": {
+            "termType": "NamedNode",
+            "value": "http://example/bookStore"
+          }
+        }
+      ]
+    }
+  ],
+  "prefixes": {
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "ns": "http://example.org/ns#"
+  }
+}

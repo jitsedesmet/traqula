@@ -9,11 +9,6 @@
     "module": "ES2020",
     "moduleResolution": "Bundler",
 
-//    From Jitse
-//    "noImplicitAny": false,
-
-    "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
     "strict": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
@@ -23,10 +18,15 @@
     "inlineSources": true,
     "preserveConstEnums": true,
     "removeComments": false,
-    "sourceMap": true
+    "sourceMap": true,
+    //  From Jitse
+    //  "noImplicitAny": false,
+
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true
   },
   "include": [
-    "src/**/*.ts",
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"

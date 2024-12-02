@@ -1,0 +1,98 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Wildcard"
+    }
+  ],
+  "where": [
+    {
+      "type": "group",
+      "patterns": [
+        {
+          "type": "bgp",
+          "triples": [
+            {
+              "subject": {
+                "termType": "Variable",
+                "value": "c"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              },
+              "object": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2002/07/owl#Class"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "!",
+        "args": [
+          {
+            "type": "operation",
+            "operator": "&&",
+            "args": [
+              {
+                "type": "operation",
+                "operator": "bound",
+                "args": [
+                  {
+                    "termType": "Variable",
+                    "value": "c"
+                  }
+                ]
+              },
+              {
+                "type": "operation",
+                "operator": "regex",
+                "args": [
+                  {
+                    "type": "operation",
+                    "operator": "str",
+                    "args": [
+                      {
+                        "termType": "Variable",
+                        "value": "c"
+                      }
+                    ]
+                  },
+                  {
+                    "termType": "Literal",
+                    "value": "^toto",
+                    "language": "",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
+                  },
+                  {
+                    "termType": "Literal",
+                    "value": "i",
+                    "language": "",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "limit": 10,
+  "type": "query",
+  "prefixes": {
+    "owl": "http://www.w3.org/2002/07/owl#"
+  }
+}

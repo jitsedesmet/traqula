@@ -1,0 +1,21 @@
+{
+  "type": "update",
+  "updates": [
+    {
+      "type": "move",
+      "silent": false,
+      "source": {
+        "type": "graph",
+        "default": true
+      },
+      "destination": {
+        "type": "graph",
+        "name": {
+          "termType": "NamedNode",
+          "value": "http://example.org/named"
+        }
+      }
+    }
+  ],
+  "prefixes": {}
+}

@@ -1,0 +1,199 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Variable",
+      "value": "offer"
+    },
+    {
+      "termType": "Variable",
+      "value": "price"
+    }
+  ],
+  "distinct": true,
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/product"
+          },
+          "object": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/dataFromProducer5/Product186"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/vendor"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "vendor"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://purl.org/dc/elements/1.1/publisher"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "vendor"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "vendor"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/country"
+          },
+          "object": {
+            "termType": "NamedNode",
+            "value": "http://downlode.org/rdf/iso-3166/countries#US"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/deliveryDays"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "deliveryDays"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": "<=",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "deliveryDays"
+          },
+          {
+            "termType": "Literal",
+            "value": "3",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#integer"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/price"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "price"
+          }
+        },
+        {
+          "subject": {
+            "termType": "Variable",
+            "value": "offer"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/validTo"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "date"
+          }
+        }
+      ]
+    },
+    {
+      "type": "filter",
+      "expression": {
+        "type": "operation",
+        "operator": ">",
+        "args": [
+          {
+            "termType": "Variable",
+            "value": "date"
+          },
+          {
+            "termType": "Literal",
+            "value": "2008-06-20T00:00:00",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "order": [
+    {
+      "expression": {
+        "type": "functionCall",
+        "function": {
+          "termType": "NamedNode",
+          "value": "http://www.w3.org/2001/XMLSchema#double"
+        },
+        "args": [
+          {
+            "type": "operation",
+            "operator": "str",
+            "args": [
+              {
+                "termType": "Variable",
+                "value": "price"
+              }
+            ]
+          }
+        ],
+        "distinct": false
+      }
+    }
+  ],
+  "limit": 10,
+  "type": "query",
+  "prefixes": {
+    "bsbm": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dc": "http://purl.org/dc/elements/1.1/"
+  }
+}

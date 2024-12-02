@@ -1,0 +1,50 @@
+{
+  "queryType": "SELECT",
+  "variables": [
+    {
+      "termType": "Wildcard"
+    }
+  ],
+  "where": [
+    {
+      "type": "bgp",
+      "triples": [
+        {
+          "subject": {
+            "termType": "NamedNode",
+            "value": "http://example/thing"
+          },
+          "predicate": {
+            "type": "path",
+            "pathType": "/",
+            "items": [
+              {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              },
+              {
+                "type": "path",
+                "pathType": "*",
+                "items": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2000/01/rdf-schema#subClassOf"
+                  }
+                ]
+              }
+            ]
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "type"
+          }
+        }
+      ]
+    }
+  ],
+  "type": "query",
+  "prefixes": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  }
+}
