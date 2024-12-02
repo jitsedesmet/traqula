@@ -1,4 +1,5 @@
 import { Builder } from '../../grammar/parserBuilder';
+import { builtInCall, existsFunc, notExistsFunc } from '../../grammar/sparql11/builtIn';
 import { selectClause, subSelect, valuesClause } from '../../grammar/sparql11/queryUnit/queryUnit';
 import {
   groupClause,
@@ -32,7 +33,6 @@ import {
   serviceGraphPattern,
   whereClause,
 } from '../../grammar/sparql11/whereClause';
-import { allTokens } from '../../lexer/sparql11/index';
 
 import { expressionParserBuilder, type ExpressionParserBuilderArgs } from './expressionParser';
 import { type TriplesBlockBuilderArgs, triplesBlockParserBuilder } from './triplesBlockParser';
@@ -45,6 +45,8 @@ export type SubSelectParserBuilderArgs =
   'solutionModifier' |
   'valuesClause' |
   ExpressionParserBuilderArgs |
+  'builtInExists' |
+  'builtInNotexists' |
   'groupGraphPattern' |
   'groupGraphPatternSub' |
   TriplesBlockBuilderArgs |
@@ -73,13 +75,16 @@ export type SubSelectParserBuilderArgs =
   'limitClause' |
   'offsetClause';
 
-export const subSelectParserBuilder = Builder.createBuilder(false)
+export const subSelectParserBuilder: Builder<SubSelectParserBuilderArgs> = Builder.createBuilder(false)
   .addRule(subSelect)
   .addRule(selectClause)
   .addRule(whereClause)
   .addRule(solutionModifier)
   .addRule(valuesClause)
   .merge(expressionParserBuilder)
+  .patchRule('builtInCall', builtInCall.impl)
+  .addRule(existsFunc)
+  .addRule(notExistsFunc)
   .addRule(groupGraphPattern)
   .addRule(groupGraphPatternSub)
   .merge(triplesBlockParserBuilder)
@@ -108,5 +113,3 @@ export const subSelectParserBuilder = Builder.createBuilder(false)
   .addRule(orderCondition)
   .addRule(limitClause)
   .addRule(offsetClause);
-
-export const subSelectParser = subSelectParserBuilder.consume(allTokens);

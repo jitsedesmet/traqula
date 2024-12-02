@@ -17,7 +17,6 @@ import {
   selectQuery,
   valuesClause,
 } from '../../grammar/sparql11/queryUnit/queryUnit';
-import { allTokens } from '../../lexer/sparql11/index';
 import { subSelectParserBuilder } from './subSelectParser';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
@@ -44,5 +43,3 @@ export const queryUnitParserBuilder = Builder.createBuilder(false)
   .addRule(constructTemplate)
   .merge(triplesTemplateParserBuilder)
   .addRule(constructTriples);
-
-export const queryUnitParser = queryUnitParserBuilder.consume(allTokens);

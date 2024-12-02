@@ -23,7 +23,6 @@ import {
   triplesNode,
   triplesSameSubject,
 } from '../../grammar/sparql11/tripleBlock';
-import { allTokens } from '../../lexer/sparql11/index';
 
 export type TriplesTemplateParserArgs = '' |
   'triplesTemplate' |
@@ -78,5 +77,3 @@ export const triplesTemplateParserBuilder = Builder.createBuilder(false)
   .addRule(collection)
   .addRule(blankNodePropertyList)
   .addRule(graphNode);
-
-export const triplesTemplateParser = triplesTemplateParserBuilder.consume(allTokens);
