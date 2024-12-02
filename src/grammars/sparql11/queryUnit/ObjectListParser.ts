@@ -1,4 +1,3 @@
-import { allTokens } from '../../../lexer';
 import { Builder } from '../../buildExample';
 import { graphTerm, var_, varOrIri, varOrTerm, verb } from '../general';
 import {
@@ -23,7 +22,31 @@ import {
   triplesNode,
 } from '../tripleBlock';
 
-export const objectListBuilder = Builder.createBuilder(false)
+export type ObjectListBuilderArgs = '' |
+'objectList' |
+'object' |
+'graphNode' |
+'varOrTerm' |
+'triplesNode' |
+'collection' |
+'blankNodePropertyList' |
+'propertyListNotEmpty' |
+'verb' |
+'varOrIri' |
+'var' |
+'iri' |
+'prefixedName' |
+'graphTerm' |
+'rdfLiteral' |
+'numericLiteral' |
+'booleanLiteral' |
+'blankNode' |
+'string' |
+'numericLiteralUnsigned' |
+'numericLiteralPositive' |
+'numericLiteralNegative';
+
+export const objectListBuilder: Builder<ObjectListBuilderArgs> = Builder.createBuilder(false)
   .addRule(objectList)
   .addRule(object)
   .addRule(graphNode)
@@ -47,5 +70,3 @@ export const objectListBuilder = Builder.createBuilder(false)
   .addRule(numericLiteralUnsigned)
   .addRule(numericLiteralPositive)
   .addRule(numericLiteralNegative);
-
-export const objectListParser = objectListBuilder.consume(allTokens);

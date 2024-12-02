@@ -34,9 +34,45 @@ import {
   serviceGraphPattern,
   whereClause,
 } from '../whereClause';
-import { expressionParserBuilder } from './expressionParser';
+import { expressionParserBuilder, type ExpressionParserBuilderArgs } from './ExpressionParser';
 import { selectClause, subSelect, valuesClause } from './queryUnit';
-import { triplesBlockParserBuilder } from './triplesBlockParser';
+import { type TriplesBlockBuilderArgs, triplesBlockParserBuilder } from './triplesBlockParser';
+
+export type SubSelectParserBuilderArgs =
+  '' |
+  'subSelect' |
+  'selectClause' |
+  'whereClause' |
+  'solutionModifier' |
+  'valuesClause' |
+  ExpressionParserBuilderArgs |
+  'groupGraphPattern' |
+  'groupGraphPatternSub' |
+  TriplesBlockBuilderArgs |
+  'graphPatternNotTriples' |
+  'groupOrUnionGraphPattern' |
+  'optionalGraphPattern' |
+  'minusGraphPattern' |
+  'graphGraphPattern' |
+  'serviceGraphPattern' |
+  'filter' |
+  'bind' |
+  'inlineData' |
+  'constraint' |
+  'functionCall' |
+  'dataBlock' |
+  'inlineDataOneVar' |
+  'inlineDataFull' |
+  'dataBlockValue' |
+  'groupClause' |
+  'havingClause' |
+  'orderClause' |
+  'limitOffsetClauses' |
+  'groupCondition' |
+  'havingCondition' |
+  'orderCondition' |
+  'limitClause' |
+  'offsetClause';
 
 export const subSelectParserBuilder = Builder.createBuilder(false)
   .addRule(subSelect)

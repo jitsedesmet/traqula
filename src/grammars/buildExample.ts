@@ -392,6 +392,8 @@ export type RuleDef<
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
 
+type RuleDefExcluding<T extends RuleDef, U extends string> = T['name'] extends U ? never : T;
+
 export class Builder<T extends string > {
   public static createBuilder(productionBuild: boolean): Builder<''> {
     return new Builder<''>(productionBuild);
@@ -411,7 +413,7 @@ export class Builder<T extends string > {
     return this;
   }
 
-  public addRule<U extends string>(rule: RuleDef<U, any, any>, terminals: TokenType[] = []): Builder<T | U> {
+  public addRuleRedundant<U extends string>(rule: RuleDef<U, any, any>, terminals: TokenType[] = []): Builder<T | U> {
     const rules = <Record<string, RuleDef>> this.rules;
     if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
       throw new Error(`Rule ${rule.name} already exists in the builder`);
@@ -420,6 +422,13 @@ export class Builder<T extends string > {
     // @ts-expect-error TS2536
     this.rules[rule.name] = rule;
     return <Builder<T | U>> this;
+  }
+
+  public addRule<U extends string>(
+    rule: RuleDefExcluding<RuleDef<U, any, any>, T>,
+    terminals: TokenType[] = [],
+  ): Builder<T | U> {
+    return this.addRuleRedundant(rule, terminals);
   }
 
   public deleteRule<U extends T>(ruleName: U): Builder<Exclude<T, U>> {

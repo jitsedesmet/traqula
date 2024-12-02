@@ -1,4 +1,3 @@
-import { allTokens } from '../../../lexer';
 import { Builder } from '../../buildExample';
 import {
   aggregate,
@@ -93,7 +92,94 @@ import {
   string,
 } from '../literals';
 
-export const expressionParserBuilder = Builder.createBuilder(false)
+export type ExpressionParserBuilderArgs = '' |
+'expression' |
+'conditionalOrExpression' |
+'conditionalAndExpression' |
+'valueLogical' |
+'relationalExpression' |
+'numericExpression' |
+'expressionList' |
+'additiveExpression' |
+'multiplicativeExpression' |
+'unaryExpression' |
+'primaryExpression' |
+'brackettedExpression' |
+'builtInCall' |
+'iriOrFunction' |
+'rdfLiteral' |
+'numericLiteral' |
+'numericLiteralUnsigned' |
+'numericLiteralPositive' |
+'numericLiteralNegative' |
+'booleanLiteral' |
+'var' |
+'builtInStr' |
+'builtInLang' |
+'builtInLangmatches' |
+'builtInDatatype' |
+'builtInBound' |
+'builtInIri' |
+'builtInUri' |
+'builtInBnode' |
+'builtInRand' |
+'builtInAbs' |
+'builtInCeil' |
+'builtInFloor' |
+'builtInRound' |
+'builtInConcat' |
+'builtInStrlen' |
+'builtInUcase' |
+'builtInLcase' |
+'builtInEncode_for_uri' |
+'builtInContains' |
+'builtInStrstarts' |
+'builtInStrends' |
+'builtInStrbefore' |
+'builtInStrafter' |
+'builtInYear' |
+'builtInMonth' |
+'builtInDay' |
+'builtInHours' |
+'builtInMinutes' |
+'builtInSeconds' |
+'builtInTimezone' |
+'builtInTz' |
+'builtInNow' |
+'builtInUuid' |
+'builtInStruuid' |
+'builtInMd5' |
+'builtInSha1' |
+'builtInSha256' |
+'builtInSha384' |
+'builtInSha512' |
+'builtInCoalesce' |
+'builtInIf' |
+'builtInStrlang' |
+'builtInStrdt' |
+'builtInSameterm' |
+'builtInIsiri' |
+'builtInIsuri' |
+'builtInIsblank' |
+'builtInIsliteral' |
+'builtInIsnumeric' |
+'builtInRegex' |
+'builtInSubstr' |
+'builtInReplace' |
+'builtInCount' |
+'builtInSum' |
+'builtInMin' |
+'builtInMax' |
+'builtInAvg' |
+'builtInSample' |
+'builtInGroup_concat' |
+'aggregate' |
+'iri' |
+'prefixedName' |
+'argList' |
+'string';
+
+export const expressionParserBuilder: Builder<ExpressionParserBuilderArgs> = Builder.createBuilder(false)
   .addRule(expression)
   .addRule(conditionalOrExpression)
   .addRule(conditionalAndExpression)
@@ -182,5 +268,3 @@ export const expressionParserBuilder = Builder.createBuilder(false)
   .addRule(prefixedName)
   .addRule(argList)
   .addRule(string);
-
-export const expressionParser = expressionParserBuilder.consume(allTokens);

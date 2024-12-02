@@ -1,4 +1,3 @@
-import { allTokens } from '../../../lexer';
 import { Builder } from '../../buildExample';
 import {
   path,
@@ -25,9 +24,33 @@ import {
   verbPath,
   verbSimple,
 } from '../tripleBlock';
-import { objectListBuilder } from './objectListParser';
+import { objectListBuilder, type ObjectListBuilderArgs } from './ObjectListParser';
 
-export const triplesBlockParserBuilder = Builder.createBuilder(false)
+export type TriplesBlockBuilderArgs = '' |
+  'triplesBlock' |
+  'triplesSameSubjectPath' |
+  'propertyListPathNotEmpty' |
+  'triplesNodePath' |
+  'propertyListPath' |
+  'verbPath' |
+  'verbSimple' |
+  'objectListPath' |
+  ObjectListBuilderArgs |
+  'path' |
+  'pathAlternative' |
+  'pathSequence' |
+  'pathEltOrInverse' |
+  'pathElt' |
+  'pathPrimary' |
+  'pathMod' |
+  'pathNegatedPropertySet' |
+  'pathOneInPropertySet' |
+  'objectPath' |
+  'graphNodePath' |
+  'collectionPath' |
+  'blankNodePropertyListPath';
+
+export const triplesBlockParserBuilder: Builder<TriplesBlockBuilderArgs> = Builder.createBuilder(false)
   .addRule(triplesBlock)
   .addRule(triplesSameSubjectPath)
   // VarOrTerm is included in the required ObjectList rule
@@ -54,5 +77,3 @@ export const triplesBlockParserBuilder = Builder.createBuilder(false)
   .addRule(graphNodePath)
   .addRule(collectionPath)
   .addRule(blankNodePropertyListPath);
-
-export const triplesBlockParser = triplesBlockParserBuilder.consume(allTokens);

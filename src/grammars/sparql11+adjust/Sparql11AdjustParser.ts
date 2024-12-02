@@ -9,9 +9,7 @@ import { allTerminals } from '../../lexer/terminals';
 import { Builder, type RuleDef } from '../buildExample';
 import { builtInCall } from '../sparql11/builtIn';
 import { expression } from '../sparql11/expression';
-import {
-  sparql12Builder,
-} from '../sparql11/Sparql11Parser';
+import { queryUnitParserBuilder } from '../sparql11/queryUnit/QueryUnitParser';
 
 const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 
@@ -46,7 +44,7 @@ const adjustBuilder = Builder.createBuilder(false)
   .addRule(builtInAdjust)
   .addRule(_builtInCall)
   .addRule(existingBuildInCall)
-  .merge(sparql12Builder, [ _builtInCall ]);
+  .merge(queryUnitParserBuilder, [ _builtInCall ]);
 
 export function trySparqlAdjust(): void {
   const tokens = [

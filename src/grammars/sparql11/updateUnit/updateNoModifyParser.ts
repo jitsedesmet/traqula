@@ -1,59 +1,30 @@
-import { allTokens } from '../../../lexer';
 import { Builder } from '../../buildExample';
-
 import {
   baseDecl,
-  graphTerm,
   prefixDecl,
   prologue,
-  triplesTemplate,
-  var_,
-  varOrIri,
-  varOrTerm,
-  verb,
 } from '../general';
 import {
-  blankNode,
-  booleanLiteral,
   iri,
-  numericLiteral,
-  numericLiteralNegative,
-  numericLiteralPositive,
-  numericLiteralUnsigned,
   prefixedName,
-  rdfLiteral,
-  string,
 } from '../literals';
-import { objectListBuilder } from '../queryUnit/objectListParser';
-import { subSelectParserBuilder } from '../queryUnit/subSelectParser';
 import {
-  blankNodePropertyList,
-  collection,
-  graphNode,
-  object,
-  objectList,
-  propertyList,
-  propertyListNotEmpty,
-  triplesNode,
-  triplesSameSubject,
-} from '../tripleBlock';
-import { groupGraphPattern } from '../whereClause';
+  triplesTemplateParserBuilder,
+  type TriplesTemplateParserArgs,
+} from '../queryUnit/TriplesTemplateParserBuilder';
 import {
   add,
   clear,
   copy,
   create,
-  deleteClause,
   deleteData,
   deleteWhere,
   drop,
   graphOrDefault,
   graphRef,
   graphRefAll,
-  insertClause,
   insertData,
   load,
-  modify,
   move,
   quadData,
   quadPattern,
@@ -62,10 +33,37 @@ import {
   update,
   update1,
   updateUnit,
-  usingClause,
 } from './updateUnit';
 
-export const updateNoModifyParserBuilder = Builder.createBuilder(false)
+export type UpdateUnitBuilderArgs = '' |
+ 'updateUnit' |
+ 'update' |
+ 'prologue' |
+ 'update1' |
+ 'baseDecl' |
+ 'prefixDecl' |
+ 'load' |
+ 'clear' |
+ 'drop' |
+ 'add' |
+ 'move' |
+ 'copy' |
+ 'create' |
+ 'insertData' |
+ 'deleteData' |
+ 'deleteWhere' |
+ 'iri' |
+ 'prefixedName' |
+ 'graphRef' |
+ 'graphRefAll' |
+ 'graphOrDefault' |
+ 'quadData' |
+ 'quads' |
+  TriplesTemplateParserArgs |
+  'quadPattern' |
+  'quadsNotTriples';
+
+export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Builder.createBuilder(false)
   .addRule(updateUnit)
   .addRule(update)
   .addRule(prologue)
@@ -101,52 +99,6 @@ export const updateNoModifyParserBuilder = Builder.createBuilder(false)
   .addRule(graphOrDefault)
   .addRule(quadData)
   .addRule(quads)
-  .addRule(triplesTemplate)
-  .addRule(quadsNotTriples)
-  .addRule(varOrIri)
-  .addRule(triplesSameSubject)
-  .addRule(varOrTerm)
-  .addRule(propertyListNotEmpty)
-  .addRule(triplesNode)
-  .addRule(propertyList)
-  .addRule(var_)
-  .addRule(graphTerm)
-  .addRule(rdfLiteral)
-  .addRule(string)
-  .addRule(numericLiteral)
-  .addRule(numericLiteralUnsigned)
-  .addRule(numericLiteralPositive)
-  .addRule(numericLiteralNegative)
-  .addRule(booleanLiteral)
-  .addRule(blankNode)
-  .addRule(verb)
-  .addRule(objectList)
-  .addRule(object)
-  .addRule(collection)
-  .addRule(blankNodePropertyList)
-  .addRule(graphNode)
-  .addRule(quadPattern);
-
-export const updateNoModifyParser = updateNoModifyParserBuilder.consume(allTokens);
-
-export const updateParserBuilder = Builder.createBuilder(false).merge(updateNoModifyParserBuilder)
-  .patchRule('update1', update1.impl)
-  .addRule(modify)
-  .addRule(iri)
-  .addRule(deleteClause)
-  .addRule(insertClause)
-  .addRule(usingClause)
-  .addRule(groupGraphPattern)
+  .merge(triplesTemplateParserBuilder)
   .addRule(quadPattern)
-  .addRule(quads)
-  .addRule(triplesTemplate)
-  .addRule(quadsNotTriples)
-  .addRule(triplesSameSubject)
-  .addRule(varOrTerm)
-  // This substitutes all of propertyListNotEmpty
-  .merge(objectListBuilder)
-  .addRule(triplesNode)
-  .addRule(propertyList)
-  .merge(subSelectParserBuilder);
-
-export const updateParser = updateParserBuilder.consume(allTokens);
+  .addRule(quadsNotTriples);
