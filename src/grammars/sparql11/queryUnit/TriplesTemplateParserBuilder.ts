@@ -26,31 +26,31 @@ import {
 } from '../tripleBlock';
 
 export type TriplesTemplateParserArgs = '' |
- 'triplesTemplate' |
- 'triplesSameSubject' |
- 'varOrTerm' |
- 'propertyListNotEmpty' |
- 'triplesNode' |
- 'propertyList' |
- 'var' |
- 'graphTerm' |
- 'iri' |
- 'prefixedName' |
- 'rdfLiteral' |
- 'string' |
- 'numericLiteral' |
- 'numericLiteralUnsigned' |
- 'numericLiteralPositive' |
- 'numericLiteralNegative' |
- 'booleanLiteral' |
- 'blankNode' |
- 'verb' |
- 'varOrIri' |
- 'objectList' |
- 'object' |
- 'collection' |
- 'blankNodePropertyList' |
- 'graphNode';
+  'triplesTemplate' |
+  'triplesSameSubject' |
+  'varOrTerm' |
+  'propertyListNotEmpty' |
+  'triplesNode' |
+  'propertyList' |
+  'var' |
+  'graphTerm' |
+  'iri' |
+  'prefixedName' |
+  'rdfLiteral' |
+  'string' |
+  'numericLiteral' |
+  'numericLiteralUnsigned' |
+  'numericLiteralPositive' |
+  'numericLiteralNegative' |
+  'booleanLiteral' |
+  'blankNode' |
+  'verb' |
+  'varOrIri' |
+  'objectList' |
+  'object' |
+  'collection' |
+  'blankNodePropertyList' |
+  'graphNode';
 
 export const triplesTemplateParserBuilder = Builder.createBuilder(false)
   .addRule(triplesTemplate)

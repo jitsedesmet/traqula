@@ -36,29 +36,29 @@ import {
 } from './updateUnit';
 
 export type UpdateUnitBuilderArgs = '' |
- 'updateUnit' |
- 'update' |
- 'prologue' |
- 'update1' |
- 'baseDecl' |
- 'prefixDecl' |
- 'load' |
- 'clear' |
- 'drop' |
- 'add' |
- 'move' |
- 'copy' |
- 'create' |
- 'insertData' |
- 'deleteData' |
- 'deleteWhere' |
- 'iri' |
- 'prefixedName' |
- 'graphRef' |
- 'graphRefAll' |
- 'graphOrDefault' |
- 'quadData' |
- 'quads' |
+  'updateUnit' |
+  'update' |
+  'prologue' |
+  'update1' |
+  'baseDecl' |
+  'prefixDecl' |
+  'load' |
+  'clear' |
+  'drop' |
+  'add' |
+  'move' |
+  'copy' |
+  'create' |
+  'insertData' |
+  'deleteData' |
+  'deleteWhere' |
+  'iri' |
+  'prefixedName' |
+  'graphRef' |
+  'graphRefAll' |
+  'graphOrDefault' |
+  'quadData' |
+  'quads' |
   TriplesTemplateParserArgs |
   'quadPattern' |
   'quadsNotTriples';

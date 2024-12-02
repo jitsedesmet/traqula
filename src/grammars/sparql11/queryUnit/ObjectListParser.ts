@@ -23,28 +23,28 @@ import {
 } from '../tripleBlock';
 
 export type ObjectListBuilderArgs = '' |
-'objectList' |
-'object' |
-'graphNode' |
-'varOrTerm' |
-'triplesNode' |
-'collection' |
-'blankNodePropertyList' |
-'propertyListNotEmpty' |
-'verb' |
-'varOrIri' |
-'var' |
-'iri' |
-'prefixedName' |
-'graphTerm' |
-'rdfLiteral' |
-'numericLiteral' |
-'booleanLiteral' |
-'blankNode' |
-'string' |
-'numericLiteralUnsigned' |
-'numericLiteralPositive' |
-'numericLiteralNegative';
+  'objectList' |
+  'object' |
+  'graphNode' |
+  'varOrTerm' |
+  'triplesNode' |
+  'collection' |
+  'blankNodePropertyList' |
+  'propertyListNotEmpty' |
+  'verb' |
+  'varOrIri' |
+  'var' |
+  'iri' |
+  'prefixedName' |
+  'graphTerm' |
+  'rdfLiteral' |
+  'numericLiteral' |
+  'booleanLiteral' |
+  'blankNode' |
+  'string' |
+  'numericLiteralUnsigned' |
+  'numericLiteralPositive' |
+  'numericLiteralNegative';
 
 export const objectListBuilder: Builder<ObjectListBuilderArgs> = Builder.createBuilder(false)
   .addRule(objectList)
