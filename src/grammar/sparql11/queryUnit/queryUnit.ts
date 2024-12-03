@@ -111,11 +111,9 @@ export const subSelect: RuleDef<'subSelect', SelectQuery> = {
 
     return ACTION(() => ({
       ...modifiers,
+      ...clause,
       type: 'query',
       queryType: 'SELECT',
-      variables: clause.variables,
-      distinct: clause.distinct,
-      reduced: clause.reduced,
       where,
       values: values?.values,
       prefixes: {},
@@ -128,8 +126,8 @@ export const subSelect: RuleDef<'subSelect', SelectQuery> = {
  */
 export interface ISelectClause {
   variables: Variable[] | [Wildcard];
-  distinct?: boolean;
-  reduced?: boolean;
+  distinct?: true;
+  reduced?: true;
 }
 export const selectClause: RuleDef<'selectClause', ISelectClause> = {
   name: 'selectClause',

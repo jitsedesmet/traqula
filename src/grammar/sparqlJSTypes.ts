@@ -61,8 +61,8 @@ export interface BaseQuery {
 export interface SelectQuery extends BaseQuery {
   queryType: 'SELECT';
   variables: Variable[] | [Wildcard];
-  distinct?: boolean | undefined;
-  reduced?: boolean | undefined;
+  distinct?: true | undefined;
+  reduced?: true | undefined;
   group?: Grouping[] | undefined;
   having?: Expression[] | undefined;
   order?: Ordering[] | undefined;
@@ -77,7 +77,7 @@ export interface Grouping {
 
 export interface Ordering {
   expression: Expression;
-  descending?: boolean | undefined;
+  descending?: true | undefined;
 }
 
 export interface ConstructQuery extends BaseQuery {
@@ -168,12 +168,12 @@ export interface ClearDropOperation {
 export interface GraphOrDefault {
   type: 'graph';
   name?: IriTerm | undefined;
-  default?: boolean | undefined;
+  default?: true | undefined;
 }
 
 export interface GraphReference extends GraphOrDefault {
-  named?: boolean | undefined;
-  all?: boolean | undefined;
+  named?: true | undefined;
+  all?: true | undefined;
 }
 
 /**
@@ -307,7 +307,7 @@ export interface Tuple extends Array<Expression> {}
 
 export interface BaseExpression {
   type: string;
-  distinct?: boolean | undefined;
+  distinct?: true | undefined;
 }
 
 export interface OperationExpression extends BaseExpression {

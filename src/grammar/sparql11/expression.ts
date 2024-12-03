@@ -20,7 +20,7 @@ import {
 export interface IArgList {
   type: 'functionCall';
   args: Expression[];
-  distinct: boolean;
+  distinct?: true;
 }
 
 export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;
@@ -40,14 +40,13 @@ export interface IExpression {
 
 export const argList: RuleDef<'argList', IArgList> = {
   name: 'argList',
-  impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR([
+  impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR<IArgList>([
     {
       ALT: () => {
         CONSUME(l.terminals.nil);
         return {
           type: 'functionCall',
           args: [],
-          distinct: false,
         };
       },
     },
@@ -55,7 +54,7 @@ export const argList: RuleDef<'argList', IArgList> = {
       ALT: () => {
         const args: Expression[] = [];
         CONSUME(l.symbols.LParen);
-        const distinct = Boolean(OPTION(() => CONSUME(l.distinct)));
+        const distinct = OPTION(() => CONSUME(l.distinct)) && true;
 
         MANY_SEP({
           DEF: () => args.push(SUBRULE1(expression)),
@@ -66,7 +65,7 @@ export const argList: RuleDef<'argList', IArgList> = {
         return {
           type: 'functionCall',
           args,
-          distinct,
+          ...(distinct && { distinct }),
         };
       },
     },
