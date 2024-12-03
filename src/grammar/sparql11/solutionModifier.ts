@@ -20,9 +20,9 @@ export const solutionModifier: RuleDef<'solutionModifier', ISolutionModifier> = 
 
     return ACTION(() => ({
       ...limitAndOffset,
-      group,
-      having,
-      order,
+      ...(group && { group }),
+      ...(having && { having }),
+      ...(order && { order }),
     }));
   },
 };

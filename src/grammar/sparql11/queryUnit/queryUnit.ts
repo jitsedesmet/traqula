@@ -48,7 +48,7 @@ export const query: RuleDef<'query', Query> = {
       ...prologueValues,
       ...queryType,
       type: 'query',
-      values,
+      ...(values && { values }),
     }));
   },
 };
@@ -56,7 +56,7 @@ export const query: RuleDef<'query', Query> = {
 type HandledByBase = 'values' | 'type' | 'base' | 'prefixes';
 
 function extractFromOfDataSetClauses(ACTION: CstDef['ACTION'], MANY: CstDef['MANY'], SUBRULE: CstDef['SUBRULE']):
-{ default: IriTerm[]; named: IriTerm[] } {
+{ default: IriTerm[]; named: IriTerm[] } | undefined {
   const datasetClauses: IDatasetClause[] = [];
   MANY(() => {
     datasetClauses.push(SUBRULE(datasetClause));
@@ -73,7 +73,7 @@ function extractFromOfDataSetClauses(ACTION: CstDef['ACTION'], MANY: CstDef['MAN
         from.named.push(datasetClause.value);
       }
     }
-    return from;
+    return (from.default.length === 0 && from.named.length === 0) ? undefined : from;
   });
 }
 
@@ -83,17 +83,15 @@ function extractFromOfDataSetClauses(ACTION: CstDef['ACTION'], MANY: CstDef['MAN
 export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase>> = {
   name: 'selectQuery',
   impl: ({ ACTION, SUBRULE, MANY }) => () => {
-    const { variables, distinct, reduced } = SUBRULE(selectClause);
+    const selectVal = SUBRULE(selectClause);
     const from = extractFromOfDataSetClauses(ACTION, MANY, SUBRULE);
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
     return {
+      ...selectVal,
       queryType: 'SELECT',
-      variables,
-      distinct,
-      reduced,
-      from,
+      ...(from && { from }),
       where,
       ...modifier,
     };
@@ -130,12 +128,12 @@ export const subSelect: RuleDef<'subSelect', SelectQuery> = {
  */
 export interface ISelectClause {
   variables: Variable[] | [Wildcard];
-  distinct: boolean;
-  reduced: boolean;
+  distinct?: boolean;
+  reduced?: boolean;
 }
 export const selectClause: RuleDef<'selectClause', ISelectClause> = {
   name: 'selectClause',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
     CONSUME(l.select);
     const tDistinctFReduced = OPTION(() => OR1([
       { ALT: () => {
@@ -172,11 +170,15 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = {
       } },
     ]);
 
-    return {
-      distinct: tDistinctFReduced === true,
-      reduced: tDistinctFReduced === false,
-      variables,
-    };
+    return ACTION(() => {
+      const res: ISelectClause = {
+        variables,
+      };
+      if (tDistinctFReduced !== undefined) {
+        res[tDistinctFReduced ? 'distinct' : 'reduced'] = true;
+      }
+      return res;
+    });
   },
 };
 

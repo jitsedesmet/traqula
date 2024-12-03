@@ -19,20 +19,19 @@
     "lint-fix": "eslint . --fix",
     "build & run ESM": "yarn build && node src/index.js",
     "build & run CJS": "yarn build && node out/index.cjs",
-    "test": "yarn node --experimental-vm-modules $(yarn bin jest)"
+    "test": "yarn build && vitest"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",
     "rdf-data-factory": "^1.1.2"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@rdfjs/types": "^1.1.2",
     "@rubensworks/eslint-config": "^3.0.0",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
-    "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.8"
   }
 }

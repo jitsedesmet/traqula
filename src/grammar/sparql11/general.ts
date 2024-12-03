@@ -14,13 +14,14 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>> = {
   name: 'prologue',
   impl: ({ ACTION, SUBRULE, MANY, OR }) => () => {
-    let base: undefined | string;
-    const prefixes: Record<string, string> = {};
+    const result: Pick<BaseQuery, 'base' | 'prefixes'> = {
+      prefixes: {},
+    };
     MANY(() => {
       OR([
         {
           ALT: () => {
-            base = SUBRULE(baseDecl);
+            result.base = SUBRULE(baseDecl);
           },
         },
         {
@@ -28,16 +29,13 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
             const pref = SUBRULE(prefixDecl);
             ACTION(() => {
               const [ name, value ] = pref;
-              prefixes[name] = value;
+              result.prefixes[name] = value;
             });
           },
         },
       ]);
     });
-    return {
-      base,
-      prefixes,
-    };
+    return result;
   },
 };
 
@@ -129,8 +127,8 @@ export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
 export const var_: RuleDef<'var', VariableTerm> = {
   name: 'var',
   impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.variable(CONSUME(l.terminals.var1).image) },
-    { ALT: () => factory.variable(CONSUME(l.terminals.var2).image) },
+    { ALT: () => factory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
+    { ALT: () => factory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
   ]),
 };
 
