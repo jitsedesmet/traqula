@@ -55,10 +55,11 @@ export const baseDecl: RuleDef<'baseDecl', string> = {
  */
 export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
   name: 'prefixDecl',
-  impl: ({ CONSUME }) => () => {
+  impl: ({ CONSUME, ACTION, prefixes }) => () => {
     CONSUME(l.prefixDecl);
-    const name = CONSUME(l.terminals.pNameNs).image;
-    const value = CONSUME(l.terminals.iriRef).image;
+    const name = CONSUME(l.terminals.pNameNs).image.slice(0, -1);
+    const value = CONSUME(l.terminals.iriRef).image.slice(1, -1);
+    ACTION(() => prefixes[name] = value);
     return [ name, value ];
   },
 };

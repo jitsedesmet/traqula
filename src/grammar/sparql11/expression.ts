@@ -1,5 +1,5 @@
 import * as l from '../../lexer/sparql11/index.js';
-import type { CstDef, RuleDef } from '../parserBuilder.js';
+import type { ImplArgs, RuleDef } from '../parserBuilder.js';
 import type { Expression, IriTerm } from '../sparqlJSTypes.js';
 import { builtInCall } from './builtIn.js';
 import {
@@ -114,8 +114,8 @@ interface LeftDeepBuildArgs<T extends string = string> {
 function constructLeftDeep<T extends string = string>(
   startGenerator: () => Expression,
   restGenerator: () => LeftDeepBuildArgs<T>,
-  ACTION: CstDef['ACTION'],
-  MANY: CstDef['MANY'],
+  ACTION: ImplArgs['ACTION'],
+  MANY: ImplArgs['MANY'],
 ): Expression {
 // By using iterExpression, we avoid creating unnecessary arrays
   let iterExpr = startGenerator();

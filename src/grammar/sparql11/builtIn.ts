@@ -1,6 +1,6 @@
 import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../../lexer/sparql11/index.js';
-import type { CstDef, RuleDef } from '../parserBuilder.js';
+import type { ImplArgs, RuleDef } from '../parserBuilder.js';
 import type { AggregateExpression, Expression } from '../sparqlJSTypes.js';
 import {
   baseAggregateFunc,
@@ -68,7 +68,7 @@ export const builtInIsblank = funcExpr1(l.builtIn.isblank);
 export const builtInIsliteral = funcExpr1(l.builtIn.isliteral);
 export const builtInIsnumeric = funcExpr1(l.builtIn.isnumeric);
 
-export function builtInCallList(SUBRULE: CstDef['SUBRULE']): IOrAlt<Expression>[] {
+export function builtInCallList(SUBRULE: ImplArgs['SUBRULE']): IOrAlt<Expression>[] {
   return [
     { ALT: () => SUBRULE(aggregate) },
     { ALT: () => SUBRULE(builtInStr) },
@@ -133,7 +133,15 @@ export function builtInCallList(SUBRULE: CstDef['SUBRULE']): IOrAlt<Expression>[
  */
 export const builtInCall: RuleDef<'builtInCall', Expression> = {
   name: 'builtInCall',
-  impl: ({ OR, SUBRULE }) => () => OR<Expression>(builtInCallList(SUBRULE)),
+  impl: ({ OR, SUBRULE, cache }) => () => {
+    const cached = <IOrAlt<Expression>[]>cache.get(builtInCall);
+    if (cached) {
+      return OR<Expression>(cached);
+    }
+    const builtIns = builtInCallList(SUBRULE);
+    cache.set(builtInCall, builtIns);
+    return OR<Expression>(builtIns);
+  },
 };
 
 /**

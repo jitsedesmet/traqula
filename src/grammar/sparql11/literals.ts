@@ -107,7 +107,7 @@ export const string: RuleDef<'string', string> = {
 export const iri: RuleDef<'iri', IriTerm> = {
   name: 'iri',
   impl: ({ SUBRULE, CONSUME, OR }) => () => OR([
-    { ALT: () => factory.namedNode(CONSUME(l.terminals.iriRef).image) },
+    { ALT: () => factory.namedNode(CONSUME(l.terminals.iriRef).image.slice(1, -1)) },
     { ALT: () => SUBRULE(prefixedName) },
   ]),
 };
@@ -117,10 +117,16 @@ export const iri: RuleDef<'iri', IriTerm> = {
  */
 export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
   name: 'prefixedName',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.namedNode(CONSUME(l.terminals.pNameLn).image) },
-    { ALT: () => factory.namedNode(CONSUME(l.terminals.pNameNs).image) },
-  ]),
+  impl: ({ ACTION, CONSUME, OR, prefixes }) => () => {
+    const fullStr = OR([
+      { ALT: () => CONSUME(l.terminals.pNameLn).image },
+      { ALT: () => CONSUME(l.terminals.pNameNs).image },
+    ]);
+    return ACTION(() => {
+      const [ prefix, localName ] = fullStr.split(':');
+      return factory.namedNode(prefixes[prefix] + localName);
+    });
+  },
 };
 
 /**

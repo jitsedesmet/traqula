@@ -50,8 +50,8 @@ const nilPattern = new RegExp(`\\((${wsPattern.source})*\\)`);
 const anonPattern = new RegExp(`\\[(${wsPattern.source})*\\]`);
 
 export const iriRef = createToken({ name: 'IriRef', pattern: iriRefPattern });
-export const pNameNs = createToken({ name: 'PNameNs', pattern: pNameNsPattern });
 export const pNameLn = createToken({ name: 'PNameLn', pattern: pNameLnPattern });
+export const pNameNs = createToken({ name: 'PNameNs', pattern: pNameNsPattern, longer_alt: [ pNameLn ]});
 export const blankNodeLabel = createToken({ name: 'BlankNodeLabel', pattern: blankNodeLabelPattern });
 export const var1 = createToken({ name: 'Var1', pattern: var1Pattern });
 export const var2 = createToken({ name: 'Var2', pattern: var2Pattern });

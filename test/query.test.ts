@@ -27,7 +27,7 @@ describe('SPARQL tests', () => {
   const prefix = './test/statics/sparql'
   const statics = fs.readdirSync(prefix);
   for (const file of statics) {
-    if (file === 'all.sparql') {
+    if (file.endsWith('sparql-4-2a.sparql')) {
       it(`should parse ${file}`, async ({expect}) => {
         const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
         const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
@@ -36,8 +36,14 @@ describe('SPARQL tests', () => {
         const lexer = ChevSparqlLexer;
         const parser = sparqlParserBuilder.consume(allTokens)
         const lexResult = lexer.tokenize(query);
+
+        console.log(lexResult.tokens);
+
         parser.input = lexResult.tokens;
         const res = parser.queryUnit();
+        for (const error of parser.errors) {
+          console.error(error);
+        }
         expect(parser.errors).toHaveLength(0);
         expect(JSON.parse(JSON.stringify(res))).toStrictEqual(json);
       })

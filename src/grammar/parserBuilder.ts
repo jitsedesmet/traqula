@@ -22,6 +22,11 @@ type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
   ...argument: ARGS
 ) => U;
 
+export interface ImplArgs extends CstDef {
+  cache: WeakMap<RuleDef, unknown>;
+  prefixes: Record<string, string>;
+}
+
 export interface CstDef {
   /**
    *
@@ -387,7 +392,7 @@ export type RuleDef<
   ParamType extends unknown[] = [],
 > = {
   name: NameType;
-  impl: (def: CstDef) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
+  impl: (def: ImplArgs) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
 };
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
@@ -667,12 +672,17 @@ export class Builder<T extends string > {
             }
           },
         };
+        const implArgs: ImplArgs = {
+          ...selfRef,
+          cache: new WeakMap(),
+          prefixes: {},
+        };
 
         for (const rule of Object.values(rules)) {
           // eslint-disable-next-line ts/ban-ts-comment
           // @ts-expect-error TS7053
           // eslint-disable-next-line ts/no-unsafe-argument
-          this[rule.name] = this.RULE(rule.name, rule.impl(selfRef));
+          this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
         }
 
         this.performSelfAnalysis();

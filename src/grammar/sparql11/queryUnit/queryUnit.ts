@@ -1,6 +1,6 @@
 import * as l from '../../../lexer/sparql11/index.js';
 import { Wildcard } from '../../../misc/Wildcard.js';
-import type { CstDef, RuleDef } from '../../parserBuilder.js';
+import type { ImplArgs, RuleDef } from '../../parserBuilder.js';
 import type {
   AskQuery,
   ConstructQuery,
@@ -55,7 +55,7 @@ export const query: RuleDef<'query', Query> = {
 
 type HandledByBase = 'values' | 'type' | 'base' | 'prefixes';
 
-function extractFromOfDataSetClauses(ACTION: CstDef['ACTION'], MANY: CstDef['MANY'], SUBRULE: CstDef['SUBRULE']):
+function extractFromOfDataSetClauses(ACTION: ImplArgs['ACTION'], MANY: ImplArgs['MANY'], SUBRULE: ImplArgs['SUBRULE']):
 { default: IriTerm[]; named: IriTerm[] } | undefined {
   const datasetClauses: IDatasetClause[] = [];
   MANY(() => {
