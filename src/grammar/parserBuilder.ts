@@ -21,6 +21,10 @@ type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
   cstDef: RuleDef<T, U, ARGS>,
   ...argument: ARGS
 ) => U;
+type BacktrackFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
+  cstDef: RuleDef<T, U, ARGS>,
+  ...argument: ARGS
+) => () => boolean;
 
 export interface ImplArgs extends CstDef {
   cache: WeakMap<RuleDef, unknown>;
@@ -371,6 +375,7 @@ export interface CstDef {
   AT_LEAST_ONE_SEP8: (options: AtLeastOneSepMethodOpts<any>) => void;
   AT_LEAST_ONE_SEP9: (options: AtLeastOneSepMethodOpts<any>) => void;
   ACTION: <T>(impl: () => T) => T;
+  BACKTRACK: BacktrackFunc;
   SUBRULE: SubRuleFunc;
   SUBRULE1: SubRuleFunc;
   SUBRULE2: SubRuleFunc;
@@ -477,7 +482,7 @@ export class Builder<T extends string > {
           // TODO: enable these and test correctness again!
           // Spec states we have an LL(1) grammar.
           maxLookahead: 1,
-          skipValidations: true,
+          // SkipValidations: true,
         });
         const selfRef: CstDef = {
           CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),
@@ -551,6 +556,18 @@ export class Builder<T extends string > {
           AT_LEAST_ONE_SEP8: options => this.AT_LEAST_ONE_SEP8(options),
           AT_LEAST_ONE_SEP9: options => this.AT_LEAST_ONE_SEP9(options),
           ACTION: func => this.ACTION(func),
+          BACKTRACK: (cstDef, ...args) => {
+            try {
+              // eslint-disable-next-line ts/ban-ts-comment
+              // @ts-expect-error TS7053
+              // eslint-disable-next-line ts/no-unsafe-argument
+              return this.BACKTRACK(this[cstDef.name], { ARGS: args });
+            } catch (error: unknown) {
+              // eslint-disable-next-line no-console
+              console.error(`Error with subrule: ${cstDef.name}`);
+              throw error;
+            }
+          },
           SUBRULE: (cstDef, ...args) => {
             try {
               // eslint-disable-next-line ts/ban-ts-comment
