@@ -28,7 +28,9 @@ type BacktrackFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
 
 export interface ImplArgs extends CstDef {
   cache: WeakMap<RuleDef, unknown>;
-  prefixes: Record<string, string>;
+  context: {
+    prefixes: Record<string, string>;
+  };
 }
 
 export interface CstDef {
@@ -692,7 +694,9 @@ export class Builder<T extends string > {
         const implArgs: ImplArgs = {
           ...selfRef,
           cache: new WeakMap(),
-          prefixes: {},
+          context: {
+            prefixes: {},
+          },
         };
 
         for (const rule of Object.values(rules)) {

@@ -117,7 +117,7 @@ export const iri: RuleDef<'iri', IriTerm> = {
  */
 export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
   name: 'prefixedName',
-  impl: ({ ACTION, CONSUME, OR, prefixes }) => () => {
+  impl: ({ ACTION, CONSUME, OR, context: { prefixes }}) => () => {
     const fullStr = OR([
       { ALT: () => CONSUME(l.terminals.pNameLn).image },
       { ALT: () => CONSUME(l.terminals.pNameNs).image },

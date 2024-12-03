@@ -55,7 +55,7 @@ export const baseDecl: RuleDef<'baseDecl', string> = {
  */
 export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
   name: 'prefixDecl',
-  impl: ({ CONSUME, ACTION, prefixes }) => () => {
+  impl: ({ CONSUME, ACTION, context: { prefixes }}) => () => {
     CONSUME(l.prefixDecl);
     const name = CONSUME(l.terminals.pNameNs).image.slice(0, -1);
     const value = CONSUME(l.terminals.iriRef).image.slice(1, -1);
