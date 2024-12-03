@@ -25,6 +25,7 @@
     "esModuleInterop": true
   },
   "include": [
+    "bench/**/*.ts",
     "src/**/*.ts",
     "test/**/*.ts"
   ],

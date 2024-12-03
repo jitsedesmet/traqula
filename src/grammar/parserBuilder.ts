@@ -477,7 +477,7 @@ export class Builder<T extends string > {
           // TODO: enable these and test correctness again!
           // Spec states we have an LL(1) grammar.
           maxLookahead: 1,
-          // SkipValidations: true,
+          skipValidations: true,
         });
         const selfRef: CstDef = {
           CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),

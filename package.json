@@ -19,7 +19,8 @@
     "lint-fix": "eslint . --fix",
     "build & run ESM": "yarn build && node src/index.js",
     "build & run CJS": "yarn build && node out/index.cjs",
-    "test": "yarn build && vitest"
+    "test": "yarn build && vitest",
+    "bench": "yarn build && node bench/benchmark.js"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",
@@ -28,8 +29,11 @@
   "devDependencies": {
     "@rdfjs/types": "^1.1.2",
     "@rubensworks/eslint-config": "^3.0.0",
+    "@types/sparqljs": "^3.1.12",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
+    "sparqljs": "^3.7.3",
+    "tinybench": "^3.0.7",
     "ts-jest": "^29.2.5",
     "typescript": "^5.3.3",
     "vitest": "^2.1.8"
