@@ -9,7 +9,7 @@ export class Wildcard implements IWildcard {
     return WILDCARD ?? this;
   }
 
-  public equals(other: { termType: any } | undefined | null): boolean {
+  public equals(other: { termType: unknown } | undefined | null): boolean {
     return Boolean(other && (this.termType === other.termType));
   }
 
