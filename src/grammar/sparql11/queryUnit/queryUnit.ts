@@ -6,14 +6,16 @@ import type {
   ConstructQuery,
   DescribeQuery,
   IriTerm,
+  Pattern,
   Query,
   SelectQuery,
   Triple,
-  ValuesPattern,
+  ValuePatternRow,
   Variable,
   VariableExpression,
   VariableTerm,
 } from '../../sparqlJSTypes.js';
+
 import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
 import { expression } from '../expression.js';
 import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
@@ -115,7 +117,7 @@ export const subSelect: RuleDef<'subSelect', SelectQuery> = {
       type: 'query',
       queryType: 'SELECT',
       where,
-      values: values?.values,
+      values,
       prefixes: {},
     }));
   },
@@ -187,7 +189,7 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
   name: 'constructQuery',
   impl: ({ ACTION, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
-    return OR([
+    return OR<Omit<ConstructQuery, HandledByBase>>([
       {
         ALT: () => {
           const template = SUBRULE(constructTemplate);
@@ -211,12 +213,19 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
           const template = OPTION(() => SUBRULE(triplesTemplate));
           CONSUME(l.symbols.RCurly);
           const modifiers = SUBRULE2(solutionModifier);
+          const where: Pattern[] = template ?
+              [{
+                type: 'bgp',
+                triples: template,
+              }] :
+              [];
 
           return ACTION(() => ({
             ...modifiers,
             queryType: 'CONSTRUCT',
             from,
             template,
+            where,
           }));
         },
       },
@@ -279,15 +288,11 @@ export const askQuery: RuleDef<'askQuery', Omit<AskQuery, HandledByBase>> = {
 /**
  * [[28]](https://www.w3.org/TR/sparql11-query/#rValuesClause)
  */
-export const valuesClause: RuleDef<'valuesClause', ValuesPattern | undefined> = {
+export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[] | undefined> = {
   name: 'valuesClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => OPTION(() => {
     CONSUME(l.values);
-    const values = SUBRULE(dataBlock);
-    return {
-      type: 'values',
-      values,
-    };
+    return SUBRULE(dataBlock);
   }),
 };
 

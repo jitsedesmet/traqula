@@ -11,26 +11,26 @@ export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
 }
 
-export interface IExpressionFunctionX<T extends string, U extends (Expression | Pattern)[]> {
+export interface IExpressionFunctionX<U extends (Expression | Pattern)[]> {
   type: 'operation';
-  operator: T;
+  operator: string;
   args: U;
 }
 export type RuleDefExpressionFunctionX<T extends string, U extends (Expression | Pattern)[]>
-  = RuleDef<T, IExpressionFunctionX<T, U>>;
+  = RuleDef<T, IExpressionFunctionX<U>>;
 
 export function funcExpr1<T extends string>(func: TokenType & { name: T }):
 RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg = SUBRULE(expression);
       CONSUME(l.symbols.RParen);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: [ arg ],
       };
     },
@@ -42,7 +42,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE1, SUBRULE2, CONSUME }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg1 = SUBRULE1(expression);
       CONSUME(l.symbols.comma);
@@ -50,7 +50,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression]> {
       CONSUME(l.symbols.RParen);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: [ arg1, arg2 ],
       };
     },
@@ -62,13 +62,13 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [VariableTerm]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg = SUBRULE(var_);
       CONSUME(l.symbols.RParen);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: [ arg ],
       };
     },
@@ -80,7 +80,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [] | [Expression]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, OR, SUBRULE }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       const args = OR<[] | [Expression]>([
         {
           ALT: () => {
@@ -99,7 +99,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [] | [Expression]> {
       ]);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args,
       };
     },
@@ -111,11 +111,11 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, []> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.terminals.nil);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: [],
       };
     },
@@ -127,11 +127,11 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, Expression[]> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       const args = SUBRULE(expressionList);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args,
       };
     },
@@ -143,7 +143,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression] | [Expressi
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, CONSUME1, OPTION, CONSUME2 }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg1 = SUBRULE1(expression);
       CONSUME1(l.symbols.comma);
@@ -155,7 +155,7 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression] | [Expressi
       CONSUME(l.symbols.RParen);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: arg3 ? [ arg1, arg2, arg3 ] : [ arg1, arg2 ],
       };
     },
@@ -170,7 +170,7 @@ RuleDefExpressionFunctionX<
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, CONSUME1, OPTION, CONSUME2, SUBRULE4, CONSUME3 }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg1 = SUBRULE1(expression);
       CONSUME1(l.symbols.comma);
@@ -183,7 +183,7 @@ RuleDefExpressionFunctionX<
       });
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args: arg4 ? [ arg1, arg2, arg3, arg4 ] : [ arg1, arg2, arg3 ],
       };
     },
@@ -198,30 +198,30 @@ RuleDefExpressionFunctionX<
   return {
     name: unCapitalize(func.name),
     impl: ({ SUBRULE, CONSUME }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       const args = SUBRULE(groupGraphPattern);
       return {
         type: 'operation',
-        operator: unCapitalize(func.name),
+        operator: operator.image.toLowerCase(),
         args,
       };
     },
   };
 }
 
-export interface IExpressionAggregator<T extends string> {
+export interface IExpressionAggregator {
   type: 'aggregate';
   expression: Expression | Wildcard;
-  aggregation: T;
+  aggregation: string;
   separator: string | undefined;
 }
-export type RuleDefExpressionAggregatorX<T extends string> = RuleDef<T, IExpressionAggregator<T>>;
+export type RuleDefExpressionAggregatorX<T extends string> = RuleDef<T, IExpressionAggregator>;
 export function baseAggregateFunc<T extends string>(func: TokenType & { name: T }):
 RuleDefExpressionAggregatorX<Uncapitalize<T>> {
   return {
     name: unCapitalize(func.name),
     impl: ({ CONSUME, SUBRULE, OPTION, OR }) => () => {
-      CONSUME(func);
+      const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const distinct = Boolean(OPTION(() => CONSUME(l.distinct)));
       const expressionVal = OR<Expression | Wildcard>([
@@ -236,7 +236,7 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
       CONSUME(l.symbols.RParen);
       return {
         type: 'aggregate',
-        aggregation: unCapitalize(func.name),
+        aggregation: operator.image.toLowerCase(),
         expression: expressionVal,
         distinct,
         separator: undefined,

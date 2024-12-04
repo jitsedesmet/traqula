@@ -17,7 +17,7 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
   impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
     const value = SUBRULE(string);
     const languageOrDatatype = OPTION(() => OR<string | NamedNode>([
-      { ALT: () => CONSUME(l.terminals.langTag).image },
+      { ALT: () => CONSUME(l.terminals.langTag).image.slice(1) },
       {
         ALT: () => {
           CONSUME(l.symbols.hathat);
@@ -94,10 +94,10 @@ export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
 export const string: RuleDef<'string', string> = {
   name: 'string',
   impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => CONSUME(l.terminals.stringLiteral1).image },
-    { ALT: () => CONSUME(l.terminals.stringLiteral2).image },
-    { ALT: () => CONSUME(l.terminals.stringLiteralLong1).image },
-    { ALT: () => CONSUME(l.terminals.stringLiteralLong2).image },
+    { ALT: () => CONSUME(l.terminals.stringLiteral1).image.slice(1, -1) },
+    { ALT: () => CONSUME(l.terminals.stringLiteral2).image.slice(1, -1) },
+    { ALT: () => CONSUME(l.terminals.stringLiteralLong1).image.slice(3, -3) },
+    { ALT: () => CONSUME(l.terminals.stringLiteralLong2).image.slice(3, -3) },
   ]),
 };
 

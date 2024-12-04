@@ -19,7 +19,7 @@
     "lint-fix": "eslint . --fix",
     "build & run ESM": "yarn build && node src/index.js",
     "build & run CJS": "yarn build && node out/index.cjs",
-    "test": "yarn build && vitest",
+    "test": "yarn build && vitest run",
     "bench": "yarn build && node bench/benchmark.js"
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "@rdfjs/types": "^1.1.2",
     "@rubensworks/eslint-config": "^3.0.0",
     "@types/sparqljs": "^3.1.12",
+    "@vitest/coverage-v8": "2.1.8",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "sparqljs": "^3.7.3",

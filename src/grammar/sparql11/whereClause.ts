@@ -70,9 +70,9 @@ export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = 
       const notTriples = SUBRULE(graphPatternNotTriples);
       patterns.push(notTriples);
       OPTION2(() => CONSUME(l.symbols.dot));
+      const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
 
       ACTION(() => {
-        const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
         patterns.push(...moreTriples);
       });
     });
@@ -248,7 +248,7 @@ export const inlineDataOneVar: RuleDef<'inlineDataOneVar', ValuePatternRow[]> = 
       const value = SUBRULE(dataBlockValue);
 
       ACTION(() => res.push({
-        [varVal.value]: value,
+        [`?${varVal.value}`]: value,
       }));
     });
     CONSUME(l.symbols.RCurly);
@@ -306,7 +306,7 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = {
             }
             const row: ValuePatternRow = {};
             for (const [ index, varVal ] of vars.entries()) {
-              row[varVal.value] = varBinds[index];
+              row[`?${varVal.value}`] = varBinds[index];
             }
             res.push(row);
           });
