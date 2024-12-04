@@ -236,11 +236,13 @@ function blankNodePropertyListImpl<T extends string>(name: T, allowPaths: boolea
       const propList = SUBRULE(allowPaths ? propertyListPathNotEmpty : propertyListNotEmpty);
       CONSUME(l.symbols.RSquare);
 
-      const subject = dataFactory.blankNode();
-      return ACTION(() => ({
-        node: subject,
-        triples: propList.map(part => part({ subject })),
-      }));
+      return ACTION(() => {
+        const subject = dataFactory.blankNode();
+        return {
+          node: subject,
+          triples: propList.map(part => part({ subject })),
+        };
+      });
     },
   };
 }

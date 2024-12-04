@@ -697,7 +697,7 @@ export class Builder<T extends string > {
           ...selfRef,
           cache: new WeakMap(),
           context: {
-            dataFactory: new DataFactory(),
+            dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
             prefixes: {},
           },
         };

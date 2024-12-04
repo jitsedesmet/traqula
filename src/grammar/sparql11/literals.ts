@@ -137,8 +137,14 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
  */
 export const blankNode: RuleDef<'blankNode', BlankTerm> = {
   name: 'blankNode',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.blankNode(CONSUME(l.terminals.blankNodeLabel).image.replace('_:', '')) },
-    { ALT: () => dataFactory.blankNode() },
+  impl: ({ ACTION, CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => {
+      const label = CONSUME(l.terminals.blankNodeLabel);
+      return ACTION(() => dataFactory.blankNode(label.image.replace('_:', '')));
+    } },
+    { ALT: () => {
+      CONSUME(l.terminals.anon);
+      return ACTION(() => dataFactory.blankNode());
+    } },
   ]),
 };
