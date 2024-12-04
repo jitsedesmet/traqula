@@ -8,9 +8,7 @@
   "main": "src/index.ts",
   "files": [
     "out",
-    "lib/**/*.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.js.map"
+    "src"
   ],
   "scripts": {
     "build": "tsc && node esbuild.mjs",
