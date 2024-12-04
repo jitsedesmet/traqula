@@ -1,9 +1,8 @@
-import { DataFactory, type NamedNode } from 'rdf-data-factory';
+import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes.js';
 
-const factory = new DataFactory();
 const uriBooleanType = 'http://www.w3.org/2001/XMLSchema#boolean';
 const uriIntegerType = 'http://www.w3.org/2001/XMLSchema#integer';
 const uriDecimalType = 'http://www.w3.org/2001/XMLSchema#decimal';
@@ -14,7 +13,7 @@ const uriDoubleType = 'http://www.w3.org/2001/XMLSchema#double';
  */
 export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
   name: 'rdfLiteral',
-  impl: ({ SUBRULE, CONSUME, OPTION, OR }) => () => {
+  impl: ({ SUBRULE, CONSUME, OPTION, OR, context: { dataFactory }}) => () => {
     const value = SUBRULE(string);
     const languageOrDatatype = OPTION(() => OR<string | NamedNode>([
       { ALT: () => CONSUME(l.terminals.langTag).image.slice(1) },
@@ -25,7 +24,7 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
         },
       },
     ]));
-    return factory.literal(value, languageOrDatatype);
+    return dataFactory.literal(value, languageOrDatatype);
   },
 };
 
@@ -46,10 +45,10 @@ export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = {
  */
 export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTerm> = {
   name: 'numericLiteralUnsigned',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.literal(CONSUME(l.terminals.integer).image, factory.namedNode(uriIntegerType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.decimal).image, factory.namedNode(uriDecimalType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.double).image, factory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => dataFactory.literal(CONSUME(l.terminals.integer).image, dataFactory.namedNode(uriIntegerType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.terminals.decimal).image, dataFactory.namedNode(uriDecimalType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.terminals.double).image, dataFactory.namedNode(uriDoubleType)) },
   ]),
 };
 
@@ -58,10 +57,12 @@ export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTe
  */
 export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTerm> = {
   name: 'numericLiteralPositive',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.literal(CONSUME(l.terminals.interferePositive).image, factory.namedNode(uriIntegerType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.decimalPositive).image, factory.namedNode(uriDecimalType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.doublePositive).image, factory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () =>
+      dataFactory.literal(CONSUME(l.terminals.interferePositive).image, dataFactory.namedNode(uriIntegerType)) },
+    { ALT: () =>
+      dataFactory.literal(CONSUME(l.terminals.decimalPositive).image, dataFactory.namedNode(uriDecimalType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.terminals.doublePositive).image, dataFactory.namedNode(uriDoubleType)) },
   ]),
 };
 
@@ -70,10 +71,12 @@ export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTe
  */
 export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTerm> = {
   name: 'numericLiteralNegative',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.literal(CONSUME(l.terminals.integerNegative).image, factory.namedNode(uriIntegerType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.decimalNegative).image, factory.namedNode(uriDecimalType)) },
-    { ALT: () => factory.literal(CONSUME(l.terminals.doubleNegative).image, factory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () =>
+      dataFactory.literal(CONSUME(l.terminals.integerNegative).image, dataFactory.namedNode(uriIntegerType)) },
+    { ALT: () =>
+      dataFactory.literal(CONSUME(l.terminals.decimalNegative).image, dataFactory.namedNode(uriDecimalType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.terminals.doubleNegative).image, dataFactory.namedNode(uriDoubleType)) },
   ]),
 };
 
@@ -82,9 +85,9 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
  */
 export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
   name: 'booleanLiteral',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.literal(CONSUME(l.true_).image, factory.namedNode(uriBooleanType)) },
-    { ALT: () => factory.literal(CONSUME(l.false_).image, factory.namedNode(uriBooleanType)) },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => dataFactory.literal(CONSUME(l.true_).image, dataFactory.namedNode(uriBooleanType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.false_).image, dataFactory.namedNode(uriBooleanType)) },
   ]),
 };
 
@@ -106,8 +109,8 @@ export const string: RuleDef<'string', string> = {
  */
 export const iri: RuleDef<'iri', IriTerm> = {
   name: 'iri',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => OR([
-    { ALT: () => factory.namedNode(CONSUME(l.terminals.iriRef).image.slice(1, -1)) },
+  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => dataFactory.namedNode(CONSUME(l.terminals.iriRef).image.slice(1, -1)) },
     { ALT: () => SUBRULE(prefixedName) },
   ]),
 };
@@ -117,14 +120,14 @@ export const iri: RuleDef<'iri', IriTerm> = {
  */
 export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
   name: 'prefixedName',
-  impl: ({ ACTION, CONSUME, OR, context: { prefixes }}) => () => {
+  impl: ({ ACTION, CONSUME, OR, context: { prefixes, dataFactory }}) => () => {
     const fullStr = OR([
       { ALT: () => CONSUME(l.terminals.pNameLn).image },
       { ALT: () => CONSUME(l.terminals.pNameNs).image },
     ]);
     return ACTION(() => {
       const [ prefix, localName ] = fullStr.split(':');
-      return factory.namedNode(prefixes[prefix] + localName);
+      return dataFactory.namedNode(prefixes[prefix] + localName);
     });
   },
 };
@@ -134,8 +137,8 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
  */
 export const blankNode: RuleDef<'blankNode', BlankTerm> = {
   name: 'blankNode',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.blankNode(CONSUME(l.terminals.blankNodeLabel).image.replace('_:', '')) },
-    { ALT: () => factory.blankNode() },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => dataFactory.blankNode(CONSUME(l.terminals.blankNodeLabel).image.replace('_:', '')) },
+    { ALT: () => dataFactory.blankNode() },
   ]),
 };

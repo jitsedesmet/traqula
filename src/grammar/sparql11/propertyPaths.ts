@@ -1,12 +1,10 @@
 import type { TokenType } from 'chevrotain';
-import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 
 import type { IriTerm, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes.js';
 import { iri } from './literals.js';
 
-const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
@@ -129,12 +127,12 @@ export const pathMod: RuleDef<'pathMod', '*' | '+' | '?'> = {
  */
 export const pathPrimary: RuleDef<'pathPrimary', PropertyPath | IriTerm> = {
   name: 'pathPrimary',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => OR<PropertyPath | IriTerm>([
+  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR<PropertyPath | IriTerm>([
     { ALT: () => SUBRULE(iri) },
     {
       ALT: () => {
         CONSUME(l.a);
-        return factory.namedNode(`${RDF}type`);
+        return dataFactory.namedNode(`${RDF}type`);
       },
     },
     {
@@ -190,11 +188,11 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
  */
 export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', NegatedPropertySet['items'][0]> = {
   name: 'pathOneInPropertySet',
-  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2 }) => () => OR1<NegatedPropertySet['items'][0]>([
+  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context: { dataFactory }}) => () => OR1<NegatedPropertySet['items'][0]>([
     { ALT: () => SUBRULE1(iri) },
     { ALT: () => {
       CONSUME1(l.a);
-      return factory.namedNode(`${RDF}type`);
+      return dataFactory.namedNode(`${RDF}type`);
     } },
     {
       ALT: () => {
@@ -203,7 +201,7 @@ export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', NegatedProper
           { ALT: () => SUBRULE2(iri) },
           { ALT: () => {
             CONSUME2(l.a);
-            return factory.namedNode(`${RDF}type`);
+            return dataFactory.namedNode(`${RDF}type`);
           } },
         ]);
         return {

@@ -1,12 +1,10 @@
 import type { BlankNode } from 'rdf-data-factory';
-import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes.js';
 import { var_, varOrTerm, verb } from './general.js';
 import { path } from './propertyPaths.js';
 
-const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
@@ -89,8 +87,9 @@ function propertyListNotEmptyImplementation<T extends string>(
 ): RuleDef<T, TripleCreatorS[]> {
   return {
     name,
-    impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2 }) => () => {
+    impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, context: { dataFactory }}) => () => {
       const result: TripleCreatorS[] = [];
+      const resultAppendage: typeof result = [];
 
       // Generates predicate and objectList
       const firstProperty = allowPaths ?
@@ -101,10 +100,19 @@ function propertyListNotEmptyImplementation<T extends string>(
         SUBRULE1(verb);
       const firstObjects = SUBRULE1(allowPaths ? objectListPath : objectList);
       ACTION(() => {
-        result.push(
-          ...firstObjects
-            .map(object => (partS: Pick<Triple, 'subject'>) => object({ ...partS, predicate: firstProperty })),
-        );
+        // TODO: this filter is only here to be compliant with sparqlJS and is quite arbitrary.
+        //   For the first predicate,
+        //   additionally generated triples (like from collections) are shoved to the back of the result.
+        const filterSubject = dataFactory.namedNode('internal:filterSubject');
+        for (const cObject of firstObjects) {
+          const triple = cObject({ subject: filterSubject, predicate: firstProperty });
+          const generator: TripleCreatorS = rest => cObject({ ...rest, predicate: firstProperty });
+          if (triple.subject === filterSubject) {
+            result.push(generator);
+          } else {
+            resultAppendage.push(generator);
+          }
+        }
       });
 
       MANY(() => {
@@ -127,7 +135,7 @@ function propertyListNotEmptyImplementation<T extends string>(
           });
         });
       });
-      return result;
+      return [ ...result, ...resultAppendage ];
     },
   };
 }
@@ -223,12 +231,12 @@ export const triplesNodePath: RuleDef<'triplesNodePath', ITriplesNode> = {
 function blankNodePropertyListImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, ITriplesNode> {
   return {
     name,
-    impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
+    impl: ({ ACTION, SUBRULE, CONSUME, context: { dataFactory }}) => () => {
       CONSUME(l.symbols.LSquare);
       const propList = SUBRULE(allowPaths ? propertyListPathNotEmpty : propertyListNotEmpty);
       CONSUME(l.symbols.RSquare);
 
-      const subject = factory.blankNode();
+      const subject = dataFactory.blankNode();
       return ACTION(() => ({
         node: subject,
         triples: propList.map(part => part({ subject })),
@@ -246,7 +254,7 @@ export const blankNodePropertyListPath = blankNodePropertyListImpl('blankNodePro
 function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, ITriplesNode> {
   return {
     name,
-    impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
+    impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, context: { dataFactory }}) => () => {
       // Construct a [cons list](https://en.wikipedia.org/wiki/Cons#Lists),
       // here called a [RDF collection](https://www.w3.org/TR/sparql11-query/#collections).
       const terms: IGraphNode[] = [];
@@ -258,10 +266,10 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
 
       return ACTION(() => {
         const triples: Triple[] = [];
-        const listHead = factory.blankNode();
+        const listHead = dataFactory.blankNode();
         let iterHead = listHead;
-        const predFirst = factory.namedNode(`${RDF}first`);
-        const predRest = factory.namedNode(`${RDF}rest`);
+        const predFirst = dataFactory.namedNode(`${RDF}first`);
+        const predRest = dataFactory.namedNode(`${RDF}rest`);
         for (const [ index, term ] of terms.entries()) {
           const headTriple: Triple = {
             subject: iterHead,
@@ -278,11 +286,11 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
             const nilTriple: Triple = {
               subject: iterHead,
               predicate: predRest,
-              object: factory.namedNode(`${RDF}nil`),
+              object: dataFactory.namedNode(`${RDF}nil`),
             };
             triples.push(nilTriple);
           } else {
-            const tail = factory.blankNode();
+            const tail = dataFactory.blankNode();
             const linkTriple: Triple = {
               subject: iterHead,
               predicate: predRest,

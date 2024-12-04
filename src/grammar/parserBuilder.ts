@@ -16,6 +16,7 @@ import {
   type TokenVocabulary,
   EmbeddedActionsParser,
 } from 'chevrotain';
+import { DataFactory } from 'rdf-data-factory';
 
 type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
   cstDef: RuleDef<T, U, ARGS>,
@@ -29,6 +30,7 @@ type BacktrackFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
 export interface ImplArgs extends CstDef {
   cache: WeakMap<RuleDef, unknown>;
   context: {
+    dataFactory: DataFactory;
     prefixes: Record<string, string>;
   };
 }
@@ -695,6 +697,7 @@ export class Builder<T extends string > {
           ...selfRef,
           cache: new WeakMap(),
           context: {
+            dataFactory: new DataFactory(),
             prefixes: {},
           },
         };

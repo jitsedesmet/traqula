@@ -1,11 +1,9 @@
-import { DataFactory } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJSTypes.js';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
 import { triplesSameSubject } from './tripleBlock.js';
 
-const factory = new DataFactory();
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
@@ -89,12 +87,12 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
  */
 export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
   name: 'verb',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => OR([
+  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR([
     { ALT: () => SUBRULE(varOrIri) },
     {
       ALT: () => {
         CONSUME(l.a);
-        return factory.namedNode(`${RDF}type`);
+        return dataFactory.namedNode(`${RDF}type`);
       },
     },
   ]),
@@ -127,9 +125,9 @@ export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
  */
 export const var_: RuleDef<'var', VariableTerm> = {
   name: 'var',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => factory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
-    { ALT: () => factory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
+  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
+    { ALT: () => dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
+    { ALT: () => dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
   ]),
 };
 
@@ -138,7 +136,7 @@ export const var_: RuleDef<'var', VariableTerm> = {
  */
 export const graphTerm: RuleDef<'graphTerm', Term> = {
   name: 'graphTerm',
-  impl: ({ SUBRULE, CONSUME, OR }) => () => OR<Term>([
+  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR<Term>([
     { ALT: () => SUBRULE(iri) },
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
@@ -147,7 +145,7 @@ export const graphTerm: RuleDef<'graphTerm', Term> = {
     {
       ALT: () => {
         CONSUME(l.terminals.nil);
-        return factory.namedNode(`${RDF}nil`);
+        return dataFactory.namedNode(`${RDF}nil`);
       },
     },
   ]),
