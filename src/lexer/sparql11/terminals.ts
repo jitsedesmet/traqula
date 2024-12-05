@@ -39,9 +39,9 @@ const doublePositivePattern = new RegExp(`\\+${doublePattern.source}`);
 const integerNegativePattern = new RegExp(`-${integerPattern.source}`);
 const decimalNegativePattern = new RegExp(`-${decimalPattern.source}`);
 const doubleNegativePattern = new RegExp(`-${doublePattern.source}`);
-const echarPattern = /\\["'bfnrt]/u;
-const stringLiteral1Pattern = new RegExp(`'(?:(?:[^\\u0027\\u005C\\u000A\u000D])|(?:${echarPattern.source}))*'`);
-const stringLiteral2Pattern = new RegExp(`"(?:(?:[^\\u0022\\u005C\\u000A\\u000D])|(?:${echarPattern.source}))*"`);
+const echarPattern = /\\[\\"'bfnrt]/u;
+const stringLiteral1Pattern = new RegExp(`'(?:([^\\u0027\\u005C\\u000A\u000D])|(?:${echarPattern.source}))*'`);
+const stringLiteral2Pattern = new RegExp(`"(?:([^\\u0022\\u005C\\u000A\\u000D])|(?:${echarPattern.source}))*"`);
 const stringLiteralLong1Pattern = new RegExp(`'''(('|(''))?([^'\\\\]|(${echarPattern.source})))*'''`);
 const stringLiteralLong2Pattern = new RegExp(`"""(("|(""))?([^"\\\\]|(${echarPattern.source})))*"""`);
 // eslint-disable-next-line no-control-regex
@@ -70,6 +70,7 @@ export const stringLiteral2 = createToken({ name: 'StringLiteral2', pattern: str
 export const stringLiteralLong1 = createToken({ name: 'StringLiteralLong1', pattern: stringLiteralLong1Pattern });
 export const stringLiteralLong2 = createToken({ name: 'StringLiteralLong2', pattern: stringLiteralLong2Pattern });
 export const ws = createToken({ name: 'Ws', pattern: wsPattern, group: Lexer.SKIPPED });
+export const comment = createToken({ name: 'Comment', pattern: /#[^\n]*/, group: Lexer.SKIPPED });
 export const nil = createToken({ name: 'Nil', pattern: nilPattern });
 export const anon = createToken({ name: 'Anon', pattern: anonPattern });
 
@@ -95,6 +96,7 @@ export const allTerminals = [
   stringLiteralLong1,
   stringLiteralLong2,
   ws,
+  comment,
   nil,
   anon,
 ];

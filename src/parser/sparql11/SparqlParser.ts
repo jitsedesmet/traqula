@@ -25,11 +25,11 @@ import { updateParserBuilder } from './updateUnitParser.js';
 // ```
 // Prologue ( Update1 ( ';' Update )? )?
 // ```
-const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update> = {
+const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'base' | 'prefixes'>> = {
   name: 'queryOrUpdate',
   impl: ({ ACTION, SUBRULE, OR1, OR2, CONSUME, OPTION1, OPTION2 }) => () => {
     const prologueValues = SUBRULE(prologue);
-    return OR1<Query | Update>([
+    return OR1<Query | Update | Pick<Update, 'base' | 'prefixes'>>([
       { ALT: () => {
         const queryType = OR2<Omit<Query, HandledByBase>>([
           { ALT: () => SUBRULE(selectQuery) },
@@ -46,12 +46,7 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update> = {
         }));
       } },
       { ALT: () => {
-        const result: Update = {
-          type: 'update',
-          base: prologueValues.base,
-          prefixes: prologueValues.prefixes,
-          updates: [],
-        };
+        let result: Update | Pick<Update, 'base' | 'prefixes'> = prologueValues;
         OPTION1(() => {
           const updateOperation = SUBRULE(update1);
           const recursiveRes = OPTION2(() => {
@@ -60,14 +55,19 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update> = {
           });
 
           return ACTION(() => {
-            result.updates.push(updateOperation);
+            const updateResult: Update = {
+              ...result,
+              type: 'update',
+              updates: [ updateOperation ],
+            };
             if (recursiveRes) {
-              result.updates.push(...recursiveRes.updates);
-              result.base = recursiveRes.base ?? result.base;
-              result.prefixes = recursiveRes.prefixes ?
+              updateResult.updates.push(...recursiveRes.updates);
+              updateResult.base = recursiveRes.base ?? result.base;
+              updateResult.prefixes = recursiveRes.prefixes ?
                   { ...result.prefixes, ...recursiveRes.prefixes } :
-                result.prefixes;
+                updateResult.prefixes;
             }
+            result = updateResult;
           });
         });
         return result;

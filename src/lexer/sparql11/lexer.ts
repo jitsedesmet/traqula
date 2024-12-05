@@ -100,27 +100,31 @@ export const allBaseTokens: TokenType[] = [
   minus,
   union,
   filter,
+  as,
   a,
   true_,
   false_,
   in_,
   notIn,
   separator,
-  as,
 ];
 
 /**
  * [!!!ORDER MATTERS!!!](https://chevrotain.io/docs/tutorial/step1_lexing.html#creating-the-lexer)
  */
 export const allTokens: TokenType[] = [
+  ...allTerminals,
   ...allBaseTokens,
   ...allBuiltInCalls,
   ...allGraphTokens,
-  ...allTerminals,
   ...allSymbols,
 ];
 
 export const ChevSparqlLexer = new Lexer(allTokens, {
-  positionTracking: 'onlyOffset',
-  ensureOptimizations: true,
+  // PositionTracking: 'onlyOffset',
+  recoveryEnabled: false,
+  skipValidations: false,
+  safeMode: true,
+  positionTracking: 'full',
+  // EnsureOptimizations: true,
 });

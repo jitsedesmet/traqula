@@ -87,8 +87,8 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
 export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
   name: 'booleanLiteral',
   impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.literal(CONSUME(l.true_).image, dataFactory.namedNode(uriBooleanType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.false_).image, dataFactory.namedNode(uriBooleanType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.true_).image.toLowerCase(), dataFactory.namedNode(uriBooleanType)) },
+    { ALT: () => dataFactory.literal(CONSUME(l.false_).image.toLowerCase(), dataFactory.namedNode(uriBooleanType)) },
   ]),
 };
 

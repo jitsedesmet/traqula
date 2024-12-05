@@ -28,6 +28,11 @@ export const greaterThanEqual = createToken({ name: 'GreaterThanEqual', pattern:
 export const hathat = createToken({ name: 'Hathat', pattern: '^^', label: '^^' });
 
 export const allSymbols = [
+  logicAnd,
+  logicOr,
+  notEqual,
+  lessThanEqual,
+  greaterThanEqual,
   LCurly,
   RCurly,
   dot,
@@ -39,19 +44,14 @@ export const allSymbols = [
   RSquare,
   pipe,
   slash,
+  hathat,
   hat,
   question,
   star,
   plus,
   minus_,
   exclamation,
-  logicAnd,
-  logicOr,
   equal,
-  notEqual,
   lessThan,
   greaterThan,
-  lessThanEqual,
-  greaterThanEqual,
-  hathat,
 ];

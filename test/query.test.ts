@@ -31,7 +31,7 @@ describe('SPARQL tests', () => {
   const prefix = './test/statics/sparql';
   const statics = fs.readdirSync(prefix);
   for (const file of statics) {
-    if (file.endsWith('9-2e.sparql')) {
+    if (file.endsWith('.sparql')) {
       it(`should parse ${file}`, async({ expect }) => {
         const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
         const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');

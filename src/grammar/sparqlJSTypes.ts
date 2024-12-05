@@ -150,7 +150,7 @@ export interface LoadOperation {
   type: 'load';
   silent: boolean;
   source: IriTerm;
-  destination: IriTerm | false;
+  destination?: IriTerm;
 }
 
 export interface CreateOperation {
@@ -166,7 +166,7 @@ export interface ClearDropOperation {
 }
 
 export interface GraphOrDefault {
-  type: 'graph';
+  type?: 'graph';
   name?: IriTerm | undefined;
   default?: true | undefined;
 }

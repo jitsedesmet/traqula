@@ -96,12 +96,12 @@ export const load: RuleDef<'load', LoadOperation> = {
     const destination = OPTION2(() => {
       CONSUME(l.loadInto);
       return SUBRULE(graphRef);
-    }) ?? false;
+    });
     return {
       type: 'load',
       silent,
       source,
-      destination,
+      ...(destination && { destination }),
     };
   },
 };
@@ -133,7 +133,7 @@ export const drop: RuleDef<'drop', UpdateOperation> = {
     const silent = Boolean(OPTION(() => CONSUME(l.silent)));
     const graph = SUBRULE(graphRefAll);
     return {
-      type: 'clear',
+      type: 'drop',
       silent,
       graph,
     };
@@ -383,15 +383,15 @@ export const graphRefAll: RuleDef<'graphRefAll', GraphReference> = {
     } },
     { ALT: () => {
       CONSUME(l.graph.default_);
-      return { type: 'graph', default: true };
+      return { default: true };
     } },
     { ALT: () => {
       CONSUME(l.graph.named);
-      return { type: 'graph', named: true };
+      return { named: true };
     } },
     { ALT: () => {
       CONSUME(l.graph.graphAll);
-      return { type: 'graph', all: true };
+      return { all: true };
     } },
   ]),
 };
