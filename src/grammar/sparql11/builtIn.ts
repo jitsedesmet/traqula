@@ -189,14 +189,14 @@ export const aggregateGroup_concat: RuleDef< Uncapitalize<typeof l.builtIn.group
       CONSUME(l.separator);
       CONSUME(l.symbols.equal);
       return SUBRULE(string);
-    });
+    }) ?? ' ';
     CONSUME(l.symbols.RParen);
 
     return {
       type: 'aggregate',
       aggregation: 'group_concat',
       expression: expr,
-      ...(distinct && { distinct: true }),
+      distinct: Boolean(distinct),
       separator,
     };
   },

@@ -181,47 +181,47 @@ export const relationalExpression: RuleDef<'relationalExpression', Expression> =
   impl: ({ ACTION, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR, SUBRULE3, SUBRULE4, SUBRULE5, SUBRULE6, SUBRULE7 }) =>
     () => {
       const args1 = SUBRULE1(numericExpression);
-      const arg2 = OPTION(() => OR<{ operator: RelationalOperator; args: Expression[] }>([
+      const arg2 = OPTION(() => OR<{ operator: RelationalOperator; args: Expression }>([
         {
           ALT: () => {
             CONSUME(l.symbols.equal);
             const expr = SUBRULE2(numericExpression);
-            return { operator: '=', args: [ expr ]};
+            return { operator: '=', args: expr };
           },
         },
         {
           ALT: () => {
             CONSUME(l.symbols.notEqual);
             const expr = SUBRULE3(numericExpression);
-            return { operator: '!=', args: [ expr ]};
+            return { operator: '!=', args: expr };
           },
         },
         {
           ALT: () => {
             CONSUME(l.symbols.lessThan);
             const expr = SUBRULE4(numericExpression);
-            return { operator: '<', args: [ expr ]};
+            return { operator: '<', args: expr };
           },
         },
         {
           ALT: () => {
             CONSUME(l.symbols.greaterThan);
             const expr = SUBRULE5(numericExpression);
-            return { operator: '>', args: [ expr ]};
+            return { operator: '>', args: expr };
           },
         },
         {
           ALT: () => {
             CONSUME(l.symbols.lessThanEqual);
             const expr = SUBRULE6(numericExpression);
-            return { operator: '<=', args: [ expr ]};
+            return { operator: '<=', args: expr };
           },
         },
         {
           ALT: () => {
             CONSUME(l.symbols.greaterThanEqual);
             const expr = SUBRULE7(numericExpression);
-            return { operator: '>=', args: [ expr ]};
+            return { operator: '>=', args: expr };
           },
         },
         {
@@ -245,7 +245,7 @@ export const relationalExpression: RuleDef<'relationalExpression', Expression> =
       return ACTION(() => ({
         type: 'operation',
         operator: arg2.operator,
-        args: [ args1, ...arg2.args ],
+        args: [ args1, arg2.args ],
       }));
     },
 };

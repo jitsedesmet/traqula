@@ -268,6 +268,8 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
 
       return ACTION(() => {
         const triples: Triple[] = [];
+        const appendTriples: Triple[] = [];
+
         const listHead = dataFactory.blankNode();
         let iterHead = listHead;
         const predFirst = dataFactory.namedNode(`${RDF}first`);
@@ -278,10 +280,8 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
             predicate: predFirst,
             object: term.node,
           };
-          triples.push(
-            headTriple,
-            ...term.triples,
-          );
+          triples.push(headTriple);
+          appendTriples.push(...term.triples);
 
           // If not the last, create new iterHead, otherwise, close list
           if (index === terms.length - 1) {
@@ -304,7 +304,7 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
         }
         return {
           node: listHead,
-          triples,
+          triples: [ ...triples, ...appendTriples ],
         };
       });
     },

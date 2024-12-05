@@ -28,7 +28,7 @@ SELECT * WHERE {
       parser.reset();
       const lexResult = lexer.tokenize(query);
       parser.input = lexResult.tokens;
-      const res = parser.queryUnit();
+      const res = parser.queryOrUpdate();
     })
     .add('sparqljs', () => {
       const res = oldParser.parse(query);

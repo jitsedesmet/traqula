@@ -17,7 +17,7 @@ function main(): void {
   const lexResult = lexer.tokenize('select (LANGMATCHES(?S, ?P) AS ?adjusted) WHERE { ?s ?p ?o }');
 
   sparqlParser.input = lexResult.tokens;
-  console.log(JSON.stringify(sparqlParser.queryUnit(), null, 2));
+  console.log(JSON.stringify(sparqlParser.queryOrUpdate(), null, 2));
   // eslint-disable-next-line no-console
   console.log(sparqlParser.errors.join('\n'));
 
@@ -36,7 +36,7 @@ function main(): void {
   console.log(lexResult.tokens.map(t => t.image).join(' '));
 
   parser.input = adjustLexResult.tokens;
-  parser.query();
+  parser.queryOrUpdate();
   console.log(parser.errors.join('\n'));
 }
 

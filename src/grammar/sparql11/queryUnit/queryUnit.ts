@@ -55,7 +55,7 @@ export const query: RuleDef<'query', Query> = {
   },
 };
 
-type HandledByBase = 'values' | 'type' | 'base' | 'prefixes';
+export type HandledByBase = 'values' | 'type' | 'base' | 'prefixes';
 
 function extractFromOfDataSetClauses(ACTION: ImplArgs['ACTION'], MANY: ImplArgs['MANY'], SUBRULE: ImplArgs['SUBRULE']):
 { default: IriTerm[]; named: IriTerm[] } | undefined {

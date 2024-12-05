@@ -37,8 +37,14 @@ export const updateUnit: RuleDef<'updateUnit', Update> = {
 export const update: RuleDef<'update', Update> = {
   name: 'update',
   impl: ({ ACTION, SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
-    const prologValue = SUBRULE(prologue);
-    const optionalResult = OPTION1<Update>(() => {
+    const prologueValues = SUBRULE(prologue);
+    const result: Update = {
+      type: 'update',
+      base: prologueValues.base,
+      prefixes: prologueValues.prefixes,
+      updates: [],
+    };
+    OPTION1(() => {
       const updateOperation = SUBRULE(update1);
       const recursiveRes = OPTION2(() => {
         CONSUME(l.symbols.semi);
@@ -46,31 +52,15 @@ export const update: RuleDef<'update', Update> = {
       });
 
       return ACTION(() => {
+        result.updates.push(updateOperation);
         if (recursiveRes) {
-          recursiveRes.updates.push(updateOperation);
-          return {
-            type: 'update',
-            base: recursiveRes.base ?? prologValue.base,
-            prefixes: recursiveRes.prefixes ?
-                { ...prologValue.prefixes, ...recursiveRes.prefixes } :
-              prologValue.prefixes,
-            updates: recursiveRes.updates,
-          };
+          result.updates.push(...recursiveRes.updates);
+          result.base = recursiveRes.base ?? result.base;
+          result.prefixes = recursiveRes.prefixes ? { ...result.prefixes, ...recursiveRes.prefixes } : result.prefixes;
         }
-        return {
-          type: 'update',
-          base: prologValue.base,
-          prefixes: prologValue.prefixes,
-          updates: [ updateOperation ],
-        };
       });
     });
-    return ACTION(() => optionalResult ?? {
-      type: 'update',
-      base: prologValue.base,
-      prefixes: prologValue.prefixes,
-      updates: [],
-    });
+    return result;
   },
 };
 
