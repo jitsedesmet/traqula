@@ -2,7 +2,7 @@ import type { TokenType } from 'chevrotain';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 
-import type { IriTerm, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes.js';
+import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes.js';
 import { iri } from './literals.js';
 
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -169,7 +169,7 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
     {
       ALT: () => {
         CONSUME(l.symbols.LParen);
-        const items: NegatedPropertySet['items'] = [];
+        const items: IriTermOrElt[] = [];
         MANY_SEP({
           DEF: () => {
             items.push(SUBRULE2(pathOneInPropertySet));
@@ -177,7 +177,13 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
           SEP: l.symbols.pipe,
         });
         CONSUME(l.symbols.RParen);
-        return items;
+        return items.length === 1 ?
+          items :
+            [{
+              type: 'path',
+              pathType: '|',
+              items,
+            }];
       },
     },
   ]),
@@ -186,30 +192,31 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
 /**
  * [[96]](https://www.w3.org/TR/sparql11-query/#rPathOneInPropertySet)
  */
-export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', NegatedPropertySet['items'][0]> = {
+export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', IriTermOrElt> = {
   name: 'pathOneInPropertySet',
-  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context: { dataFactory }}) => () => OR1<NegatedPropertySet['items'][0]>([
-    { ALT: () => SUBRULE1(iri) },
-    { ALT: () => {
-      CONSUME1(l.a);
-      return dataFactory.namedNode(`${RDF}type`);
-    } },
-    {
-      ALT: () => {
-        CONSUME(l.symbols.hat);
-        const item = OR2([
-          { ALT: () => SUBRULE2(iri) },
-          { ALT: () => {
-            CONSUME2(l.a);
-            return dataFactory.namedNode(`${RDF}type`);
-          } },
-        ]);
-        return {
-          type: 'path',
-          pathType: '^',
-          items: [ item ],
-        };
+  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context: { dataFactory }}) => () =>
+    OR1<IriTermOrElt>([
+      { ALT: () => SUBRULE1(iri) },
+      { ALT: () => {
+        CONSUME1(l.a);
+        return dataFactory.namedNode(`${RDF}type`);
+      } },
+      {
+        ALT: () => {
+          CONSUME(l.symbols.hat);
+          const item = OR2([
+            { ALT: () => SUBRULE2(iri) },
+            { ALT: () => {
+              CONSUME2(l.a);
+              return dataFactory.namedNode(`${RDF}type`);
+            } },
+          ]);
+          return {
+            type: 'path',
+            pathType: '^',
+            items: [ item ],
+          };
+        },
       },
-    },
-  ]),
+    ]),
 };

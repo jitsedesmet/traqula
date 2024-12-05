@@ -2,6 +2,7 @@ import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../parserBuilder.js';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes.js';
+import { resolveIRI } from '../utils.js';
 
 const uriBooleanType = 'http://www.w3.org/2001/XMLSchema#boolean';
 const uriIntegerType = 'http://www.w3.org/2001/XMLSchema#integer';
@@ -109,8 +110,11 @@ export const string: RuleDef<'string', string> = {
  */
 export const iri: RuleDef<'iri', IriTerm> = {
   name: 'iri',
-  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.namedNode(CONSUME(l.terminals.iriRef).image.slice(1, -1)) },
+  impl: ({ ACTION, SUBRULE, CONSUME, OR, context }) => () => OR([
+    { ALT: () => {
+      const iriVal = CONSUME(l.terminals.iriRef).image.slice(1, -1);
+      return ACTION(() => context.dataFactory.namedNode(resolveIRI(iriVal, context.baseIRI)));
+    } },
     { ALT: () => SUBRULE(prefixedName) },
   ]),
 };

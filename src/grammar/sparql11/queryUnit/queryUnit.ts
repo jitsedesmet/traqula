@@ -103,7 +103,7 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
 /**
  * [[8]](https://www.w3.org/TR/sparql11-query/#rSubSelect)
  */
-export const subSelect: RuleDef<'subSelect', SelectQuery> = {
+export const subSelect: RuleDef<'subSelect', Omit<SelectQuery, 'prefixes'>> = {
   name: 'subSelect',
   impl: ({ ACTION, SUBRULE }) => () => {
     const clause = SUBRULE(selectClause);
@@ -117,8 +117,7 @@ export const subSelect: RuleDef<'subSelect', SelectQuery> = {
       type: 'query',
       queryType: 'SELECT',
       where,
-      values,
-      prefixes: {},
+      ...(values && { values }),
     }));
   },
 };

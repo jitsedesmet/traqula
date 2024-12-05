@@ -1,8 +1,8 @@
 import { createToken } from '../../lexer/sparql11/helpers.js';
 import type { RuleDef } from '../parserBuilder.js';
 import { builtInCall } from '../sparql11/builtIn.js';
+import { funcExpr2 } from '../sparql11/expressionhelpers';
 import type { Expression } from '../sparqlJSTypes.js';
-import { funcExpr2 } from '../utils.js';
 
 export const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJUST' });
 

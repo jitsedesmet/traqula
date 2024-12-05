@@ -42,9 +42,13 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
  */
 export const baseDecl: RuleDef<'baseDecl', string> = {
   name: 'baseDecl',
-  impl: ({ CONSUME }) => () => {
+  impl: ({ CONSUME, ACTION, context }) => () => {
     CONSUME(l.baseDecl);
-    return CONSUME(l.terminals.iriRef).image;
+    const base = CONSUME(l.terminals.iriRef).image.slice(1, -1);
+    return ACTION(() => {
+      context.baseIRI = base;
+      return base;
+    });
   },
 };
 

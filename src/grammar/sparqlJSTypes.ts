@@ -193,7 +193,7 @@ export type Pattern =
   | FilterPattern
   | BindPattern
   | ValuesPattern
-  | SelectQuery;
+  | Omit<SelectQuery, 'prefixes'>;
 
 /**
  * Basic Graph Pattern
@@ -281,14 +281,20 @@ export type PropertyPath = NegatedPropertySet | {
   items: (IriTerm | PropertyPath)[];
 };
 
+export type IriTermOrElt = IriTerm | {
+  type: 'path';
+  pathType: '^';
+  items: [IriTerm];
+};
+
 export interface NegatedPropertySet {
   type: 'path';
   pathType: '!';
-  items: (IriTerm | {
+  items: IriTermOrElt[] | [{
     type: 'path';
-    pathType: '^';
-    items: [IriTerm];
-  })[];
+    pathType: '|';
+    items: (IriTermOrElt)[];
+  }];
 }
 
 export type Expression =

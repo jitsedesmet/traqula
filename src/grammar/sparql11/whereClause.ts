@@ -140,8 +140,10 @@ export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', Group
     });
 
     return patterns.length === 1 ?
-    // TODO: This cast might not be correct! (Test it)
-        <GroupPattern> patterns[0] :
+        {
+          type: 'group',
+          patterns,
+        } :
         {
           type: 'union',
           patterns,

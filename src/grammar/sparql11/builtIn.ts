@@ -3,6 +3,10 @@ import * as l from '../../lexer/sparql11/index.js';
 import type { ImplArgs, RuleDef } from '../parserBuilder.js';
 import type { AggregateExpression, Expression } from '../sparqlJSTypes.js';
 import {
+  unCapitalize,
+} from '../utils.js';
+import { expression } from './expression.js';
+import {
   baseAggregateFunc,
   funcExpr1,
   funcExpr2,
@@ -10,12 +14,10 @@ import {
   funcExpr3or4,
   funcExprList1,
   funcExprOrNil1,
-  funcNil1,
-  unCapitalize,
-  funcVar1,
   funcGroupGraphPattern,
-} from '../utils.js';
-import { expression } from './expression.js';
+  funcNil1,
+  funcVar1,
+} from './expressionhelpers.js';
 import { string } from './literals.js';
 
 export const builtInStr = funcExpr1(l.builtIn.str);

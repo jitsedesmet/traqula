@@ -32,6 +32,7 @@ export interface ImplArgs extends CstDef {
   context: {
     dataFactory: DataFactory;
     prefixes: Record<string, string>;
+    baseIRI: string | undefined;
   };
 }
 
@@ -699,6 +700,7 @@ export class Builder<T extends string > {
           context: {
             dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
             prefixes: {},
+            baseIRI: undefined,
           },
         };
 
