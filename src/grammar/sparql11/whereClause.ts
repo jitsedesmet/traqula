@@ -32,27 +32,31 @@ import { triplesBlock } from './tripleBlock.js';
  */
 export const whereClause: RuleDef<'whereClause', Pattern[]> = {
   name: 'whereClause',
-  impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME, OPTION }) => () => {
     OPTION(() => {
       CONSUME(l.where);
     });
-    return SUBRULE(groupGraphPattern);
+    const group = SUBRULE(groupGraphPattern);
+    return ACTION(() => group.patterns);
   },
 };
 
 /**
  * [[53]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPattern)
  */
-export const groupGraphPattern: RuleDef<'groupGraphPattern', Pattern[]> = {
+export const groupGraphPattern: RuleDef<'groupGraphPattern', GroupPattern> = {
   name: 'groupGraphPattern',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.symbols.LCurly);
-    const result = OR([
+    const patterns = OR([
       { ALT: () => [ SUBRULE(subSelect) ]},
       { ALT: () => SUBRULE(groupGraphPatternSub) },
     ]);
     CONSUME(l.symbols.RCurly);
-    return result;
+    return {
+      type: 'group',
+      patterns,
+    };
   },
 };
 
@@ -64,16 +68,21 @@ export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = 
   impl: ({ ACTION, SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     const patterns: Pattern[] = [];
 
-    const bgpPattern = OPTION1(() => [ SUBRULE1(triplesBlock) ]) ?? [];
-    ACTION(() => patterns.push(...bgpPattern));
+    const bgpPattern = OPTION1(() => SUBRULE1(triplesBlock));
+    ACTION(() => {
+      if (bgpPattern) {
+        patterns.push(bgpPattern);
+      }
+    });
     MANY(() => {
       const notTriples = SUBRULE(graphPatternNotTriples);
       patterns.push(notTriples);
       OPTION2(() => CONSUME(l.symbols.dot));
-      const moreTriples = OPTION3(() => [ SUBRULE2(triplesBlock) ]) ?? [];
-
+      const moreTriples = OPTION3(() => SUBRULE2(triplesBlock));
       ACTION(() => {
-        patterns.push(...moreTriples);
+        if (moreTriples) {
+          patterns.push(moreTriples);
+        }
       });
     });
 
@@ -105,14 +114,14 @@ RuleDef<'graphPatternNotTriples', GraphPatternNotTriplesReturn> = {
  */
 export const optionalGraphPattern: RuleDef<'optionalGraphPattern', OptionalPattern> = {
   name: 'optionalGraphPattern',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
     CONSUME(l.optional);
-    const patterns = SUBRULE(groupGraphPattern);
+    const group = SUBRULE(groupGraphPattern);
 
-    return {
+    return ACTION(() => ({
       type: 'optional',
-      patterns,
-    };
+      patterns: group.patterns,
+    }));
   },
 };
 
@@ -122,31 +131,21 @@ export const optionalGraphPattern: RuleDef<'optionalGraphPattern', OptionalPatte
 export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', GroupPattern | UnionPattern> = {
   name: 'groupOrUnionGraphPattern',
   impl: ({ AT_LEAST_ONE_SEP, SUBRULE }) => () => {
-    const patterns: Pattern[] = [];
+    const groups: GroupPattern[] = [];
 
     AT_LEAST_ONE_SEP({
       DEF: () => {
-        const subPatterns = SUBRULE(groupGraphPattern);
-        if (subPatterns.length === 1) {
-          patterns.push(subPatterns[0]);
-        } else {
-          patterns.push({
-            type: 'group',
-            patterns: subPatterns,
-          });
-        }
+        const group = SUBRULE(groupGraphPattern);
+        groups.push(group);
       },
       SEP: l.union,
     });
 
-    return patterns.length === 1 ?
-        {
-          type: 'group',
-          patterns,
-        } :
+    return groups.length === 1 ?
+      groups[0] :
         {
           type: 'union',
-          patterns,
+          patterns: groups,
         };
   },
 };
@@ -156,16 +155,16 @@ export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', Group
  */
 export const graphGraphPattern: RuleDef<'graphGraphPattern', GraphPattern> = {
   name: 'graphGraphPattern',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
     const name = SUBRULE(varOrIri);
-    const patterns = SUBRULE(groupGraphPattern);
+    const group = SUBRULE(groupGraphPattern);
 
-    return {
+    return ACTION(() => ({
       type: 'graph',
       name,
-      patterns,
-    };
+      patterns: group.patterns,
+    }));
   },
 };
 
@@ -178,13 +177,13 @@ export const serviceGraphPattern: RuleDef<'serviceGraphPattern', ServicePattern>
     CONSUME(l.service);
     const silent = Boolean(OPTION(() => CONSUME(l.silent)));
     const name = SUBRULE(varOrIri);
-    const patterns = SUBRULE(groupGraphPattern);
+    const group = SUBRULE(groupGraphPattern);
 
     return {
       type: 'service',
       name,
       silent,
-      patterns,
+      patterns: group.patterns,
     };
   },
 };
@@ -345,14 +344,14 @@ export const dataBlockValue: RuleDef<'dataBlockValue', IriTerm | BlankTerm | Lit
  */
 export const minusGraphPattern: RuleDef<'minusGraphPattern', MinusPattern> = {
   name: 'minusGraphPattern',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
     CONSUME(l.minus);
-    const patterns = SUBRULE(groupGraphPattern);
+    const group = SUBRULE(groupGraphPattern);
 
-    return {
+    return ACTION(() => ({
       type: 'minus',
-      patterns,
-    };
+      patterns: group.patterns,
+    }));
   },
 };
 

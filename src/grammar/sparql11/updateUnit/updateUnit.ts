@@ -273,15 +273,14 @@ export const modify: RuleDef<'modify', UpdateOperation> = {
         return { insert, delete: []};
       } },
     ]);
+    const usingArr: RuleDefReturn<typeof usingClause>[] = [];
+    MANY(() => {
+      usingArr.push(SUBRULE(usingClause));
+    });
+    CONSUME(l.where);
+    const where = SUBRULE(groupGraphPattern);
 
     return ACTION(() => {
-      const usingArr: RuleDefReturn<typeof usingClause>[] = [];
-      MANY(() => {
-        usingArr.push(SUBRULE(usingClause));
-      });
-      CONSUME(l.where);
-      const where = SUBRULE(groupGraphPattern);
-
       const def: IriTerm[] = [];
       const named: IriTerm[] = [];
       for (const { value, type } of usingArr) {
@@ -297,7 +296,7 @@ export const modify: RuleDef<'modify', UpdateOperation> = {
         insert,
         delete: del,
         using: usingArr.length > 0 ? { default: def, named } : undefined,
-        where,
+        where: where.patterns,
       };
     });
   },

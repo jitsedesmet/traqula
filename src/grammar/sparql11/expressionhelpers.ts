@@ -199,14 +199,14 @@ RuleDefExpressionFunctionX<
   > {
   return {
     name: unCapitalize(func.name),
-    impl: ({ SUBRULE, CONSUME }) => () => {
+    impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
       const operator = CONSUME(func);
-      const args = SUBRULE(groupGraphPattern);
-      return {
+      const group = SUBRULE(groupGraphPattern);
+      return ACTION(() => ({
         type: 'operation',
         operator: formatOperator(operator.image),
-        args,
-      };
+        args: [ group ],
+      }));
     },
   };
 }
