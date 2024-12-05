@@ -40,8 +40,8 @@ const integerNegativePattern = new RegExp(`-${integerPattern.source}`);
 const decimalNegativePattern = new RegExp(`-${decimalPattern.source}`);
 const doubleNegativePattern = new RegExp(`-${doublePattern.source}`);
 const echarPattern = /\\["'bfnrt]/u;
-const stringLiteral1Pattern = new RegExp(`'(([^\\u0027\\u005C\\u000A\u000D])|(${echarPattern.source}))*'`);
-const stringLiteral2Pattern = new RegExp(`"(([^\\u0027\\u005C\\u000A\\u000D])|(${echarPattern.source}))*"`);
+const stringLiteral1Pattern = new RegExp(`'(?:(?:[^\\u0027\\u005C\\u000A\u000D])|(?:${echarPattern.source}))*'`);
+const stringLiteral2Pattern = new RegExp(`"(?:(?:[^\\u0022\\u005C\\u000A\\u000D])|(?:${echarPattern.source}))*"`);
 const stringLiteralLong1Pattern = new RegExp(`'''(('|(''))?([^'\\\\]|(${echarPattern.source})))*'''`);
 const stringLiteralLong2Pattern = new RegExp(`"""(("|(""))?([^"\\\\]|(${echarPattern.source})))*"""`);
 // eslint-disable-next-line no-control-regex

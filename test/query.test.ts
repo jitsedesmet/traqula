@@ -26,11 +26,11 @@ function restoreUndefined(object: Record<string, any>): object {
   return object;
 }
 
-describe('sPARQL tests', () => {
+describe('SPARQL tests', () => {
   const prefix = './test/statics/sparql';
   const statics = fs.readdirSync(prefix);
   for (const file of statics) {
-    if (file.endsWith('17-6a.sparql')) {
+    if (file.endsWith('.sparql')) {
       it(`should parse ${file}`, async({ expect }) => {
         const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
         const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
@@ -40,7 +40,7 @@ describe('sPARQL tests', () => {
         const parser = sparqlParserBuilder.consume(allTokens);
         const lexResult = lexer.tokenize(query);
 
-        // Console.log(lexResult.tokens);
+        // console.log(lexResult.tokens);
 
         parser.input = lexResult.tokens;
         const res = parser.queryUnit();

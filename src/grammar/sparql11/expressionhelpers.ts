@@ -213,9 +213,10 @@ RuleDefExpressionFunctionX<
 
 export interface IExpressionAggregator {
   type: 'aggregate';
+  distinct: boolean;
   expression: Expression | Wildcard;
   aggregation: string;
-  separator: string | undefined;
+  separator?: string;
 }
 
 export type RuleDefExpressionAggregatorX<T extends string> = RuleDef<T, IExpressionAggregator>;
@@ -242,8 +243,7 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
         type: 'aggregate',
         aggregation: operator.image.toLowerCase(),
         expression: expressionVal,
-        ...(distinct && { distinct: true }),
-        separator: undefined,
+        distinct: Boolean(distinct),
       };
     },
   };
