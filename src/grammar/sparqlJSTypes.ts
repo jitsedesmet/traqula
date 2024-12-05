@@ -313,7 +313,7 @@ export interface Tuple extends Array<Expression> {}
 
 export interface BaseExpression {
   type: string;
-  distinct?: true | undefined;
+  distinct?: boolean | undefined;
 }
 
 export interface OperationExpression extends BaseExpression {

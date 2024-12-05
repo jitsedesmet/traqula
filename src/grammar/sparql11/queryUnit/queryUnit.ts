@@ -134,14 +134,14 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = {
   name: 'selectClause',
   impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
     CONSUME(l.select);
-    const tDistinctFReduced = OPTION(() => OR1([
+    const distinctOrReduced = OPTION(() => OR1<Partial<{ distinct: true; reduced: true }>>([
       { ALT: () => {
         CONSUME(l.distinct);
-        return true;
+        return { distinct: true };
       } },
       { ALT: () => {
         CONSUME(l.reduced);
-        return false;
+        return { reduced: true };
       } },
     ]));
     const variables = OR2<ISelectClause['variables']>([
@@ -169,15 +169,10 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = {
       } },
     ]);
 
-    return ACTION(() => {
-      const res: ISelectClause = {
-        variables,
-      };
-      if (tDistinctFReduced !== undefined) {
-        res[tDistinctFReduced ? 'distinct' : 'reduced'] = true;
-      }
-      return res;
-    });
+    return ACTION(() => ({
+      ...distinctOrReduced,
+      variables,
+    }));
   },
 };
 

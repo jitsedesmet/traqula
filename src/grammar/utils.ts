@@ -1,3 +1,5 @@
+import type { GroupPattern, Pattern } from './sparqlJSTypes';
+
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));
 }
@@ -34,4 +36,8 @@ export function resolveIRI(iri: string, base: string | undefined): string {
     default:
       return base + iri;
   }
+}
+
+export function deGroupSingle(group: GroupPattern): Pattern {
+  return group.patterns.length === 1 ? group.patterns[0] : group;
 }

@@ -3,7 +3,7 @@ import * as l from '../../lexer/sparql11/index.js';
 import { Wildcard } from '../../misc/Wildcard.js';
 import type { RuleDef } from '../parserBuilder.js';
 import type { Expression, Pattern, VariableTerm } from '../sparqlJSTypes.js';
-import { unCapitalize } from '../utils.js';
+import { deGroupSingle, unCapitalize } from '../utils.js';
 import { expression, expressionList } from './expression.js';
 import { var_ } from './general.js';
 import { groupGraphPattern } from './whereClause.js';
@@ -205,7 +205,7 @@ RuleDefExpressionFunctionX<
       return ACTION(() => ({
         type: 'operation',
         operator: formatOperator(operator.image),
-        args: [ group ],
+        args: [ deGroupSingle(group) ],
       }));
     },
   };
@@ -227,7 +227,7 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
     impl: ({ CONSUME, SUBRULE, OPTION, OR }) => () => {
       const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
-      const distinct = Boolean(OPTION(() => CONSUME(l.distinct)));
+      const distinct = OPTION(() => CONSUME(l.distinct));
       const expressionVal = OR<Expression | Wildcard>([
         {
           ALT: () => {
@@ -242,7 +242,7 @@ RuleDefExpressionAggregatorX<Uncapitalize<T>> {
         type: 'aggregate',
         aggregation: operator.image.toLowerCase(),
         expression: expressionVal,
-        distinct,
+        ...(distinct && { distinct: true }),
         separator: undefined,
       };
     },

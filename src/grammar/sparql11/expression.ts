@@ -20,7 +20,7 @@ import {
 export interface IArgList {
   type: 'functionCall';
   args: Expression[];
-  distinct?: true;
+  distinct: boolean;
 }
 
 export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;
@@ -34,9 +34,6 @@ export type buildInOperator = 'STR' | 'LANG' | 'LANGMATCHES' | 'DATATYPE' | 'BOU
   'COALESCE' | 'IF' | 'STRLANG' | 'STRDT' | 'sameTerm' | 'isIRI' | 'isURI' | 'isBLANK' | 'isLITERAL' | 'isNUMERIC' |
   'REGEX' | 'SUBSTR' | 'REPLACE' | 'EXISTS' | 'NOT EXISTS';
 export type aggregatorOperator = 'COUNT' | 'SUM' | 'MIN' | 'MAX' | 'AVG' | 'SAMPLE' | 'GROUP_CONCAT';
-export interface IExpression {
-
-}
 
 export const argList: RuleDef<'argList', IArgList> = {
   name: 'argList',
@@ -47,6 +44,7 @@ export const argList: RuleDef<'argList', IArgList> = {
         return {
           type: 'functionCall',
           args: [],
+          distinct: false,
         };
       },
     },
@@ -65,7 +63,7 @@ export const argList: RuleDef<'argList', IArgList> = {
         return {
           type: 'functionCall',
           args,
-          ...(distinct && { distinct }),
+          distinct: Boolean(distinct),
         };
       },
     },

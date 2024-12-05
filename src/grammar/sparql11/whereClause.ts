@@ -20,6 +20,7 @@ import type {
   ValuesPattern,
   VariableTerm,
 } from '../sparqlJSTypes.js';
+import { deGroupSingle } from '../utils';
 import { builtInCall } from './builtIn.js';
 import { argList, brackettedExpression, expression } from './expression.js';
 import { var_, varOrIri } from './general.js';
@@ -122,31 +123,6 @@ export const optionalGraphPattern: RuleDef<'optionalGraphPattern', OptionalPatte
       type: 'optional',
       patterns: group.patterns,
     }));
-  },
-};
-
-/**
- * [[67]](https://www.w3.org/TR/sparql11-query/#rGroupOrUnionGraphPattern)
- */
-export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', GroupPattern | UnionPattern> = {
-  name: 'groupOrUnionGraphPattern',
-  impl: ({ AT_LEAST_ONE_SEP, SUBRULE }) => () => {
-    const groups: GroupPattern[] = [];
-
-    AT_LEAST_ONE_SEP({
-      DEF: () => {
-        const group = SUBRULE(groupGraphPattern);
-        groups.push(group);
-      },
-      SEP: l.union,
-    });
-
-    return groups.length === 1 ?
-      groups[0] :
-        {
-          type: 'union',
-          patterns: groups,
-        };
   },
 };
 
@@ -352,6 +328,31 @@ export const minusGraphPattern: RuleDef<'minusGraphPattern', MinusPattern> = {
       type: 'minus',
       patterns: group.patterns,
     }));
+  },
+};
+
+/**
+ * [[67]](https://www.w3.org/TR/sparql11-query/#rGroupOrUnionGraphPattern)
+ */
+export const groupOrUnionGraphPattern: RuleDef<'groupOrUnionGraphPattern', GroupPattern | UnionPattern> = {
+  name: 'groupOrUnionGraphPattern',
+  impl: ({ AT_LEAST_ONE_SEP, SUBRULE }) => () => {
+    const groups: GroupPattern[] = [];
+
+    AT_LEAST_ONE_SEP({
+      DEF: () => {
+        const group = SUBRULE(groupGraphPattern);
+        groups.push(group);
+      },
+      SEP: l.union,
+    });
+
+    return groups.length === 1 ?
+      groups[0] :
+        {
+          type: 'union',
+          patterns: groups.map(group => deGroupSingle(group)),
+        };
   },
 };
 

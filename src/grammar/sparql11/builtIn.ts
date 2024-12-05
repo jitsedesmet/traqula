@@ -182,7 +182,7 @@ export const aggregateGroup_concat: RuleDef< Uncapitalize<typeof l.builtIn.group
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
     CONSUME(l.builtIn.groupConcat);
     CONSUME(l.symbols.LParen);
-    const distinct = OPTION1(() => CONSUME(l.distinct)) && true;
+    const distinct = OPTION1(() => CONSUME(l.distinct));
     const expr = SUBRULE(expression);
     const separator = OPTION2(() => {
       CONSUME(l.symbols.semi);
@@ -196,7 +196,7 @@ export const aggregateGroup_concat: RuleDef< Uncapitalize<typeof l.builtIn.group
       type: 'aggregate',
       aggregation: 'group_concat',
       expression: expr,
-      ...(distinct && { distinct }),
+      ...(distinct && { distinct: true }),
       separator,
     };
   },
