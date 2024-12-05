@@ -477,7 +477,7 @@ export class Builder<T extends string > {
     return res;
   }
 
-  public consume(tokenVocabulary: TokenVocabulary):
+  public consume(tokenVocabulary: TokenVocabulary, context: Partial<ImplArgs['context']> = {}):
     EmbeddedActionsParser & Record<T, ParserMethod<unknown[], CstNode>> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
@@ -701,6 +701,7 @@ export class Builder<T extends string > {
             dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
             prefixes: {},
             baseIRI: undefined,
+            ...context,
           },
         };
 

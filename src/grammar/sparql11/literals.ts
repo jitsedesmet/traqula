@@ -97,12 +97,24 @@ export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
  */
 export const string: RuleDef<'string', string> = {
   name: 'string',
-  impl: ({ CONSUME, OR }) => () => OR([
-    { ALT: () => CONSUME(l.terminals.stringLiteral1).image.slice(1, -1) },
-    { ALT: () => CONSUME(l.terminals.stringLiteral2).image.slice(1, -1) },
-    { ALT: () => CONSUME(l.terminals.stringLiteralLong1).image.slice(3, -3) },
-    { ALT: () => CONSUME(l.terminals.stringLiteralLong2).image.slice(3, -3) },
-  ]),
+  impl: ({ ACTION, CONSUME, OR }) => () => {
+    const rawString = OR([
+      { ALT: () => CONSUME(l.terminals.stringLiteral1).image.slice(1, -1) },
+      { ALT: () => CONSUME(l.terminals.stringLiteral2).image.slice(1, -1) },
+      { ALT: () => CONSUME(l.terminals.stringLiteralLong1).image.slice(3, -3) },
+      { ALT: () => CONSUME(l.terminals.stringLiteralLong2).image.slice(3, -3) },
+    ]);
+    return ACTION(() => rawString.replaceAll(/\\([tnrbf"'\\])/gu, (_, char: string) => {
+      switch (char) {
+        case 't': return '\t';
+        case 'n': return '\n';
+        case 'r': return '\r';
+        case 'b': return '\b';
+        case 'f': return '\f';
+        default: return char;
+      }
+    }));
+  },
 };
 
 /**
@@ -144,7 +156,7 @@ export const blankNode: RuleDef<'blankNode', BlankTerm> = {
   impl: ({ ACTION, CONSUME, OR, context: { dataFactory }}) => () => OR([
     { ALT: () => {
       const label = CONSUME(l.terminals.blankNodeLabel);
-      return ACTION(() => dataFactory.blankNode(label.image.replace('_:', '')));
+      return ACTION(() => dataFactory.blankNode(label.image.replace('_:', 'e_')));
     } },
     { ALT: () => {
       CONSUME(l.terminals.anon);

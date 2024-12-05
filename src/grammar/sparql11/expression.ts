@@ -294,17 +294,20 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
                   // Note #6. No spaces are allowed between the sign and a number.
                   // In this rule however, we do not want to care about this.
                   const integer = SUBRULE(numericLiteralPositive);
-                  return {
-                    operator: '+',
-                    args: [ integer ],
-                  };
+                  return ACTION(() => {
+                    integer.value = integer.value.replace(/^\+/u, '');
+                    return {
+                      operator: '+',
+                      args: [ integer ],
+                    };
+                  });
                 },
               },
               {
                 ALT: () => {
                   const integer = SUBRULE(numericLiteralNegative);
                   return ACTION(() => {
-                    integer.value = integer.value.replace(/^(-)/u, '');
+                    integer.value = integer.value.replace(/^-/u, '');
                     return {
                       operator: '-',
                       args: [ integer ],

@@ -45,6 +45,8 @@ function objectsEqual(received: unknown, expected: unknown): boolean {
     // @ts-expect-error TS2345
     return expected.equals(received);
   }
+  //  York
+  // test
   if (Array.isArray(received)) {
     if (!Array.isArray(expected)) {
       return false;

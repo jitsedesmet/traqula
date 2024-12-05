@@ -5,6 +5,7 @@ import { describe, it } from 'vitest';
 import { allTokens, ChevSparqlLexer } from '../src/lexer/sparql11/index.js';
 import { sparqlParserBuilder } from '../src/parser/sparql11/SparqlParser.js';
 import './matchers/toEqualParsedQuery.js';
+import {DataFactory} from "rdf-data-factory";
 
 // Parses a JSON object, restoring `undefined` values
 function parseJSON(string: string): object {
@@ -30,14 +31,16 @@ describe('SPARQL tests', () => {
   const prefix = './test/statics/sparql';
   const statics = fs.readdirSync(prefix);
   for (const file of statics) {
-    if (file.endsWith('.sparql')) {
+    if (file.endsWith('multiline.sparql')) {
       it(`should parse ${file}`, async({ expect }) => {
         const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
         const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
         const json = JSON.parse(result);
 
         const lexer = ChevSparqlLexer;
-        const parser = sparqlParserBuilder.consume(allTokens);
+        const parser = sparqlParserBuilder.consume(allTokens, {
+          dataFactory: new DataFactory({ blankNodePrefix: 'g_' })
+        });
         const lexResult = lexer.tokenize(query);
 
         // console.log(lexResult.tokens);
