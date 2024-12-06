@@ -114,7 +114,7 @@ const rules = {
   numericLiteralPositive,
   numericLiteralNegative,
   booleanLiteral,
-  var_,
+  var: var_,
   builtInStr,
   builtInLang,
   builtInLangmatches,

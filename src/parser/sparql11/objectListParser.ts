@@ -34,7 +34,7 @@ const rules = {
   // PropertyListNotEmpty
   verb,
   varOrIri,
-  var_,
+  var: var_,
   iri,
   prefixedName,
   graphTerm,
