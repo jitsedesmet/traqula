@@ -7,53 +7,43 @@ import { sparqlParserBuilder } from '../src/parser/sparql11/SparqlParser.js';
 import './matchers/toEqualParsedQuery.js';
 import {DataFactory} from "rdf-data-factory";
 
-// Parses a JSON object, restoring `undefined` values
-function parseJSON(string: string): object {
-  const object = <object> JSON.parse(string);
-  return (/"\{undefined\}"/u).test(string) ? restoreUndefined(object) : object;
-}
+describe('A SPARQL parser', () => {
+  describe('confirms to SPARQL tests', () => {
+    const prefix = './test/statics/sparql';
+    const statics = fs.readdirSync(prefix);
+    for (const file of statics) {
+      if (file.endsWith('.sparql')) {
+        it(`should parse ${file}`, async ({expect}) => {
+          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
+          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
+          const json = JSON.parse(result);
 
-// Recursively replace values of "{undefined}" by `undefined`
-function restoreUndefined(object: Record<string, any>): object {
-  for (const key in object) {
-    // eslint-disable-next-line ts/no-unsafe-assignment
-    const item = object[key];
-    if (typeof item === 'object') {
-      object[key] = restoreUndefined(<Record<string, any>> item);
-    } else if (item === '{undefined}') {
-      object[key] = undefined;
-    }
-  }
-  return object;
-}
+          const lexer = ChevSparqlLexer;
+          const parser = sparqlParserBuilder.consume({ tokenVocabulary: allTokens }, {
+            dataFactory: new DataFactory({blankNodePrefix: 'g_'})
+          });
+          const lexResult = lexer.tokenize(query);
 
-describe('SPARQL tests', () => {
-  const prefix = './test/statics/sparql';
-  const statics = fs.readdirSync(prefix);
-  for (const file of statics) {
-    if (file.endsWith('.sparql')) {
-      it(`should parse ${file}`, async({ expect }) => {
-        const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
-        const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
-        const json = JSON.parse(result);
-
-        const lexer = ChevSparqlLexer;
-        const parser = sparqlParserBuilder.consume(allTokens, {
-          dataFactory: new DataFactory({ blankNodePrefix: 'g_' })
+          parser.input = lexResult.tokens;
+          const res = parser.queryOrUpdate();
+          for (const error of parser.errors) {
+            console.error(error);
+          }
+          expect(parser.errors).toHaveLength(0);
+          expect(res).toEqualParsedQuery(json);
         });
-        const lexResult = lexer.tokenize(query);
-
-        // console.log(lexResult.tokens);
-
-        parser.input = lexResult.tokens;
-        const res = parser.queryOrUpdate();
-        for (const error of parser.errors) {
-          console.error(error);
-        }
-        expect(parser.errors).toHaveLength(0);
-        expect(res).toEqualParsedQuery(json);
-        // Expect(JSON.parse(JSON.stringify(res))).toStrictEqual(json);
-      });
+      }
     }
-  }
+  });
+
+  it('should throw an error on a projection of ungrouped variable', function () {
+    var query = 'PREFIX : <http://www.example.org/> SELECT ?o WHERE { ?s ?p ?o } GROUP BY ?s', error = null;
+    var error = null;
+    try { parser.parse(query); }
+    catch (e) { error = e; }
+
+    expect(error).not.toBeUndefined();
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toContain("Projection of ungrouped variable (?o)");
+  });
 });

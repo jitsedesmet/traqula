@@ -4,17 +4,18 @@ import type {
   DSLMethodOptsWithErr,
   GrammarAction,
   IOrAlt,
+  IParserConfig,
   ManySepMethodOpts,
   OrMethodOpts,
 } from '@chevrotain/types';
 import {
   type ConsumeMethodOpts,
   type CstNode,
+  EmbeddedActionsParser,
   type IToken,
   type ParserMethod,
   type TokenType,
   type TokenVocabulary,
-  EmbeddedActionsParser,
 } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
 
@@ -410,13 +411,13 @@ export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : ne
 type RuleDefExcluding<T extends RuleDef, U extends string> = T['name'] extends U ? never : T;
 
 export class Builder<T extends string > {
-  public static createBuilder(productionBuild: boolean): Builder<''> {
-    return new Builder<''>(productionBuild);
+  public static createBuilder(): Builder<''> {
+    return new Builder<''>();
   }
 
   private rules: Record<T, RuleDef<T, unknown, unknown[]>>;
 
-  private constructor(private readonly productionBuild: boolean) {
+  private constructor() {
     this.rules = <Record<T, RuleDef<T>>> {};
   }
 
@@ -472,24 +473,51 @@ export class Builder<T extends string > {
         }
       }
     }
-    const res = new Builder<T | U>(this.productionBuild);
+    const res = new Builder<T | U>();
     res.rules = <Record<T | U, RuleDef<T | U, unknown, unknown[]>>> rules;
     return res;
   }
 
-  public consume(tokenVocabulary: TokenVocabulary, context: Partial<ImplArgs['context']> = {}):
+  public consume({ tokenVocabulary, config = {}}: {
+    tokenVocabulary: TokenVocabulary;
+    config?: IParserConfig;
+  }, context: Partial<ImplArgs['context']> = {}):
     EmbeddedActionsParser & Record<T, ParserMethod<unknown[], CstNode>> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
         super(tokenVocabulary, {
           // RecoveryEnabled: true,
-          // TODO: enable these and test correctness again!
-          // Spec states we have an LL(1) grammar.
           maxLookahead: 1,
           // SkipValidations: true,
+          ...config,
         });
-        const selfRef: CstDef = {
+
+        const selfRef = this.getSelfRef();
+
+        const implArgs: ImplArgs = {
+          ...selfRef,
+          cache: new WeakMap(),
+          context: {
+            dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
+            prefixes: {},
+            baseIRI: undefined,
+            ...context,
+          },
+        };
+
+        for (const rule of Object.values(rules)) {
+          // eslint-disable-next-line ts/ban-ts-comment
+          // @ts-expect-error TS7053
+          // eslint-disable-next-line ts/no-unsafe-argument
+          this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
+        }
+
+        this.performSelfAnalysis();
+      }
+
+      private getSelfRef(): CstDef {
+        return {
           CONSUME: (tokenType, option) => this.CONSUME(tokenType, option),
           CONSUME1: (tokenType, option) => this.CONSUME1(tokenType, option),
           CONSUME2: (tokenType, option) => this.CONSUME2(tokenType, option),
@@ -694,29 +722,8 @@ export class Builder<T extends string > {
             }
           },
         };
-        const implArgs: ImplArgs = {
-          ...selfRef,
-          cache: new WeakMap(),
-          context: {
-            dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
-            prefixes: {},
-            baseIRI: undefined,
-            ...context,
-          },
-        };
-
-        for (const rule of Object.values(rules)) {
-          // eslint-disable-next-line ts/ban-ts-comment
-          // @ts-expect-error TS7053
-          // eslint-disable-next-line ts/no-unsafe-argument
-          this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
-        }
-
-        this.performSelfAnalysis();
       }
     }
-    const parser = <EmbeddedActionsParser & Record<string, ParserMethod<unknown[], CstNode>>> <unknown> new MyParser();
-
-    return parser;
+    return <EmbeddedActionsParser & Record<string, ParserMethod<unknown[], CstNode>>><unknown> new MyParser();
   }
 }
