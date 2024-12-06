@@ -7,29 +7,17 @@ import {
   usingClause,
 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
 import { groupGraphPattern } from '../../grammar/sparql11/whereClause.js';
-import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser.js';
-import { subSelectParserBuilder, type SubSelectParserBuilderArgs } from './subSelectParser.js';
-import { updateNoModifyParserBuilder, type UpdateUnitBuilderArgs } from './updateNoModifyParser.js';
+import { objectListBuilder } from './objectListParser.js';
+import { subSelectParserBuilder } from './subSelectParser.js';
+import { updateNoModifyParserBuilder } from './updateNoModifyParser.js';
 
-export type UpdateBuilderArgs =
-  UpdateUnitBuilderArgs |
-  'modify' |
-  'iri' |
-  'deleteClause' |
-  'insertClause' |
-  'usingClause' |
-  'groupGraphPattern' |
-  ObjectListBuilderArgs |
-  SubSelectParserBuilderArgs;
-
-export const updateParserBuilder: Builder<UpdateBuilderArgs> = Builder.createBuilder()
-  .merge(updateNoModifyParserBuilder)
-  .patchRule('update1', update1.impl)
+export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder)
+  .patchRule(update1)
   .addRule(modify)
   .addRule(deleteClause)
   .addRule(insertClause)
   .addRule(usingClause)
   .addRule(groupGraphPattern)
   // This substitutes all of propertyListNotEmpty
-  .merge(objectListBuilder)
-  .merge(subSelectParserBuilder);
+  .merge(objectListBuilder, {})
+  .merge(subSelectParserBuilder, {});

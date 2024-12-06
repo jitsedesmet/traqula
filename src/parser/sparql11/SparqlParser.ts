@@ -1,15 +1,15 @@
 import type { RuleDef } from '../../grammar/parserBuilder.js';
 import { Builder } from '../../grammar/parserBuilder.js';
 import { prologue } from '../../grammar/sparql11/general.js';
-import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit';
+import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import {
   askQuery,
   constructQuery,
   describeQuery,
   selectQuery,
   valuesClause,
-} from '../../grammar/sparql11/queryUnit/queryUnit';
-import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit';
+} from '../../grammar/sparql11/queryUnit/queryUnit.js';
+import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
 import type { Query, Update } from '../../grammar/sparqlJSTypes.js';
 import * as l from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';
@@ -76,9 +76,8 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
   },
 };
 
-export const sparqlParserBuilder = Builder.createBuilder()
-  .merge(queryUnitParserBuilder)
-  .merge(updateParserBuilder)
+export const sparqlParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
+  .merge(updateParserBuilder, {})
   .deleteRule('queryUnit')
   .deleteRule('query')
   .deleteRule('updateUnit')

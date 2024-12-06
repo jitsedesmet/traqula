@@ -22,51 +22,30 @@ import {
   triplesNode,
 } from '../../grammar/sparql11/tripleBlock.js';
 
-export type ObjectListBuilderArgs = '' |
-  'objectList' |
-  'object' |
-  'graphNode' |
-  'varOrTerm' |
-  'triplesNode' |
-  'collection' |
-  'blankNodePropertyList' |
-  'propertyListNotEmpty' |
-  'verb' |
-  'varOrIri' |
-  'var' |
-  'iri' |
-  'prefixedName' |
-  'graphTerm' |
-  'rdfLiteral' |
-  'numericLiteral' |
-  'booleanLiteral' |
-  'blankNode' |
-  'string' |
-  'numericLiteralUnsigned' |
-  'numericLiteralPositive' |
-  'numericLiteralNegative';
-
-export const objectListBuilder: Builder<ObjectListBuilderArgs> = Builder.createBuilder()
-  .addRule(objectList)
-  .addRule(object)
-  .addRule(graphNode)
-  .addRule(varOrTerm)
-  .addRule(triplesNode)
-  .addRule(collection)
-  .addRule(blankNodePropertyList)
-  .addRule(propertyListNotEmpty)
+const rules = {
+  objectList,
+  object,
+  graphNode,
+  varOrTerm,
+  triplesNode,
+  collection,
+  blankNodePropertyList,
+  propertyListNotEmpty,
   // PropertyListNotEmpty
-  .addRule(verb)
-  .addRule(varOrIri)
-  .addRule(var_)
-  .addRule(iri)
-  .addRule(prefixedName)
-  .addRule(graphTerm)
-  .addRule(rdfLiteral)
-  .addRule(numericLiteral)
-  .addRule(booleanLiteral)
-  .addRule(blankNode)
-  .addRule(string)
-  .addRule(numericLiteralUnsigned)
-  .addRule(numericLiteralPositive)
-  .addRule(numericLiteralNegative);
+  verb,
+  varOrIri,
+  var_,
+  iri,
+  prefixedName,
+  graphTerm,
+  rdfLiteral,
+  numericLiteral,
+  booleanLiteral,
+  blankNode,
+  string,
+  numericLiteralUnsigned,
+  numericLiteralPositive,
+  numericLiteralNegative,
+};
+
+export const objectListBuilder = Builder.createBuilder(rules);

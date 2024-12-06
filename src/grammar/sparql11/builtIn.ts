@@ -177,7 +177,7 @@ export const aggregateMin = baseAggregateFunc(l.builtIn.min);
 export const aggregateMax = baseAggregateFunc(l.builtIn.max);
 export const aggregateAvg = baseAggregateFunc(l.builtIn.avg);
 export const aggregateSample = baseAggregateFunc(l.builtIn.sample);
-export const aggregateGroup_concat: RuleDef< Uncapitalize<typeof l.builtIn.groupConcat.name>, AggregateExpression> = {
+export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpression> = {
   name: unCapitalize(l.builtIn.groupConcat.name),
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
     CONSUME(l.builtIn.groupConcat);

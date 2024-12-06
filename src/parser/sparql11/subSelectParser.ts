@@ -34,60 +34,25 @@ import {
   whereClause,
 } from '../../grammar/sparql11/whereClause.js';
 
-import { expressionParserBuilder, type ExpressionParserBuilderArgs } from './expressionParser.js';
-import { type TriplesBlockBuilderArgs, triplesBlockParserBuilder } from './triplesBlockParser.js';
+import { expressionParserBuilder } from './expressionParser.js';
+import { triplesBlockParserBuilder } from './triplesBlockParser.js';
 
-export type SubSelectParserBuilderArgs =
-  '' |
-  'subSelect' |
-  'selectClause' |
-  'whereClause' |
-  'solutionModifier' |
-  'valuesClause' |
-  ExpressionParserBuilderArgs |
-  'builtInExists' |
-  'builtInNotexists' |
-  'groupGraphPattern' |
-  'groupGraphPatternSub' |
-  TriplesBlockBuilderArgs |
-  'graphPatternNotTriples' |
-  'groupOrUnionGraphPattern' |
-  'optionalGraphPattern' |
-  'minusGraphPattern' |
-  'graphGraphPattern' |
-  'serviceGraphPattern' |
-  'filter' |
-  'bind' |
-  'inlineData' |
-  'constraint' |
-  'functionCall' |
-  'dataBlock' |
-  'inlineDataOneVar' |
-  'inlineDataFull' |
-  'dataBlockValue' |
-  'groupClause' |
-  'havingClause' |
-  'orderClause' |
-  'limitOffsetClauses' |
-  'groupCondition' |
-  'havingCondition' |
-  'orderCondition' |
-  'limitClause' |
-  'offsetClause';
+const rules = {
+  subSelect,
+  selectClause,
+  whereClause,
+  solutionModifier,
+  valuesClause,
+};
 
-export const subSelectParserBuilder: Builder<SubSelectParserBuilderArgs> = Builder.createBuilder()
-  .addRule(subSelect)
-  .addRule(selectClause)
-  .addRule(whereClause)
-  .addRule(solutionModifier)
-  .addRule(valuesClause)
-  .merge(expressionParserBuilder)
-  .patchRule('builtInCall', builtInCall.impl)
+export const subSelectParserBuilder = Builder.createBuilder(rules)
+  .merge(expressionParserBuilder, {})
+  .patchRule(builtInCall)
   .addRule(existsFunc)
   .addRule(notExistsFunc)
   .addRule(groupGraphPattern)
   .addRule(groupGraphPatternSub)
-  .merge(triplesBlockParserBuilder)
+  .merge(triplesBlockParserBuilder, {})
   .addRule(graphPatternNotTriples)
   .addRule(groupOrUnionGraphPattern)
   .addRule(optionalGraphPattern)

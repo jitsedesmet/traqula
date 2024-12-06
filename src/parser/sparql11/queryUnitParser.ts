@@ -20,20 +20,22 @@ import {
 import { subSelectParserBuilder } from './subSelectParser.js';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
 
-export const queryUnitParserBuilder = Builder.createBuilder()
-  .addRule(queryUnit)
-  .addRule(query)
-  .addRule(prologue)
-  .addRule(selectQuery)
-  .addRule(constructQuery)
-  .addRule(describeQuery)
-  .addRule(askQuery)
-  .addRule(valuesClause)
-  .addRule(baseDecl)
-  .addRule(prefixDecl)
+const rules = {
+  queryUnit,
+  query,
+  prologue,
+  selectQuery,
+  constructQuery,
+  describeQuery,
+  askQuery,
+  valuesClause,
+  baseDecl,
+  prefixDecl,
+};
 
+export const queryUnitParserBuilder = Builder.createBuilder(rules)
   // Select Query
-  .merge(subSelectParserBuilder)
+  .merge(subSelectParserBuilder, {})
   .addRule(datasetClause)
   .addRule(defaultGraphClause)
   .addRule(namedGraphClause)
@@ -41,5 +43,5 @@ export const queryUnitParserBuilder = Builder.createBuilder()
 
   // Construct Query
   .addRule(constructTemplate)
-  .merge(triplesTemplateParserBuilder)
+  .merge(triplesTemplateParserBuilder, {})
   .addRule(constructTriples);

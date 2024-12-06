@@ -1,13 +1,6 @@
 import { Builder } from '../../grammar/parserBuilder.js';
-import {
-  baseDecl,
-  prefixDecl,
-  prologue,
-} from '../../grammar/sparql11/general.js';
-import {
-  iri,
-  prefixedName,
-} from '../../grammar/sparql11/literals.js';
+import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general.js';
+import { iri, prefixedName } from '../../grammar/sparql11/literals.js';
 import {
   add,
   clear,
@@ -30,45 +23,11 @@ import {
   update1,
   updateUnit,
 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
-import {
-  triplesTemplateParserBuilder,
-  type TriplesTemplateParserArgs,
-} from './triplesTemplateParserBuilder.js';
+import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
 
-export type UpdateUnitBuilderArgs = '' |
-  'updateUnit' |
-  'update' |
-  'prologue' |
-  'update1' |
-  'baseDecl' |
-  'prefixDecl' |
-  'load' |
-  'clear' |
-  'drop' |
-  'add' |
-  'move' |
-  'copy' |
-  'create' |
-  'insertData' |
-  'deleteData' |
-  'deleteWhere' |
-  'iri' |
-  'prefixedName' |
-  'graphRef' |
-  'graphRefAll' |
-  'graphOrDefault' |
-  'quadData' |
-  'quads' |
-  TriplesTemplateParserArgs |
-  'quadPattern' |
-  'quadsNotTriples';
-
-export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Builder.createBuilder()
-  .addRule(updateUnit)
-  .addRule(update)
-  .addRule(prologue)
-  .addRule(update1)
-  .patchRule('update1', ({ SUBRULE, OR }) => () => OR([
+const update1Patch: typeof update1 = {
+  name: 'update1',
+  impl: ({ SUBRULE, OR }) => () => OR([
     { ALT: () => SUBRULE(load) },
     { ALT: () => SUBRULE(clear) },
     { ALT: () => SUBRULE(drop) },
@@ -79,7 +38,20 @@ export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Build
     { ALT: () => SUBRULE(insertData) },
     { ALT: () => SUBRULE(deleteData) },
     { ALT: () => SUBRULE(deleteWhere) },
-  ]))
+  ]),
+};
+
+/**
+ * Simple SPARQL 1.1 Update parser excluding MODIFY operations.
+ * Top enable MODIFY, you need to path the update1 rule.
+ */
+export const updateNoModifyParserBuilder = Builder.createBuilder({
+  updateUnit,
+  update,
+  prologue,
+  update1,
+})
+  .patchRule(update1Patch)
   .addRule(baseDecl)
   .addRule(prefixDecl)
   .addRule(load)
@@ -99,6 +71,6 @@ export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Build
   .addRule(graphOrDefault)
   .addRule(quadData)
   .addRule(quads)
-  .merge(triplesTemplateParserBuilder)
+  .merge(triplesTemplateParserBuilder, {})
   .addRule(quadPattern)
   .addRule(quadsNotTriples);

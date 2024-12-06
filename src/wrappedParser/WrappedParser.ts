@@ -2,10 +2,10 @@ import type { ILexerConfig, IParserConfig } from '@chevrotain/types';
 import { Lexer } from 'chevrotain';
 import type { EmbeddedActionsParser, TokenType, ParserMethod } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
-import type { Builder, ImplArgs } from '../grammar/parserBuilder';
-import type { SparqlParser, SparqlQuery } from '../grammar/sparqlJSTypes';
+import type { Builder, ImplArgs, RuleDefMap } from '../grammar/parserBuilder.js';
+import type { SparqlParser, SparqlQuery } from '../grammar/sparqlJSTypes.js';
 
-class WrappedParser<T extends string> implements SparqlParser {
+export class WrappedParser<T extends RuleDefMap> implements SparqlParser {
   private readonly lexer: Lexer;
   private readonly parser: EmbeddedActionsParser & { queryOrUpdate: ParserMethod<[], SparqlQuery> };
   private readonly dataFactory: DataFactory;
@@ -36,7 +36,11 @@ class WrappedParser<T extends string> implements SparqlParser {
     const lexResult = this.lexer.tokenize(query);
     this.parser.reset();
     this.parser.input = lexResult.tokens;
-    return this.parser.queryOrUpdate();
+    const result = this.parser.queryOrUpdate();
+    if (this.parser.errors.length > 0) {
+      throw new Error(this.parser.errors.join('\n'));
+    }
+    return result;
   }
 
   public _resetBlanks(): void {

@@ -10,7 +10,6 @@ import type {
 } from '@chevrotain/types';
 import {
   type ConsumeMethodOpts,
-  type CstNode,
   EmbeddedActionsParser,
   type IToken,
   type ParserMethod,
@@ -36,6 +35,9 @@ export interface ImplArgs extends CstDef {
     baseIRI: string | undefined;
   };
 }
+
+export type Parser<T extends RuleDefMap> =
+  {[K in keyof T]: T[K] extends RuleDef<any, infer RET, infer ARGS> ? ParserMethod<ARGS, RET> : never };
 
 export interface CstDef {
   /**
@@ -408,28 +410,43 @@ export type RuleDef<
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
 
-type RuleDefExcluding<T extends RuleDef, U extends string> = T['name'] extends U ? never : T;
+type RuleDefExcluding<T extends RuleDef, U extends PropertyKey> = T['name'] extends U ? never : T;
 
-export class Builder<T extends string> {
-  public static createBuilder(): Builder<''> {
-    return new Builder<''>();
+// Check if 2 types are overlap, if they do, return never, else return T
+export type CheckOverlap<T, U> = T & U extends never ? T : never;
+
+export type RuleDefMapExcluding<T extends RuleDefMap, U extends string> = T[U] extends NonNullable<unknown> ? never : T;
+
+export type RuleDefMap = {[K in string]: RuleDef<K> };
+
+export class Builder<T extends RuleDefMap> {
+  public static createBuilder<
+    T extends RuleDefMap | Builder<U>,
+    U extends RuleDefMap = T extends Builder<infer X> ? X : T,
+    // eslint-disable-next-line antfu/consistent-list-newline
+  >(start: T): T extends RuleDefMap ? Builder<T> : Builder<U> {
+    if (start instanceof Builder) {
+      return <T extends RuleDefMap ? Builder<T> : Builder<U>><unknown> new Builder({ ...start.rules });
+    }
+    return <T extends RuleDefMap ? Builder<T> : Builder<U>> new Builder<T & RuleDefMap>(<T & RuleDefMap>start);
   }
 
-  private rules: Record<T, RuleDef<T, unknown, unknown[]>>;
+  private rules: T;
 
-  private constructor() {
-    this.rules = <Record<T, RuleDef<T>>> {};
+  private constructor(startRules: T) {
+    this.rules = startRules;
   }
 
-  public patchRule<U extends T>(ruleName: U, patch: RuleDef['impl']): Builder<T> {
-    this.rules[ruleName] = {
-      name: ruleName,
-      impl: patch,
-    };
-    return this;
+  public patchRule<U extends (keyof T) & string, RET, ARGS extends undefined[]>(patch: RuleDef<U, RET, ARGS>):
+  Builder<Omit<T, U> & {[key in U]: RuleDef<U, RET, ARGS> }> {
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error TS2322
+    this.rules[patch.name] = patch;
+    return <Builder<Omit<T, U> & {[key in U]: RuleDef<U, RET, ARGS> }>> <unknown> this;
   }
 
-  public addRuleRedundant<U extends string>(rule: RuleDef<U, any, any>, terminals: TokenType[] = []): Builder<T | U> {
+  public addRuleRedundant<U extends string, RET, ARGS extends undefined[]>(rule: RuleDef<U, RET, ARGS>):
+  Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }> {
     const rules = <Record<string, RuleDef>> this.rules;
     if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
       throw new Error(`Rule ${rule.name} already exists in the builder`);
@@ -437,33 +454,42 @@ export class Builder<T extends string> {
     // eslint-disable-next-line ts/ban-ts-comment
     // @ts-expect-error TS2536
     this.rules[rule.name] = rule;
-    return <Builder<T | U>> this;
+    return <Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }>> <unknown> this;
   }
 
-  public addRule<U extends string>(
-    rule: RuleDefExcluding<RuleDef<U, any, any>, T>,
-    terminals: TokenType[] = [],
-  ): Builder<T | U> {
-    return this.addRuleRedundant(rule, terminals);
+  public addRule<U extends string, RET, ARGS extends undefined[]>(
+    rule: RuleDefExcluding<RuleDef<U, RET, ARGS>, keyof T>,
+  ):
+    Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }> {
+    return this.addRuleRedundant(rule);
   }
 
-  public deleteRule<U extends T>(ruleName: U): Builder<Exclude<T, U>> {
+  public addMany<U extends RuleDefMap>(
+    rules: CheckOverlap<keyof U, keyof T> extends never ? never : U,
+  ):
+    Builder<T & U> {
+    this.rules = { ...this.rules, ...rules };
+    return <Builder<T & U>> <unknown> this;
+  }
+
+  public deleteRule<U extends (keyof T)>(ruleName: U): Builder<Omit<T, U>> {
     delete this.rules[ruleName];
-    return <Builder<Exclude<T, U>>><unknown> this;
+    return <Builder<Omit<T, U>>> <unknown> this;
   }
 
-  public merge<U extends string>(builder: Builder<U>, overridingRules: RuleDef[] = []): Builder<T | U> {
+  public merge<U extends RuleDefMap, OW extends RuleDefMap>(builder: Builder<U>, overridingRules: OW):
+  Builder<Omit<T, keyof OW> & Omit<U, keyof OW> & OW> {
     const rules: Record<string, RuleDef> = { ...builder.rules };
 
     for (const iter of Object.values(this.rules)) {
-      const rule = <RuleDef> iter;
+      const rule = iter;
       if (rules[rule.name] === undefined) {
         rules[rule.name] = rule;
       } else {
         const existingRule = rules[rule.name];
         // If same rule, no issue, move on
         if (existingRule !== rule) {
-          const override = overridingRules.find(r => r.name === rule.name);
+          const override = overridingRules[rule.name];
           // If override specified, take override, else, inform user that there is a conflict
           if (override) {
             rules[rule.name] = override;
@@ -473,16 +499,14 @@ export class Builder<T extends string> {
         }
       }
     }
-    const res = new Builder<T | U>();
-    res.rules = <Record<T | U, RuleDef<T | U, unknown, unknown[]>>> rules;
-    return res;
+    return new Builder<Omit<T, keyof OW> & Omit<U, keyof OW> & OW>(<Omit<T, keyof OW> & Omit<U, keyof OW> & OW> rules);
   }
 
   public consume({ tokenVocabulary, config = {}}: {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
   }, context: Partial<ImplArgs['context']> = {}):
-    EmbeddedActionsParser & Record<T, ParserMethod<unknown[], CstNode>> {
+    EmbeddedActionsParser & Parser<T> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
@@ -509,7 +533,7 @@ export class Builder<T extends string> {
         for (const rule of Object.values(rules)) {
           // eslint-disable-next-line ts/ban-ts-comment
           // @ts-expect-error TS7053
-          // eslint-disable-next-line ts/no-unsafe-argument
+
           this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
         }
 
@@ -724,6 +748,6 @@ export class Builder<T extends string> {
         };
       }
     }
-    return <EmbeddedActionsParser & Record<string, ParserMethod<unknown[], CstNode>>><unknown> new MyParser();
+    return <EmbeddedActionsParser & Parser<T>><unknown> new MyParser();
   }
 }

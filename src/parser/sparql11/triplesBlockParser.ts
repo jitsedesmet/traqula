@@ -24,34 +24,9 @@ import {
   verbPath,
   verbSimple,
 } from '../../grammar/sparql11/tripleBlock.js';
-import { objectListBuilder, type ObjectListBuilderArgs } from './objectListParser.js';
+import { objectListBuilder } from './objectListParser.js';
 
-export type TriplesBlockBuilderArgs = '' |
-  'triplesBlock' |
-  'triplesSameSubjectPath' |
-  'propertyListPathNotEmpty' |
-  'triplesNodePath' |
-  'propertyListPath' |
-  'verbPath' |
-  'verbSimple' |
-  'objectListPath' |
-  ObjectListBuilderArgs |
-  'path' |
-  'pathAlternative' |
-  'pathSequence' |
-  'pathEltOrInverse' |
-  'pathElt' |
-  'pathPrimary' |
-  'pathMod' |
-  'pathNegatedPropertySet' |
-  'pathOneInPropertySet' |
-  'objectPath' |
-  'graphNodePath' |
-  'collectionPath' |
-  'blankNodePropertyListPath';
-
-export const triplesBlockParserBuilder: Builder<TriplesBlockBuilderArgs> = Builder.createBuilder()
-  .addRule(triplesBlock)
+export const triplesBlockParserBuilder = Builder.createBuilder({ triplesBlock })
   .addRule(triplesSameSubjectPath)
   // VarOrTerm is included in the required ObjectList rule
   .addRule(propertyListPathNotEmpty)
@@ -61,7 +36,7 @@ export const triplesBlockParserBuilder: Builder<TriplesBlockBuilderArgs> = Build
   .addRule(verbPath)
   .addRule(verbSimple)
   .addRule(objectListPath)
-  .merge(objectListBuilder)
+  .merge(objectListBuilder, {})
   // Verb path
   .addRule(path)
   .addRule(pathAlternative)

@@ -13,7 +13,7 @@ async function main(): Promise<void> {
   bench.concurrency = null;
 
   const lexer = ChevSparqlLexer;
-  const parser = sparqlParserBuilder.consume(allTokens);
+  const parser = sparqlParserBuilder.consume({ tokenVocabulary: allTokens });
 
   const oldParser = new Parser();
 
