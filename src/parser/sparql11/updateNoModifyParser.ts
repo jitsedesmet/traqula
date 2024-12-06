@@ -63,7 +63,7 @@ export type UpdateUnitBuilderArgs = '' |
   'quadPattern' |
   'quadsNotTriples';
 
-export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Builder.createBuilder(false)
+export const updateNoModifyParserBuilder: Builder<UpdateUnitBuilderArgs> = Builder.createBuilder()
   .addRule(updateUnit)
   .addRule(update)
   .addRule(prologue)

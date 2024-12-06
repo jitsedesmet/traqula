@@ -410,7 +410,7 @@ export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : ne
 
 type RuleDefExcluding<T extends RuleDef, U extends string> = T['name'] extends U ? never : T;
 
-export class Builder<T extends string > {
+export class Builder<T extends string> {
   public static createBuilder(): Builder<''> {
     return new Builder<''>();
   }

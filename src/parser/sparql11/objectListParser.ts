@@ -46,7 +46,7 @@ export type ObjectListBuilderArgs = '' |
   'numericLiteralPositive' |
   'numericLiteralNegative';
 
-export const objectListBuilder: Builder<ObjectListBuilderArgs> = Builder.createBuilder(false)
+export const objectListBuilder: Builder<ObjectListBuilderArgs> = Builder.createBuilder()
   .addRule(objectList)
   .addRule(object)
   .addRule(graphNode)

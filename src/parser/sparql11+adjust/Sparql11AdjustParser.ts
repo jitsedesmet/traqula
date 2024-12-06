@@ -3,7 +3,7 @@ import { builtInAdjust, existingBuildInCall } from '../../grammar/sparql11+adjus
 import type { Expression } from '../../grammar/sparqlJSTypes.js';
 import { sparqlParserBuilder } from '../sparql11/SparqlParser.js';
 
-export const adjustBuilder = Builder.createBuilder(false)
+export const adjustBuilder = Builder.createBuilder()
   .merge(sparqlParserBuilder)
   .addRule(builtInAdjust)
   .addRule(existingBuildInCall)

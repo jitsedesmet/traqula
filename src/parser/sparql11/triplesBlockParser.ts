@@ -50,7 +50,7 @@ export type TriplesBlockBuilderArgs = '' |
   'collectionPath' |
   'blankNodePropertyListPath';
 
-export const triplesBlockParserBuilder: Builder<TriplesBlockBuilderArgs> = Builder.createBuilder(false)
+export const triplesBlockParserBuilder: Builder<TriplesBlockBuilderArgs> = Builder.createBuilder()
   .addRule(triplesBlock)
   .addRule(triplesSameSubjectPath)
   // VarOrTerm is included in the required ObjectList rule

@@ -75,7 +75,7 @@ export type SubSelectParserBuilderArgs =
   'limitClause' |
   'offsetClause';
 
-export const subSelectParserBuilder: Builder<SubSelectParserBuilderArgs> = Builder.createBuilder(false)
+export const subSelectParserBuilder: Builder<SubSelectParserBuilderArgs> = Builder.createBuilder()
   .addRule(subSelect)
   .addRule(selectClause)
   .addRule(whereClause)

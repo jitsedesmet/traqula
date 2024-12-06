@@ -76,7 +76,7 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
   },
 };
 
-export const sparqlParserBuilder = Builder.createBuilder(false)
+export const sparqlParserBuilder = Builder.createBuilder()
   .merge(queryUnitParserBuilder)
   .merge(updateParserBuilder)
   .deleteRule('queryUnit')

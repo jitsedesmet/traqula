@@ -179,7 +179,7 @@ export type ExpressionParserBuilderArgs = '' |
   'argList' |
   'string';
 
-export const expressionParserBuilder: Builder<ExpressionParserBuilderArgs> = Builder.createBuilder(false)
+export const expressionParserBuilder: Builder<ExpressionParserBuilderArgs> = Builder.createBuilder()
   .addRule(expression)
   .addRule(conditionalOrExpression)
   .addRule(conditionalAndExpression)

@@ -20,7 +20,7 @@ import {
 import { subSelectParserBuilder } from './subSelectParser.js';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
 
-export const queryUnitParserBuilder = Builder.createBuilder(false)
+export const queryUnitParserBuilder = Builder.createBuilder()
   .addRule(queryUnit)
   .addRule(query)
   .addRule(prologue)

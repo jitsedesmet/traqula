@@ -22,7 +22,7 @@ export type UpdateBuilderArgs =
   ObjectListBuilderArgs |
   SubSelectParserBuilderArgs;
 
-export const updateParserBuilder: Builder<UpdateBuilderArgs> = Builder.createBuilder(false)
+export const updateParserBuilder: Builder<UpdateBuilderArgs> = Builder.createBuilder()
   .merge(updateNoModifyParserBuilder)
   .patchRule('update1', update1.impl)
   .addRule(modify)

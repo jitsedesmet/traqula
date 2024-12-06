@@ -51,7 +51,7 @@ export type TriplesTemplateParserArgs = '' |
   'blankNodePropertyList' |
   'graphNode';
 
-export const triplesTemplateParserBuilder = Builder.createBuilder(false)
+export const triplesTemplateParserBuilder = Builder.createBuilder()
   .addRule(triplesTemplate)
   .addRule(triplesSameSubject)
   .addRule(varOrTerm)
