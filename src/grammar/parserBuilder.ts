@@ -10,12 +10,9 @@ import type {
   OrMethodOpts,
 } from '@chevrotain/types';
 import {
-  type ConsumeMethodOpts,
   EmbeddedActionsParser,
-  type IToken,
-  type TokenType,
-  type TokenVocabulary,
 } from 'chevrotain';
+import type { ParserMethod, type ConsumeMethodOpts, type IToken, type TokenType, type TokenVocabulary } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
 
 type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
@@ -423,12 +420,28 @@ export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
   CheckOverlap<T['name'], RuleNames<U>, T>;
 export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =
   CheckOverlap<RuleNames<T>, RuleNames<U>, T>;
-export type RuleDefsToRecord<T extends readonly RuleDef[]> =
-  T extends readonly [infer First, ...infer Rest] ? (
-    First extends RuleDef ? (
-      Rest extends RuleDef[] ? Record<First['name'], First> & RuleDefsToRecord<Rest> : never
+export type RuleDefsToRecord<
+  T extends readonly RuleDef[],
+  Agg extends Record<string, RuleDef> = Record<string, RuleDef>,
+> = T extends readonly [infer First, ...infer Rest] ? (
+  First extends RuleDef ? (
+    Rest extends readonly RuleDef[] ? (
+      RuleDefsToRecord<Rest, Agg & Record<First['name'], First>>
     ) : never
-  ) : Record<number, never>;
+  ) : never
+) : Agg;
+export type RuleDefsToParserMethods<
+  T extends readonly RuleDef[],
+  Agg extends Record<string, ParserMethod<unknown[], unknown>> = Record<string, ParserMethod<unknown[], unknown>>,
+> = T extends readonly [infer First, ...infer Rest] ? (
+  First extends RuleDef ? (
+    Rest extends readonly RuleDef[] ? (
+      First extends RuleDef<string, infer RET, infer ARGS> ? (
+        RuleDefsToParserMethods<Rest, Agg & Record<First['name'], ParserMethod<ARGS, RET>>>
+      ) : never
+    ) : never
+  ) : never
+) : Agg;
 
 export class Builder<T extends readonly RuleDef[]> {
   public static createBuilder<
@@ -528,7 +541,7 @@ export class Builder<T extends readonly RuleDef[]> {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
   }, context: Partial<ImplArgs['context']> = {}):
-    EmbeddedActionsParser & RuleDefsToRecord<T> {
+    EmbeddedActionsParser & RuleDefsToParserMethods<T> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
@@ -757,6 +770,6 @@ export class Builder<T extends readonly RuleDef[]> {
         };
       }
     }
-    return <EmbeddedActionsParser & RuleDefsToRecord<T>><unknown> new MyParser();
+    return <EmbeddedActionsParser & RuleDefsToParserMethods<T>><unknown> new MyParser();
   }
 }
