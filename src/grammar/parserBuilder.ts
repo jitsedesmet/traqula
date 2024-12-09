@@ -12,7 +12,7 @@ import type {
 import {
   EmbeddedActionsParser,
 } from 'chevrotain';
-import type { ParserMethod, type ConsumeMethodOpts, type IToken, type TokenType, type TokenVocabulary } from 'chevrotain';
+import type { ParserMethod, ConsumeMethodOpts, IToken, TokenType, TokenVocabulary } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
 
 type SubRuleFunc = <T extends string, U = unknown, ARGS extends any[] = []>(
@@ -409,13 +409,23 @@ export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
 export type RuleNames<T extends readonly RuleDef[]> = T[number]['name'];
 // TAIL RECURSION! https://github.com/Beppobert/ts-prevent-recursion-limit
 export type OmitRuleDef<T extends readonly RuleDef[], Name extends RuleNames<T>, Agg extends RuleDef[] = []> =
-  T extends readonly [infer First, ...infer Rest] ? (
+  T extends readonly [infer First, infer Second, ...infer Rest] ? (
     First extends RuleDef ? (
-      Rest extends RuleDef[] ? (
-        OmitRuleDef<Rest, Name, First['name'] extends Name ? Agg : [...Agg, First]>
+      Second extends RuleDef ? (
+        Rest extends RuleDef[] ? (
+          OmitRuleDef<
+            Rest,
+            Name,
+            First['name'] extends Name ? (
+              Second['name'] extends Name ? Agg : [...Agg, Second]
+            ) : (
+              Second['name'] extends Name ? [...Agg, First] : [...Agg, First, Second]
+            )
+>
+        ) : never
       ) : never
     ) : never
-  ) : Agg;
+  ) : T extends [infer First] ? [...Agg, First] : Agg;
 export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
   CheckOverlap<T['name'], RuleNames<U>, T>;
 export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =
@@ -448,16 +458,16 @@ export class Builder<T extends RuleDef[]> {
     T extends readonly RuleDef[] | Builder<U>,
     U extends RuleDef[] = T extends Builder<infer X> ? X : RuleDef[],
     // eslint-disable-next-line antfu/consistent-list-newline
-  >(start: T): T extends RuleDef[] ? Builder<T> : Builder<U> {
+  >(start: T): T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U> {
     if (start instanceof Builder) {
-      return <T extends RuleDef[] ? Builder<T> : Builder<U>><unknown> new Builder({ ...start.rules });
+      return <T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U>><unknown> new Builder({ ...start.rules });
     }
     const rules: Record<string, RuleDef> = {};
 
     for (const rule of <RuleDef[]>start) {
       rules[rule.name] = rule;
     }
-    return <T extends RuleDef[] ? Builder<T> : Builder<U>> new Builder<T & RuleDef[]>(
+    return <T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U>> new Builder<T & RuleDef[]>(
       <RuleDefsToRecord<T & RuleDef[]>>rules,
     );
   }
@@ -497,12 +507,15 @@ export class Builder<T extends RuleDef[]> {
     ...rules: RuleDefsCheckOverlap<U, T>
   ):
     Builder<[...T, ...U]> {
-    this.rules = { ...this.rules, ...rules };
+    const newRules: Record<string, RuleDef> = {};
+    for (const rule of rules) {
+      newRules[rule.name] = rule;
+    }
+    this.rules = { ...this.rules, ...newRules };
     return <Builder<[...T, ...U]>> <unknown> this;
   }
 
   public deleteRule<U extends RuleNames<T>>(ruleName: U): Builder<OmitRuleDef<T, U>> {
-    // @ts-expect-error TS2536
     delete this.rules[ruleName];
     return <Builder<OmitRuleDef<T, U>>> <unknown> this;
   }

@@ -48,4 +48,6 @@ const rules = <const> [
   numericLiteralNegative,
 ];
 
-export const objectListBuilder = Builder.createBuilder(rules);
+export type ObjectListParserArgs = [...typeof rules];
+
+export const objectListBuilder: Builder<ObjectListParserArgs> = Builder.createBuilder(rules);

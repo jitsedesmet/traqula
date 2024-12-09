@@ -52,4 +52,6 @@ const rules = <const> [
   graphNode,
 ];
 
-export const triplesTemplateParserBuilder = Builder.createBuilder(rules);
+export type TriplesTemplateParserArgs = [...typeof rules];
+
+export const triplesTemplateParserBuilder: Builder<TriplesTemplateParserArgs> = Builder.createBuilder(rules);

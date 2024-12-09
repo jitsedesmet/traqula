@@ -1,6 +1,6 @@
 import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
-import type { OmitRuleDef, RuleDef, RuleDefsCheckOverlap, RuleDefsToRecord } from '../parserBuilder.js';
+import type { RuleDef } from '../parserBuilder.js';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes.js';
 import { resolveIRI } from '../utils.js';
 
@@ -130,13 +130,6 @@ export const iri: RuleDef<'iri', IriTerm> = {
     { ALT: () => SUBRULE(prefixedName) },
   ]),
 };
-
-const test = <const> [ iri, string ];
-const test2 = <const> [ numericLiteralPositive, numericLiteralNegative, iri ];
-type Test = OmitRuleDef<typeof test, 'iri'>;
-type Test2 = RuleDefsCheckOverlap<typeof test, typeof test2>;
-const tester: RuleDefsToRecord<typeof test> = <RuleDefsToRecord<typeof test>><unknown> null;
-const appel = tester.iri;
 
 /**
  * [[137]](https://www.w3.org/TR/sparql11-query/#rPrefixedName)

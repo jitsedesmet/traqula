@@ -13,11 +13,7 @@ import { updateNoModifyParserBuilder } from './updateNoModifyParser.js';
 
 export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder)
   .patchRule(update1)
-  .addRule(modify)
-  .addRule(deleteClause)
-  .addRule(insertClause)
-  .addRule(usingClause)
-  .addRule(groupGraphPattern)
+  .addMany(modify, deleteClause, insertClause, usingClause, groupGraphPattern)
   // This substitutes all of propertyListNotEmpty
   .merge(objectListBuilder, [])
   .merge(subSelectParserBuilder, []);

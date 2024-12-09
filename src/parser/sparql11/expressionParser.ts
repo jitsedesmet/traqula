@@ -1,5 +1,5 @@
-import type { RuleDef } from '../../grammar/parserBuilder.js';
 import { Builder } from '../../grammar/parserBuilder.js';
+import type { builtInCall } from '../../grammar/sparql11/builtIn.js';
 import {
   aggregate,
   aggregateAvg,
@@ -12,7 +12,6 @@ import {
   builtInAbs,
   builtInBnode,
   builtInBound,
-  builtInCall,
   builtInCallList,
   builtInCeil,
   builtInCoalesce,
@@ -93,7 +92,7 @@ import {
   string,
 } from '../../grammar/sparql11/literals.js';
 
-const rules = <const> [
+const rulesNoBuiltIn = <const> [
   expression,
   conditionalOrExpression,
   conditionalAndExpression,
@@ -106,7 +105,7 @@ const rules = <const> [
   unaryExpression,
   primaryExpression,
   brackettedExpression,
-  builtInCall,
+  // BuiltInCall,
   iriOrFunction,
   rdfLiteral,
   numericLiteral,
@@ -181,10 +180,12 @@ const rules = <const> [
   string,
 ];
 
-const builtInPatch: RuleDef<'builtInCall'> = {
+const builtInPatch: typeof builtInCall = {
   name: 'builtInCall',
   impl: ({ OR, SUBRULE }) => () => OR(builtInCallList(SUBRULE).slice(0, -2)),
 };
 
-export const expressionParserBuilder = Builder.createBuilder(rules)
-  .patchRule(builtInPatch);
+type ExpressionParserBuilderArgs = [...typeof rulesNoBuiltIn, typeof builtInPatch];
+
+export const expressionParserBuilder: Builder<ExpressionParserBuilderArgs> = Builder.createBuilder(rulesNoBuiltIn)
+  .addRule(builtInPatch);

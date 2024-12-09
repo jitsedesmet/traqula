@@ -24,7 +24,7 @@ import {
   verbPath,
   verbSimple,
 } from '../../grammar/sparql11/tripleBlock.js';
-import { objectListBuilder } from './objectListParser';
+import { objectListBuilder } from './objectListParser.js';
 
 export const triplesBlockParserBuilder = Builder.createBuilder([
   triplesBlock,
