@@ -1,27 +1,363 @@
 /* eslint-disable import/no-nodejs-modules,no-sync */
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
-import {describe, it} from 'vitest';
+import { DataFactory } from 'rdf-data-factory';
+import { beforeEach, describe, it } from 'vitest';
 import './matchers/toEqualParsedQuery.js';
-import {SparqlParser} from "../src/parser/sparql11/SparqlParser.js";
+import { SparqlParser } from '../src/parser/sparql11/SparqlParser.js';
 
-describe('A SPARQL parser', () => {
+describe('a SPARQL parser', () => {
+  const dataFactory = new DataFactory();
+  const parser = new SparqlParser();
+  beforeEach(() => {
+    parser._resetBlanks();
+  });
+
   describe('confirms to SPARQL tests', () => {
     const prefix = './test/statics/sparql';
     const statics = fs.readdirSync(prefix);
     for (const file of statics) {
       if (file.endsWith('.sparql')) {
-        it(`should parse ${file}`, async ({expect}) => {
+        it(`should parse ${file}`, async({ expect }) => {
           const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
           const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
-          const json = JSON.parse(result);
+          const json: unknown = JSON.parse(result);
 
-
-          const parser = new SparqlParser();
           const res = parser.parse(query);
           expect(res).toEqualParsedQuery(json);
         });
       }
     }
   });
+
+  function testErrorousQuery(testName: string, query: string, errorMsg: string): void {
+    it(`should throw an error on ${testName}`, ({ expect }) => {
+      let error: any = null;
+      try {
+        parser.parse(query);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).not.toBeUndefined();
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toContain(errorMsg);
+    });
+  }
+
+  testErrorousQuery('an invalid query', 'invalid', 'Parse error on line 1');
+
+  testErrorousQuery(
+    'a projection of ungrouped variable',
+    'PREFIX : <http://www.example.org/> SELECT ?o WHERE { ?s ?p ?o } GROUP BY ?s',
+    'Projection of ungrouped variable (?o)',
+  );
+
+  testErrorousQuery(
+    'an invalid selectscope',
+    'SELECT (1 AS ?X ) { SELECT (2 AS ?X ) {} }',
+    'Target id of \'AS\' (?X) already used in subquery',
+  );
+
+  it('should preserve BGP and filter pattern order', ({ expect }) => {
+    const query = 'SELECT * { ?s ?p "1" . FILTER(true) . ?s ?p "2"  }';
+    expect(parser.parse(query)).toMatchObject({
+      where: [
+        { type: 'bgp' },
+        { type: 'filter' },
+        { type: 'bgp' },
+      ],
+    });
+  });
+
+  describe('with pre-defined prefixes', () => {
+    const prefixes = { a: 'ex:abc#', b: 'ex:def#' };
+    const parser = new SparqlParser({ prefixes });
+
+    it('should use those prefixes', ({ expect }) => {
+      const query = 'SELECT * { a:a b:b "" }';
+      expect(parser.parse(query)).toMatchObject({
+        where: [
+          {
+            triples: [
+              {
+                subject: dataFactory.namedNode('ex:abc#a'),
+                predicate: dataFactory.namedNode('ex:def#b'),
+                object: dataFactory.literal(''),
+              },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should allow temporarily overriding prefixes', ({ expect }) => {
+      const query = 'PREFIX a: <ex:xyz#> SELECT * { a:a b:b "" }';
+      expect(parser.parse(query)).toMatchObject({
+        where: [{
+          triples: [{
+            subject: dataFactory.namedNode('ex:xyz#a'),
+            predicate: dataFactory.namedNode('ex:def#b'),
+            object: dataFactory.literal(''),
+          }],
+        },
+        ],
+      });
+
+      const query2 = 'SELECT * { a:a b:b "" }';
+      expect(parser.parse(query2)).toMatchObject({
+        where: [{
+          triples: [{
+            subject: dataFactory.namedNode('ex:abc#a'),
+            predicate: dataFactory.namedNode('ex:def#b'),
+            object: dataFactory.literal(''),
+          }],
+        },
+        ],
+      });
+    });
+
+    it('should not change the original prefixes', ({ expect }) => {
+      expect(prefixes).toEqual({ a: 'ex:abc#', b: 'ex:def#' });
+    });
+
+    it('should not take over changes to the original prefixes', ({ expect }) => {
+      const query = 'SELECT * { a:a b:b "" }';
+      prefixes.a = 'ex:xyz#';
+      expect(parser.parse(query)).toMatchObject({
+        where: [{
+          triples: [{
+            subject: dataFactory.namedNode('ex:abc#a'),
+            predicate: dataFactory.namedNode('ex:def#b'),
+            object: dataFactory.literal(''),
+          }],
+        },
+        ],
+      });
+    });
+  });
+
+  describe('with pre-defined base IRI', () => {
+    const parser = new SparqlParser({ baseIRI: 'http://ex.org/' });
+
+    it('should use the base IRI', ({ expect }) => {
+      const query = 'SELECT * { <> <#b> "" }';
+      const result = {
+        subject: dataFactory.namedNode('http://ex.org/'),
+        predicate: dataFactory.namedNode('http://ex.org/#b'),
+        object: dataFactory.literal(''),
+      };
+
+      expect(parser.parse(query)).toMatchObject({
+        where: [{ triples: [ result ]}],
+      });
+    });
+
+    it('should work after a previous query failed', ({ expect }) => {
+      const badQuery = 'SELECT * { <> <#b> "" } invalid!';
+      expect(() => parser.parse(badQuery)).toThrow(Error);
+
+      const goodQuery = 'SELECT * { <> <#b> "" }';
+
+      const parser = new SparqlParser({ baseIRI: 'http://ex2.org/' });
+      const result = {
+        subject: dataFactory.namedNode('http://ex2.org/'),
+        predicate: dataFactory.namedNode('http://ex2.org/#b'),
+        object: dataFactory.literal(''),
+      };
+      const data = parser.parse(goodQuery);
+      expect(data).toMatchObject({
+        where: [{ triples: [ result ]}],
+      });
+    });
+  });
+
+  testErrorousQuery(
+    ' relative IRIs if no base IRI is specified',
+    'SELECT * { <a> <b> <c> }',
+    'Cannot resolve relative IRI a because no base IRI was set.',
+  );
+
+  describe('with group collapsing disabled', () => {
+    it('should keep explicit pattern group', ({ expect }) => {
+      const query = 'SELECT * WHERE { { ?s ?p ?o } ?a ?b ?c }';
+      const result = [
+        {
+          type: 'group',
+          patterns: [
+            {
+              type: 'bgp',
+              triples: [
+                {
+                  subject: dataFactory.variable('s'),
+                  predicate: dataFactory.variable('p'),
+                  object: dataFactory.variable('o'),
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'bgp',
+          triples: [
+            {
+              subject: dataFactory.variable('a'),
+              predicate: dataFactory.variable('b'),
+              object: dataFactory.variable('c'),
+            },
+          ],
+        },
+      ];
+
+      expect(parser.parse(query)).toMatchObject({ where: result });
+    });
+
+    it('should still collapse immediate union groups', ({ expect }) => {
+      const query = 'SELECT * WHERE { { ?s ?p ?o } UNION { ?a ?b ?c } }';
+
+      const result = [
+        {
+          type: 'union',
+          patterns: [{
+            type: 'bgp',
+            triples: [{
+              subject: {
+                termType: 'Variable',
+                value: 's',
+              },
+              predicate: {
+                termType: 'Variable',
+                value: 'p',
+              },
+              object: {
+                termType: 'Variable',
+                value: 'o',
+              },
+            }],
+          }, {
+            type: 'bgp',
+            triples: [{
+              subject: {
+                termType: 'Variable',
+                value: 'a',
+              },
+              predicate: {
+                termType: 'Variable',
+                value: 'b',
+              },
+              object: {
+                termType: 'Variable',
+                value: 'c',
+              },
+            }],
+          }],
+        },
+      ];
+
+      expect(parser.parse(query)).toMatchObject({ where: result });
+    });
+  });
+
+  describe('for update queries', () => {
+    testErrorousQuery(
+      'blank nodes in DELETE clause',
+      'DELETE { ?a <ex:knows> [] . } WHERE { ?a <ex:knows> "Alan" . }',
+      'Detected illegal blank node in BGP',
+    );
+
+    it('should not throw on blank nodes in INSERT clause', ({ expect }) => {
+      const query = 'INSERT { ?a <ex:knows> [] . } WHERE { ?a <ex:knows> "Alan" . }';
+      // TODO: add proper test
+      expect(parser.parse(query)).toMatchObject({});
+    });
+
+    testErrorousQuery(
+      'blank nodes in compact DELETE clause',
+      'DELETE WHERE { _:a <ex:p> <ex:o> }',
+      'Detected illegal blank node in BGP',
+    );
+
+    testErrorousQuery(
+      'variables in DELETE DATA clause',
+      'DELETE DATA { ?a <ex:p> <ex:o> }',
+      'Detected illegal variable in BGP',
+    );
+
+    testErrorousQuery(
+      'blank nodes in DELETE DATA clause',
+      'DELETE DATA { _:a <ex:p> <ex:o> }',
+      'Detected illegal blank node in BGP',
+    );
+
+    testErrorousQuery(
+      'variables in DELETE DATA clause with GRAPH',
+      'DELETE DATA { GRAPH ?a { <ex:s> <ex:p> <ex:o> } }',
+      'Detected illegal variable in GRAPH',
+    );
+
+    testErrorousQuery(
+      'variables in INSERT DATA clause',
+      'INSERT DATA { ?a <ex:p> <ex:o> }',
+      'Detected illegal variable in BGP',
+    );
+
+    testErrorousQuery(
+      'variables in DELETE DATA clause with GRAPH',
+      'DELETE DATA { GRAPH ?a { <ex:s> <ex:p> <ex:o> } }',
+      'Detected illegal variable in GRAPH',
+    );
+
+    it('should not throw on reused blank nodes in one INSERT DATA clause', ({ expect }) => {
+      const query = 'INSERT DATA { _:a <ex:p> <ex:o> . _:a <ex:p> <ex:o> . }';
+      // Todo: add proper test
+      expect(parser.parse(query)).toMatchObject({});
+    });
+
+    testErrorousQuery(
+      'reused blank nodes across INSERT DATA clauses',
+      'INSERT DATA { _:a <ex:p> <ex:o> }; INSERT DATA { _:a <ex:p> <ex:o> }',
+      'Detected reuse blank node across different INSERT DATA clauses',
+    );
+
+    testErrorousQuery(
+      'reused blank nodes across INSERT DATA clauses with GRAPH',
+      'INSERT DATA { _:a <ex:p> <ex:o> }; INSERT DATA { GRAPH <ex:g> { _:a <ex:p> <ex:o> } }',
+      'Detected reuse blank node across different INSERT DATA clauses',
+    );
+
+    it('should not throw on comment between INSERT and DATA', ({ expect }) => {
+      const query = `INSERT
+# Comment
+DATA { GRAPH <ex:G> { <ex:s> <ex:p> 'o1', 'o2', 'o3' } }`;
+      // TODO: add proper test
+      expect(parser.parse(query)).toMatchObject({});
+    });
+
+    it('should not throw on comment after INSERT that could be confused with DATA', ({ expect }) => {
+      const query = `INSERT # DATA
+DATA { GRAPH <ex:G> { <ex:s> <ex:p> 'o1', 'o2', 'o3' } }`;
+      // TODO: add proper test
+      expect(parser.parse(query)).toMatchObject({});
+    });
+
+    testErrorousQuery(
+      'commented DATA after INSERT',
+      'INSERT # DATA { GRAPH <ex:G> { <ex:s> <ex:p> \'o1\', \'o2\', \'o3\' } }',
+      'Parse error',
+    );
+  });
+
+  testErrorousQuery(
+    'unicode codepoint escaping in literal with partial surrogate pair',
+    'SELECT * WHERE { ?s <ex:p> \'\uD800\' }',
+    'Invalid unicode codepoint of surrogate pair without corresponding codepoint',
+  );
+
+  it(
+    'should not throw an error on unicode codepoint escaping in literal with complete surrogate pair',
+    ({ expect }) => {
+      const query = 'SELECT * WHERE { ?s <ex:p> \'\uD800\uDFFF\' }';
+      // TODO: add proper test
+      expect(parser.parse(query)).toMatchObject({});
+    },
+  );
 });

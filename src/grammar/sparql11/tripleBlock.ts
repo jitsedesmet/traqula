@@ -87,7 +87,7 @@ function propertyListNotEmptyImplementation<T extends string>(
 ): RuleDef<T, TripleCreatorS[]> {
   return {
     name,
-    impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, context: { dataFactory }}) => () => {
+    impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, context }) => () => {
       const result: TripleCreatorS[] = [];
       const resultAppendage: typeof result = [];
 
@@ -103,7 +103,7 @@ function propertyListNotEmptyImplementation<T extends string>(
         // TODO: this filter is only here to be compliant with sparqlJS and is quite arbitrary.
         //   For the first predicate,
         //   additionally generated triples (like from collections) are shoved to the back of the result.
-        const filterSubject = dataFactory.namedNode('internal:filterSubject');
+        const filterSubject = context.dataFactory.namedNode('internal:filterSubject');
         for (const cObject of firstObjects) {
           const triple = cObject({ subject: filterSubject, predicate: firstProperty });
           const generator: TripleCreatorS = rest => cObject({ ...rest, predicate: firstProperty });
@@ -231,13 +231,13 @@ export const triplesNodePath: RuleDef<'triplesNodePath', ITriplesNode> = {
 function blankNodePropertyListImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, ITriplesNode> {
   return {
     name,
-    impl: ({ ACTION, SUBRULE, CONSUME, context: { dataFactory }}) => () => {
+    impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
       CONSUME(l.symbols.LSquare);
       const propList = SUBRULE(allowPaths ? propertyListPathNotEmpty : propertyListNotEmpty);
       CONSUME(l.symbols.RSquare);
 
       return ACTION(() => {
-        const subject = dataFactory.blankNode();
+        const subject = context.dataFactory.blankNode();
         return {
           node: subject,
           triples: propList.map(part => part({ subject })),
@@ -256,10 +256,11 @@ export const blankNodePropertyListPath = blankNodePropertyListImpl('blankNodePro
 function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, ITriplesNode> {
   return {
     name,
-    impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, context: { dataFactory }}) => () => {
+    impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, context }) => () => {
       // Construct a [cons list](https://en.wikipedia.org/wiki/Cons#Lists),
       // here called a [RDF collection](https://www.w3.org/TR/sparql11-query/#collections).
       const terms: IGraphNode[] = [];
+      const dataFactory = context.dataFactory;
       CONSUME(l.symbols.LParen);
       AT_LEAST_ONE(() => {
         terms.push(SUBRULE(allowPaths ? graphNodePath : graphNode));

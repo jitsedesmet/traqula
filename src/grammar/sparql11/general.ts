@@ -57,11 +57,11 @@ export const baseDecl: RuleDef<'baseDecl', string> = {
  */
 export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
   name: 'prefixDecl',
-  impl: ({ CONSUME, ACTION, context: { prefixes }}) => () => {
+  impl: ({ CONSUME, ACTION, context }) => () => {
     CONSUME(l.prefixDecl);
     const name = CONSUME(l.terminals.pNameNs).image.slice(0, -1);
     const value = CONSUME(l.terminals.iriRef).image.slice(1, -1);
-    ACTION(() => prefixes[name] = value);
+    ACTION(() => context.prefixes[name] = value);
     return [ name, value ];
   },
 };
@@ -91,12 +91,12 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
  */
 export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
   name: 'verb',
-  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR([
+  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR([
     { ALT: () => SUBRULE(varOrIri) },
     {
       ALT: () => {
         CONSUME(l.a);
-        return dataFactory.namedNode(`${RDF}type`);
+        return context.dataFactory.namedNode(`${RDF}type`);
       },
     },
   ]),
@@ -129,9 +129,9 @@ export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
  */
 export const var_: RuleDef<'var', VariableTerm> = {
   name: 'var',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
-    { ALT: () => dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
+  impl: ({ CONSUME, OR, context }) => () => OR([
+    { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
+    { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
   ]),
 };
 
@@ -140,7 +140,7 @@ export const var_: RuleDef<'var', VariableTerm> = {
  */
 export const graphTerm: RuleDef<'graphTerm', Term> = {
   name: 'graphTerm',
-  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR<Term>([
+  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<Term>([
     { ALT: () => SUBRULE(iri) },
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
@@ -149,7 +149,7 @@ export const graphTerm: RuleDef<'graphTerm', Term> = {
     {
       ALT: () => {
         CONSUME(l.terminals.nil);
-        return dataFactory.namedNode(`${RDF}nil`);
+        return context.dataFactory.namedNode(`${RDF}nil`);
       },
     },
   ]),

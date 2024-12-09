@@ -14,7 +14,7 @@ const uriDoubleType = 'http://www.w3.org/2001/XMLSchema#double';
  */
 export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
   name: 'rdfLiteral',
-  impl: ({ SUBRULE, CONSUME, OPTION, OR, context: { dataFactory }}) => () => {
+  impl: ({ SUBRULE, CONSUME, OPTION, OR, context }) => () => {
     const value = SUBRULE(string);
     const languageOrDatatype = OPTION(() => OR<string | NamedNode>([
       { ALT: () => CONSUME(l.terminals.langTag).image.slice(1) },
@@ -25,7 +25,7 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
         },
       },
     ]));
-    return dataFactory.literal(value, languageOrDatatype);
+    return context.dataFactory.literal(value, languageOrDatatype);
   },
 };
 
@@ -46,10 +46,19 @@ export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = {
  */
 export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTerm> = {
   name: 'numericLiteralUnsigned',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.literal(CONSUME(l.terminals.integer).image, dataFactory.namedNode(uriIntegerType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.terminals.decimal).image, dataFactory.namedNode(uriDecimalType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.terminals.double).image, dataFactory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context }) => () => OR([
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.integer).image,
+      context.dataFactory.namedNode(uriIntegerType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.decimal).image,
+      context.dataFactory.namedNode(uriDecimalType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.double).image,
+      context.dataFactory.namedNode(uriDoubleType),
+    ) },
   ]),
 };
 
@@ -58,12 +67,19 @@ export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTe
  */
 export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTerm> = {
   name: 'numericLiteralPositive',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () =>
-      dataFactory.literal(CONSUME(l.terminals.interferePositive).image, dataFactory.namedNode(uriIntegerType)) },
-    { ALT: () =>
-      dataFactory.literal(CONSUME(l.terminals.decimalPositive).image, dataFactory.namedNode(uriDecimalType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.terminals.doublePositive).image, dataFactory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context }) => () => OR([
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.interferePositive).image,
+      context.dataFactory.namedNode(uriIntegerType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.decimalPositive).image,
+      context.dataFactory.namedNode(uriDecimalType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.doublePositive).image,
+      context.dataFactory.namedNode(uriDoubleType),
+    ) },
   ]),
 };
 
@@ -72,12 +88,19 @@ export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTe
  */
 export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTerm> = {
   name: 'numericLiteralNegative',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () =>
-      dataFactory.literal(CONSUME(l.terminals.integerNegative).image, dataFactory.namedNode(uriIntegerType)) },
-    { ALT: () =>
-      dataFactory.literal(CONSUME(l.terminals.decimalNegative).image, dataFactory.namedNode(uriDecimalType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.terminals.doubleNegative).image, dataFactory.namedNode(uriDoubleType)) },
+  impl: ({ CONSUME, OR, context }) => () => OR([
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.integerNegative).image,
+      context.dataFactory.namedNode(uriIntegerType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.decimalNegative).image,
+      context.dataFactory.namedNode(uriDecimalType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.terminals.doubleNegative).image,
+      context.dataFactory.namedNode(uriDoubleType),
+    ) },
   ]),
 };
 
@@ -86,9 +109,15 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
  */
 export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
   name: 'booleanLiteral',
-  impl: ({ CONSUME, OR, context: { dataFactory }}) => () => OR([
-    { ALT: () => dataFactory.literal(CONSUME(l.true_).image.toLowerCase(), dataFactory.namedNode(uriBooleanType)) },
-    { ALT: () => dataFactory.literal(CONSUME(l.false_).image.toLowerCase(), dataFactory.namedNode(uriBooleanType)) },
+  impl: ({ CONSUME, OR, context }) => () => OR([
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.true_).image.toLowerCase(),
+      context.dataFactory.namedNode(uriBooleanType),
+    ) },
+    { ALT: () => context.dataFactory.literal(
+      CONSUME(l.false_).image.toLowerCase(),
+      context.dataFactory.namedNode(uriBooleanType),
+    ) },
   ]),
 };
 
@@ -136,14 +165,14 @@ export const iri: RuleDef<'iri', IriTerm> = {
  */
 export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
   name: 'prefixedName',
-  impl: ({ ACTION, CONSUME, OR, context: { prefixes, dataFactory }}) => () => {
+  impl: ({ ACTION, CONSUME, OR, context }) => () => {
     const fullStr = OR([
       { ALT: () => CONSUME(l.terminals.pNameLn).image },
       { ALT: () => CONSUME(l.terminals.pNameNs).image },
     ]);
     return ACTION(() => {
       const [ prefix, localName ] = fullStr.split(':');
-      return dataFactory.namedNode(prefixes[prefix] + localName);
+      return context.dataFactory.namedNode(context.prefixes[prefix] + localName);
     });
   },
 };
@@ -153,14 +182,14 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
  */
 export const blankNode: RuleDef<'blankNode', BlankTerm> = {
   name: 'blankNode',
-  impl: ({ ACTION, CONSUME, OR, context: { dataFactory }}) => () => OR([
+  impl: ({ ACTION, CONSUME, OR, context }) => () => OR([
     { ALT: () => {
       const label = CONSUME(l.terminals.blankNodeLabel);
-      return ACTION(() => dataFactory.blankNode(label.image.replace('_:', 'e_')));
+      return ACTION(() => context.dataFactory.blankNode(label.image.replace('_:', 'e_')));
     } },
     { ALT: () => {
       CONSUME(l.terminals.anon);
-      return ACTION(() => dataFactory.blankNode());
+      return ACTION(() => context.dataFactory.blankNode());
     } },
   ]),
 };

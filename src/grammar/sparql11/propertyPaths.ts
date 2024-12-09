@@ -127,12 +127,12 @@ export const pathMod: RuleDef<'pathMod', '*' | '+' | '?'> = {
  */
 export const pathPrimary: RuleDef<'pathPrimary', PropertyPath | IriTerm> = {
   name: 'pathPrimary',
-  impl: ({ SUBRULE, CONSUME, OR, context: { dataFactory }}) => () => OR<PropertyPath | IriTerm>([
+  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<PropertyPath | IriTerm>([
     { ALT: () => SUBRULE(iri) },
     {
       ALT: () => {
         CONSUME(l.a);
-        return dataFactory.namedNode(`${RDF}type`);
+        return context.dataFactory.namedNode(`${RDF}type`);
       },
     },
     {
@@ -194,12 +194,12 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
  */
 export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', IriTermOrElt> = {
   name: 'pathOneInPropertySet',
-  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context: { dataFactory }}) => () =>
+  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context }) => () =>
     OR1<IriTermOrElt>([
       { ALT: () => SUBRULE1(iri) },
       { ALT: () => {
         CONSUME1(l.a);
-        return dataFactory.namedNode(`${RDF}type`);
+        return context.dataFactory.namedNode(`${RDF}type`);
       } },
       {
         ALT: () => {
@@ -208,7 +208,7 @@ export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', IriTermOrElt>
             { ALT: () => SUBRULE2(iri) },
             { ALT: () => {
               CONSUME2(l.a);
-              return dataFactory.namedNode(`${RDF}type`);
+              return context.dataFactory.namedNode(`${RDF}type`);
             } },
           ]);
           return {

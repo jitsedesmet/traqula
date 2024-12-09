@@ -600,6 +600,9 @@ export class Builder<T extends RuleDef[]> {
   }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & RuleDefsToParserMethods<T> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
+      private readonly initialParseContext: ImplArgs['context'];
+      private readonly runningContext: ImplArgs['context'];
+
       public constructor() {
         super(tokenVocabulary, {
           // RecoveryEnabled: true,
@@ -609,24 +612,31 @@ export class Builder<T extends RuleDef[]> {
         });
 
         const selfRef = this.getSelfRef();
+        this.initialParseContext = {
+          dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
+          baseIRI: undefined,
+          ...context,
+          prefixes: context.prefixes ? { ...context.prefixes } : {},
+        };
+        this.runningContext = { ...this.initialParseContext };
 
         const implArgs: ImplArgs = {
           ...selfRef,
           cache: new WeakMap(),
-          context: {
-            dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
-            prefixes: {},
-            baseIRI: undefined,
-            ...context,
-          },
+          context: this.runningContext,
         };
 
         for (const rule of Object.values(<Record<string, RuleDef>>rules)) {
           // @ts-expect-error TS7053
           this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
         }
-
         this.performSelfAnalysis();
+      }
+
+      public override reset(): void {
+        super.reset();
+        Object.assign(this.runningContext, this.initialParseContext);
+        this.runningContext.prefixes = { ...this.initialParseContext.prefixes };
       }
 
       private getSelfRef(): CstDef {
