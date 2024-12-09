@@ -410,11 +410,15 @@ export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : ne
 // Check if 2 types are overlap, if they do, return never, else return V
 export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
 export type RuleNames<T extends readonly RuleDef[]> = T[number]['name'];
-export type OmitRuleDef<T extends readonly RuleDef[], Name extends RuleNames<T>> =
+// TAIL RECURSION! https://github.com/Beppobert/ts-prevent-recursion-limit
+export type OmitRuleDef<T extends readonly RuleDef[], Name extends RuleNames<T>, Agg extends RuleDef[] = []> =
   T extends readonly [infer First, ...infer Rest] ? (
-    // @ts-expect-error TS2346
-    First['name'] extends Name ? OmitRuleDef<Rest, Name> : [First, ...OmitRuleDef<Rest, Name>]
-  ) : [];
+    First extends RuleDef ? (
+      Rest extends RuleDef[] ? (
+        OmitRuleDef<Rest, Name, First['name'] extends Name ? Agg : [...Agg, First]>
+      ) : never
+    ) : never
+  ) : Agg;
 export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
   CheckOverlap<T['name'], RuleNames<U>, T>;
 export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =
