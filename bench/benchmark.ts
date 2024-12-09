@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import { Parser } from 'sparqljs';
 import { Bench } from 'tinybench';
-import { allTokens, ChevSparqlLexer } from '../src/lexer/sparql11/index.js';
-import { sparqlParserBuilder } from '../src/parser/sparql11/SparqlParser.js';
+import { SparqlParser } from '../src/parser/sparql11/SparqlParser.js';
 
 async function main(): Promise<void> {
   const bench = new Bench({
@@ -12,23 +11,22 @@ async function main(): Promise<void> {
 
   bench.concurrency = null;
 
-  const lexer = ChevSparqlLexer;
-  const parser = sparqlParserBuilder.consume({ tokenVocabulary: allTokens });
-
+  const newParser = new SparqlParser();
   const oldParser = new Parser();
 
   const query = `
-SELECT * WHERE {
-  ?s ?p ?o
-}  
+SELECT ?president ?party ?page WHERE {
+   ?president <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/President> .
+   ?president <http://dbpedia.org/ontology/nationality> <http://dbpedia.org/resource/United_States> .
+   ?president <http://dbpedia.org/ontology/party> ?party .
+   ?x <http://data.nytimes.com/elements/topicPage> ?page .
+   ?x <http://www.w3.org/2002/07/owl#sameAs> ?president .
+}
 `;
 
   bench
     .add('TRAQULA parse', () => {
-      parser.reset();
-      const lexResult = lexer.tokenize(query);
-      parser.input = lexResult.tokens;
-      const res = parser.queryOrUpdate();
+      const res = newParser.parse(query);
     })
     .add('sparqljs', () => {
       const res = oldParser.parse(query);

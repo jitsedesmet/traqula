@@ -20,7 +20,7 @@ import type {
   ValuesPattern,
   VariableTerm,
 } from '../sparqlJSTypes.js';
-import { deGroupSingle } from '../utils';
+import { deGroupSingle } from '../utils.js';
 import { builtInCall } from './builtIn.js';
 import { argList, brackettedExpression, expression } from './expression.js';
 import { var_, varOrIri } from './general.js';
