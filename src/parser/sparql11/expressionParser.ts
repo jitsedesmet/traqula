@@ -93,7 +93,7 @@ import {
   string,
 } from '../../grammar/sparql11/literals.js';
 
-const rules = {
+const rules = <const> [
   expression,
   conditionalOrExpression,
   conditionalAndExpression,
@@ -114,7 +114,7 @@ const rules = {
   numericLiteralPositive,
   numericLiteralNegative,
   booleanLiteral,
-  var: var_,
+  var_,
   builtInStr,
   builtInLang,
   builtInLangmatches,
@@ -179,7 +179,7 @@ const rules = {
   prefixedName,
   argList,
   string,
-};
+];
 
 const builtInPatch: RuleDef<'builtInCall'> = {
   name: 'builtInCall',

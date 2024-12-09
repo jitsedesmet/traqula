@@ -1,3 +1,4 @@
+/* eslint-disable ts/ban-ts-comment */
 import type {
   AtLeastOneSepMethodOpts,
   DSLMethodOpts,
@@ -12,7 +13,6 @@ import {
   type ConsumeMethodOpts,
   EmbeddedActionsParser,
   type IToken,
-  type ParserMethod,
   type TokenType,
   type TokenVocabulary,
 } from 'chevrotain';
@@ -35,9 +35,6 @@ export interface ImplArgs extends CstDef {
     baseIRI: string | undefined;
   };
 }
-
-export type Parser<T extends RuleDefMap> =
-  {[K in keyof T]: T[K] extends RuleDef<any, infer RET, infer ARGS> ? ParserMethod<ARGS, RET> : never };
 
 export interface CstDef {
   /**
@@ -402,7 +399,7 @@ export type ArrayElementsUndefinable<ArrayType extends any[]> =
 export type RuleDef<
   NameType extends string = string,
   ReturnType = unknown,
-  ParamType extends unknown[] = [],
+  ParamType extends unknown[] = unknown[],
 > = {
   name: NameType;
   impl: (def: ImplArgs) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
@@ -410,103 +407,124 @@ export type RuleDef<
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
 
-type RuleDefExcluding<T extends RuleDef, U extends PropertyKey> = T['name'] extends U ? never : T;
+// Check if 2 types are overlap, if they do, return never, else return V
+export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
+export type RuleNames<T extends readonly RuleDef[]> = T[number]['name'];
+export type OmitRuleDef<T extends readonly RuleDef[], Name extends RuleNames<T>> =
+  T extends readonly [infer First, ...infer Rest] ? (
+    // @ts-expect-error TS2346
+    First['name'] extends Name ? OmitRuleDef<Rest, Name> : [First, ...OmitRuleDef<Rest, Name>]
+  ) : [];
+export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
+  CheckOverlap<T['name'], RuleNames<U>, T>;
+export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =
+  CheckOverlap<RuleNames<T>, RuleNames<U>, T>;
+export type RuleDefsToRecord<T extends readonly RuleDef[]> =
+  T extends readonly [infer First, ...infer Rest] ? (
+    First extends RuleDef ? (
+      Rest extends RuleDef[] ? Record<First['name'], First> & RuleDefsToRecord<Rest> : never
+    ) : never
+  ) : Record<number, never>;
 
-// Check if 2 types are overlap, if they do, return never, else return T
-export type CheckOverlap<T, U> = T & U extends never ? T : never;
-
-export type RuleDefMapExcluding<T extends RuleDefMap, U extends string> = T[U] extends NonNullable<unknown> ? never : T;
-
-export type RuleDefMap = {[K in string]: RuleDef<K> };
-
-export class Builder<T extends RuleDefMap> {
+export class Builder<T extends readonly RuleDef[]> {
   public static createBuilder<
-    T extends RuleDefMap | Builder<U>,
-    U extends RuleDefMap = T extends Builder<infer X> ? X : T,
+    T extends readonly RuleDef[] | Builder<U>,
+    U extends readonly RuleDef[] = T extends Builder<infer X> ? X : T,
     // eslint-disable-next-line antfu/consistent-list-newline
-  >(start: T): T extends RuleDefMap ? Builder<T> : Builder<U> {
+  >(start: T): T extends RuleDef[] ? Builder<T> : Builder<U> {
     if (start instanceof Builder) {
-      return <T extends RuleDefMap ? Builder<T> : Builder<U>><unknown> new Builder({ ...start.rules });
+      return <T extends RuleDef[] ? Builder<T> : Builder<U>><unknown> new Builder({ ...start.rules });
     }
-    return <T extends RuleDefMap ? Builder<T> : Builder<U>> new Builder<T & RuleDefMap>(<T & RuleDefMap>start);
+    const rules: Record<string, RuleDef> = {};
+
+    for (const rule of <RuleDef[]>start) {
+      rules[rule.name] = rule;
+    }
+    return <T extends RuleDef[] ? Builder<T> : Builder<U>> new Builder<T & RuleDef[]>(
+      <RuleDefsToRecord<T & RuleDef[]>>rules,
+    );
   }
 
-  private rules: T;
+  private rules: RuleDefsToRecord<T>;
 
-  private constructor(startRules: T) {
+  private constructor(startRules: RuleDefsToRecord<T>) {
     this.rules = startRules;
   }
 
-  public patchRule<U extends (keyof T) & string, RET, ARGS extends undefined[]>(patch: RuleDef<U, RET, ARGS>):
-  Builder<Omit<T, U> & {[key in U]: RuleDef<U, RET, ARGS> }> {
-    // eslint-disable-next-line ts/ban-ts-comment
+  public patchRule<U extends RuleNames<T>, RET, ARGS extends unknown[]>(patch: RuleDef<U, RET, ARGS>):
+  Builder<[...OmitRuleDef<T, U>, RuleDef<U, RET, ARGS>]> {
     // @ts-expect-error TS2322
     this.rules[patch.name] = patch;
-    return <Builder<Omit<T, U> & {[key in U]: RuleDef<U, RET, ARGS> }>> <unknown> this;
+    return <Builder<[...OmitRuleDef<T, U>, RuleDef<U, RET, ARGS>]>> <unknown> this;
   }
 
   public addRuleRedundant<U extends string, RET, ARGS extends undefined[]>(rule: RuleDef<U, RET, ARGS>):
-  Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }> {
+  Builder<U extends RuleNames<T> ? T : [...T, RuleDef<U, RET, ARGS>]> {
     const rules = <Record<string, RuleDef>> this.rules;
     if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
       throw new Error(`Rule ${rule.name} already exists in the builder`);
     }
-    // eslint-disable-next-line ts/ban-ts-comment
+
     // @ts-expect-error TS2536
     this.rules[rule.name] = rule;
-    return <Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }>> <unknown> this;
+    return <Builder<U extends RuleNames<T> ? T : [...T, RuleDef<U, RET, ARGS>]>> <unknown> this;
   }
 
   public addRule<U extends string, RET, ARGS extends undefined[]>(
-    rule: RuleDefExcluding<RuleDef<U, RET, ARGS>, keyof T>,
-  ):
-    Builder<T & {[key in U]: RuleDef<U, RET, ARGS> }> {
-    return this.addRuleRedundant(rule);
+    rule: RuleCheckOverlap<RuleDef<U, RET, ARGS>, T>,
+  ): Builder<[...T, RuleDef<U, RET, ARGS>]> {
+    return <Builder<[...T, RuleDef<U, RET, ARGS>]>> this.addRuleRedundant(rule);
   }
 
-  public addMany<U extends RuleDefMap>(
-    rules: CheckOverlap<keyof U, keyof T> extends never ? never : U,
+  public addMany<U extends RuleDef[]>(
+    rules: RuleDefsCheckOverlap<U, T>,
   ):
-    Builder<T & U> {
+    Builder<[...T, ...U]> {
     this.rules = { ...this.rules, ...rules };
-    return <Builder<T & U>> <unknown> this;
+    return <Builder<[...T, ...U]>> <unknown> this;
   }
 
-  public deleteRule<U extends (keyof T)>(ruleName: U): Builder<Omit<T, U>> {
+  public deleteRule<U extends RuleNames<T>>(ruleName: U): Builder<OmitRuleDef<T, U>> {
+    // @ts-expect-error TS2536
     delete this.rules[ruleName];
-    return <Builder<Omit<T, U>>> <unknown> this;
+    return <Builder<OmitRuleDef<T, U>>> <unknown> this;
   }
 
-  public merge<U extends RuleDefMap, OW extends RuleDefMap>(builder: Builder<U>, overridingRules: OW):
-  Builder<Omit<T, keyof OW> & Omit<U, keyof OW> & OW> {
-    const rules: Record<string, RuleDef> = { ...builder.rules };
+  public merge<U extends RuleDef[], OW extends RuleDef[]>(builder: Builder<U>, overridingRules: OW):
+  Builder<[...OmitRuleDef<T, RuleNames<OW>>, ...OmitRuleDef<U, RuleNames<OW> | RuleNames<T>>, ...OW]> {
+    // Assume the other grammar is bigger than yours. So start from that one and add this one
+    const otherRules: Record<string, RuleDef> = { ...builder.rules };
+    const myRules: Record<string, RuleDef> = this.rules;
 
-    for (const iter of Object.values(this.rules)) {
-      const rule = iter;
-      if (rules[rule.name] === undefined) {
-        rules[rule.name] = rule;
+    for (const rule of Object.values(myRules)) {
+      if (otherRules[rule.name] === undefined) {
+        otherRules[rule.name] = rule;
       } else {
-        const existingRule = rules[rule.name];
-        // If same rule, no issue, move on
+        const existingRule = otherRules[rule.name];
+        // If same rule, no issue, move on. Else
         if (existingRule !== rule) {
-          const override = overridingRules[rule.name];
+          const override = overridingRules.find(x => x.name === rule.name);
           // If override specified, take override, else, inform user that there is a conflict
           if (override) {
-            rules[rule.name] = override;
+            otherRules[rule.name] = override;
           } else {
-            throw new Error(`Rule ${rule.name} already exists in the builder, specify an override to resolve conflict`);
+            throw new Error(`Rule with name "${rule.name}" already exists in the builder, specify an override to resolve conflict`);
           }
         }
       }
     }
-    return new Builder<Omit<T, keyof OW> & Omit<U, keyof OW> & OW>(<Omit<T, keyof OW> & Omit<U, keyof OW> & OW> rules);
+
+    // @ts-expect-error TS2322
+    this.rules = otherRules;
+    // @ts-expect-error TS2322
+    return this;
   }
 
   public consume({ tokenVocabulary, config = {}}: {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
   }, context: Partial<ImplArgs['context']> = {}):
-    EmbeddedActionsParser & Parser<T> {
+    EmbeddedActionsParser & RuleDefsToRecord<T> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {
@@ -530,10 +548,8 @@ export class Builder<T extends RuleDefMap> {
           },
         };
 
-        for (const rule of Object.values(rules)) {
-          // eslint-disable-next-line ts/ban-ts-comment
+        for (const rule of Object.values(<Record<string, RuleDef>>rules)) {
           // @ts-expect-error TS7053
-
           this[rule.name] = this.RULE(rule.name, rule.impl(implArgs));
         }
 
@@ -615,7 +631,6 @@ export class Builder<T extends RuleDefMap> {
           ACTION: func => this.ACTION(func),
           BACKTRACK: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.BACKTRACK(this[cstDef.name], { ARGS: args });
@@ -627,7 +642,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE(this[cstDef.name], { ARGS: args });
@@ -639,7 +653,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE1: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE1(this[cstDef.name], { ARGS: args });
@@ -651,7 +664,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE2: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE2(this[cstDef.name], { ARGS: args });
@@ -663,7 +675,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE3: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE3(this[cstDef.name], { ARGS: args });
@@ -675,7 +686,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE4: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE4(this[cstDef.name], { ARGS: args });
@@ -687,7 +697,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE5: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE5(this[cstDef.name], { ARGS: args });
@@ -699,7 +708,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE6: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE6(this[cstDef.name], { ARGS: args });
@@ -711,7 +719,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE7: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE7(this[cstDef.name], { ARGS: args });
@@ -723,7 +730,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE8: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE8(this[cstDef.name], { ARGS: args });
@@ -735,7 +741,6 @@ export class Builder<T extends RuleDefMap> {
           },
           SUBRULE9: (cstDef, ...args) => {
             try {
-              // eslint-disable-next-line ts/ban-ts-comment
               // @ts-expect-error TS7053
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE9(this[cstDef.name], { ARGS: args });
@@ -748,6 +753,6 @@ export class Builder<T extends RuleDefMap> {
         };
       }
     }
-    return <EmbeddedActionsParser & Parser<T>><unknown> new MyParser();
+    return <EmbeddedActionsParser & RuleDefsToRecord<T>><unknown> new MyParser();
   }
 }
