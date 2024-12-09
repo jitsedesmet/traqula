@@ -24,31 +24,35 @@ import {
   verbPath,
   verbSimple,
 } from '../../grammar/sparql11/tripleBlock.js';
-import { objectListBuilder } from './objectListParser.js';
+import { objectListBuilder } from './objectListParser';
 
-export const triplesBlockParserBuilder = Builder.createBuilder({ triplesBlock })
-  .addRule(triplesSameSubjectPath)
+export const triplesBlockParserBuilder = Builder.createBuilder([
+  triplesBlock,
+  triplesSameSubjectPath,
   // VarOrTerm is included in the required ObjectList rule
-  .addRule(propertyListPathNotEmpty)
-  .addRule(triplesNodePath)
-  .addRule(propertyListPath)
+  propertyListPathNotEmpty,
+  triplesNodePath,
+  propertyListPath,
   // PropertyListNotEmpty
-  .addRule(verbPath)
-  .addRule(verbSimple)
-  .addRule(objectListPath)
-  .merge(objectListBuilder, {})
+  verbPath,
+  verbSimple,
+  objectListPath,
+])
+  .merge(objectListBuilder, [])
   // Verb path
-  .addRule(path)
-  .addRule(pathAlternative)
-  .addRule(pathSequence)
-  .addRule(pathEltOrInverse)
-  .addRule(pathElt)
-  .addRule(pathPrimary)
-  .addRule(pathMod)
-  .addRule(pathNegatedPropertySet)
-  .addRule(pathOneInPropertySet)
-// ObjectListPath
-  .addRule(objectPath)
-  .addRule(graphNodePath)
-  .addRule(collectionPath)
-  .addRule(blankNodePropertyListPath);
+  .addMany(
+    path,
+    pathAlternative,
+    pathSequence,
+    pathEltOrInverse,
+    pathElt,
+    pathPrimary,
+    pathMod,
+    pathNegatedPropertySet,
+    pathOneInPropertySet,
+    // ObjectListPath
+    objectPath,
+    graphNodePath,
+    collectionPath,
+    blankNodePropertyListPath,
+  );

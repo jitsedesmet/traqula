@@ -37,44 +37,48 @@ import {
 import { expressionParserBuilder } from './expressionParser.js';
 import { triplesBlockParserBuilder } from './triplesBlockParser.js';
 
-const rules = {
+const rules = <const> [
   subSelect,
   selectClause,
   whereClause,
   solutionModifier,
   valuesClause,
-};
+];
 
 export const subSelectParserBuilder = Builder.createBuilder(rules)
-  .merge(expressionParserBuilder, {})
+  .merge(expressionParserBuilder, [])
   .patchRule(builtInCall)
-  .addRule(existsFunc)
-  .addRule(notExistsFunc)
-  .addRule(groupGraphPattern)
-  .addRule(groupGraphPatternSub)
-  .merge(triplesBlockParserBuilder, {})
-  .addRule(graphPatternNotTriples)
-  .addRule(groupOrUnionGraphPattern)
-  .addRule(optionalGraphPattern)
-  .addRule(minusGraphPattern)
-  .addRule(graphGraphPattern)
-  .addRule(serviceGraphPattern)
-  .addRule(filter)
-  .addRule(bind)
-  .addRule(inlineData)
-  .addRule(constraint)
-  .addRule(functionCall)
-  .addRule(dataBlock)
-  .addRule(inlineDataOneVar)
-  .addRule(inlineDataFull)
-  .addRule(dataBlockValue)
-  // Solution modifier
-  .addRule(groupClause)
-  .addRule(havingClause)
-  .addRule(orderClause)
-  .addRule(limitOffsetClauses)
-  .addRule(groupCondition)
-  .addRule(havingCondition)
-  .addRule(orderCondition)
-  .addRule(limitClause)
-  .addRule(offsetClause);
+  .addMany(
+    existsFunc,
+    notExistsFunc,
+    groupGraphPattern,
+    groupGraphPatternSub,
+  )
+  .merge(triplesBlockParserBuilder, [])
+  .addMany(
+    graphPatternNotTriples,
+    groupOrUnionGraphPattern,
+    optionalGraphPattern,
+    minusGraphPattern,
+    graphGraphPattern,
+    serviceGraphPattern,
+    filter,
+    bind,
+    inlineData,
+    constraint,
+    functionCall,
+    dataBlock,
+    inlineDataOneVar,
+    inlineDataFull,
+    dataBlockValue,
+    // Solution modifier
+    groupClause,
+    havingClause,
+    orderClause,
+    limitOffsetClauses,
+    groupCondition,
+    havingCondition,
+    orderCondition,
+    limitClause,
+    offsetClause,
+  );

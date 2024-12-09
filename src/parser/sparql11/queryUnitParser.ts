@@ -20,7 +20,7 @@ import {
 import { subSelectParserBuilder } from './subSelectParser.js';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
 
-const rules = {
+const rules = <const> [
   queryUnit,
   query,
   prologue,
@@ -31,17 +31,16 @@ const rules = {
   valuesClause,
   baseDecl,
   prefixDecl,
-};
+];
 
 export const queryUnitParserBuilder = Builder.createBuilder(rules)
   // Select Query
-  .merge(subSelectParserBuilder, {})
+  .merge(subSelectParserBuilder, [])
   .addRule(datasetClause)
   .addRule(defaultGraphClause)
   .addRule(namedGraphClause)
   .addRule(sourceSelector)
-
   // Construct Query
   .addRule(constructTemplate)
-  .merge(triplesTemplateParserBuilder, {})
+  .merge(triplesTemplateParserBuilder, [])
   .addRule(constructTriples);

@@ -24,7 +24,7 @@ import {
   triplesSameSubject,
 } from '../../grammar/sparql11/tripleBlock.js';
 
-const rules = {
+const rules = <const> [
   triplesTemplate,
   triplesSameSubject,
   varOrTerm,
@@ -50,6 +50,6 @@ const rules = {
   collection,
   blankNodePropertyList,
   graphNode,
-};
+];
 
 export const triplesTemplateParserBuilder = Builder.createBuilder(rules);

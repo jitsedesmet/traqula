@@ -19,5 +19,5 @@ export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBui
   .addRule(usingClause)
   .addRule(groupGraphPattern)
   // This substitutes all of propertyListNotEmpty
-  .merge(objectListBuilder, {})
-  .merge(subSelectParserBuilder, {});
+  .merge(objectListBuilder, [])
+  .merge(subSelectParserBuilder, []);

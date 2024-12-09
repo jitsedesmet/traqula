@@ -45,32 +45,34 @@ const update1Patch: typeof update1 = {
  * Simple SPARQL 1.1 Update parser excluding MODIFY operations.
  * Top enable MODIFY, you need to path the update1 rule.
  */
-export const updateNoModifyParserBuilder = Builder.createBuilder({
+export const updateNoModifyParserBuilder = Builder.createBuilder([
   updateUnit,
   update,
   prologue,
   update1,
-})
+])
   .patchRule(update1Patch)
-  .addRule(baseDecl)
-  .addRule(prefixDecl)
-  .addRule(load)
-  .addRule(clear)
-  .addRule(drop)
-  .addRule(add)
-  .addRule(move)
-  .addRule(copy)
-  .addRule(create)
-  .addRule(insertData)
-  .addRule(deleteData)
-  .addRule(deleteWhere)
-  .addRule(iri)
-  .addRule(prefixedName)
-  .addRule(graphRef)
-  .addRule(graphRefAll)
-  .addRule(graphOrDefault)
-  .addRule(quadData)
-  .addRule(quads)
-  .merge(triplesTemplateParserBuilder, {})
+  .addMany(
+    baseDecl,
+    prefixDecl,
+    load,
+    clear,
+    drop,
+    add,
+    move,
+    copy,
+    create,
+    insertData,
+    deleteData,
+    deleteWhere,
+    iri,
+    prefixedName,
+    graphRef,
+    graphRefAll,
+    graphOrDefault,
+    quadData,
+    quads,
+  )
+  .merge(triplesTemplateParserBuilder, [])
   .addRule(quadPattern)
   .addRule(quadsNotTriples);

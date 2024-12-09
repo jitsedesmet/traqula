@@ -443,10 +443,10 @@ export type RuleDefsToParserMethods<
   ) : never
 ) : Agg;
 
-export class Builder<T extends readonly RuleDef[]> {
+export class Builder<T extends RuleDef[]> {
   public static createBuilder<
     T extends readonly RuleDef[] | Builder<U>,
-    U extends readonly RuleDef[] = T extends Builder<infer X> ? X : T,
+    U extends RuleDef[] = T extends Builder<infer X> ? X : RuleDef[],
     // eslint-disable-next-line antfu/consistent-list-newline
   >(start: T): T extends RuleDef[] ? Builder<T> : Builder<U> {
     if (start instanceof Builder) {
@@ -494,7 +494,7 @@ export class Builder<T extends readonly RuleDef[]> {
   }
 
   public addMany<U extends RuleDef[]>(
-    rules: RuleDefsCheckOverlap<U, T>,
+    ...rules: RuleDefsCheckOverlap<U, T>
   ):
     Builder<[...T, ...U]> {
     this.rules = { ...this.rules, ...rules };

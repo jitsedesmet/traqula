@@ -22,7 +22,7 @@ import {
   triplesNode,
 } from '../../grammar/sparql11/tripleBlock.js';
 
-const rules = {
+const rules = <const> [
   objectList,
   object,
   graphNode,
@@ -34,7 +34,7 @@ const rules = {
   // PropertyListNotEmpty
   verb,
   varOrIri,
-  var: var_,
+  var_,
   iri,
   prefixedName,
   graphTerm,
@@ -46,6 +46,6 @@ const rules = {
   numericLiteralUnsigned,
   numericLiteralPositive,
   numericLiteralNegative,
-};
+];
 
 export const objectListBuilder = Builder.createBuilder(rules);
