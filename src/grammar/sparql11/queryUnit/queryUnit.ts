@@ -26,7 +26,7 @@ import { dataBlock, whereClause } from '../whereClause.js';
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)
  */
-export const queryUnit: RuleDef<'queryUnit', Query> = {
+export const queryUnit: RuleDef<'queryUnit', Query> = <const> {
   name: 'queryUnit',
   impl: ({ SUBRULE }) => () => SUBRULE(query),
 };
@@ -34,7 +34,7 @@ export const queryUnit: RuleDef<'queryUnit', Query> = {
 /**
  * [[2]](https://www.w3.org/TR/sparql11-query/#rQuery)
  */
-export const query: RuleDef<'query', Query> = {
+export const query: RuleDef<'query', Query> = <const> {
   name: 'query',
   impl: ({ ACTION, SUBRULE, OR }) => () => {
     const prologueValues = SUBRULE(prologue);
@@ -82,7 +82,7 @@ function extractFromOfDataSetClauses(ACTION: ImplArgs['ACTION'], MANY: ImplArgs[
 /**
  * [[7]](https://www.w3.org/TR/sparql11-query/#rSelectQuery)
  */
-export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase>> = {
+export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase>> = <const> {
   name: 'selectQuery',
   impl: ({ ACTION, SUBRULE, MANY }) => () => {
     const selectVal = SUBRULE(selectClause);
@@ -103,7 +103,7 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
 /**
  * [[8]](https://www.w3.org/TR/sparql11-query/#rSubSelect)
  */
-export const subSelect: RuleDef<'subSelect', Omit<SelectQuery, 'prefixes'>> = {
+export const subSelect: RuleDef<'subSelect', Omit<SelectQuery, 'prefixes'>> = <const> {
   name: 'subSelect',
   impl: ({ ACTION, SUBRULE }) => () => {
     const clause = SUBRULE(selectClause);
@@ -130,7 +130,7 @@ export interface ISelectClause {
   distinct?: true;
   reduced?: true;
 }
-export const selectClause: RuleDef<'selectClause', ISelectClause> = {
+export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
   name: 'selectClause',
   impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
     CONSUME(l.select);
@@ -179,7 +179,7 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = {
 /**
  * [[10]](https://www.w3.org/TR/sparql11-query/#rConstructQuery)
  */
-export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, HandledByBase>> = {
+export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, HandledByBase>> = <const> {
   name: 'constructQuery',
   impl: ({ ACTION, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, MANY1, MANY2, OPTION, OR }) => () => {
     CONSUME(l.construct);
@@ -230,7 +230,7 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
 /**
  * [[11]](https://www.w3.org/TR/sparql11-query/#rDescribeQuery)
  */
-export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, HandledByBase>> = {
+export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, HandledByBase>> = <const> {
   name: 'describeQuery',
   impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, MANY, OPTION, OR }) => () => {
     CONSUME(l.describe);
@@ -263,7 +263,7 @@ export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, Handled
 /**
  * [[12]](https://www.w3.org/TR/sparql11-query/#rAskQuery)
  */
-export const askQuery: RuleDef<'askQuery', Omit<AskQuery, HandledByBase>> = {
+export const askQuery: RuleDef<'askQuery', Omit<AskQuery, HandledByBase>> = <const> {
   name: 'askQuery',
   impl: ({ ACTION, SUBRULE, CONSUME, MANY }) => () => {
     CONSUME(l.ask);
@@ -282,7 +282,7 @@ export const askQuery: RuleDef<'askQuery', Omit<AskQuery, HandledByBase>> = {
 /**
  * [[28]](https://www.w3.org/TR/sparql11-query/#rValuesClause)
  */
-export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[] | undefined> = {
+export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[] | undefined> = <const> {
   name: 'valuesClause',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => OPTION(() => {
     CONSUME(l.values);
@@ -293,7 +293,7 @@ export const valuesClause: RuleDef<'valuesClause', ValuePatternRow[] | undefined
 /**
  * [[73]](https://www.w3.org/TR/sparql11-query/#ConstructTemplate)
  */
-export const constructTemplate: RuleDef<'constructTemplate', Triple[] | undefined> = {
+export const constructTemplate: RuleDef<'constructTemplate', Triple[] | undefined> = <const> {
   name: 'constructTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.symbols.LCurly);
@@ -306,7 +306,7 @@ export const constructTemplate: RuleDef<'constructTemplate', Triple[] | undefine
 /**
  * [[12]](https://www.w3.org/TR/sparql11-query/#rConstructTriples)
  */
-export const constructTriples: RuleDef<'constructTriples', Triple[]> = {
+export const constructTriples: RuleDef<'constructTriples', Triple[]> = <const> {
   name: 'constructTriples',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];

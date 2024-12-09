@@ -35,7 +35,7 @@ export type buildInOperator = 'STR' | 'LANG' | 'LANGMATCHES' | 'DATATYPE' | 'BOU
   'REGEX' | 'SUBSTR' | 'REPLACE' | 'EXISTS' | 'NOT EXISTS';
 export type aggregatorOperator = 'COUNT' | 'SUM' | 'MIN' | 'MAX' | 'AVG' | 'SAMPLE' | 'GROUP_CONCAT';
 
-export const argList: RuleDef<'argList', IArgList> = {
+export const argList: RuleDef<'argList', IArgList> = <const> {
   name: 'argList',
   impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR<IArgList>([
     {
@@ -70,7 +70,7 @@ export const argList: RuleDef<'argList', IArgList> = {
   ]),
 };
 
-export const expressionList: RuleDef<'expressionList', Expression[]> = {
+export const expressionList: RuleDef<'expressionList', Expression[]> = <const> {
   name: 'expressionList',
   impl: ({ CONSUME, SUBRULE, MANY_SEP, OR }) => () => OR([
     {
@@ -99,7 +99,7 @@ export const expressionList: RuleDef<'expressionList', Expression[]> = {
 /**
  * [[110]](https://www.w3.org/TR/sparql11-query/#rExpression)
  */
-export const expression: RuleDef<'expression', Expression> = {
+export const expression: RuleDef<'expression', Expression> = <const> {
   name: 'expression',
   impl: ({ SUBRULE }) => () => SUBRULE(conditionalOrExpression),
 };
@@ -133,7 +133,7 @@ function constructLeftDeep<T extends string = string>(
 /**
  * [[111]](https://www.w3.org/TR/sparql11-query/#rConditionalOrExpression)
  */
-export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Expression> = {
+export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Expression> = <const> {
   name: 'conditionalOrExpression',
   impl: ({ ACTION, MANY, CONSUME, SUBRULE1, SUBRULE2 }) => () =>
     constructLeftDeep(() => SUBRULE1(conditionalAndExpression), () => {
@@ -149,7 +149,7 @@ export const conditionalOrExpression: RuleDef<'conditionalOrExpression', Express
 /**
  * [[112]](https://www.w3.org/TR/sparql11-query/#rConditionalAndExpression)
  */
-export const conditionalAndExpression: RuleDef<'conditionalAndExpression', Expression> = {
+export const conditionalAndExpression: RuleDef<'conditionalAndExpression', Expression> = <const> {
   name: 'conditionalAndExpression',
   impl: ({ ACTION, MANY, SUBRULE1, SUBRULE2, CONSUME }) => () => constructLeftDeep(
     () => SUBRULE1(valueLogical),
@@ -168,7 +168,7 @@ export const conditionalAndExpression: RuleDef<'conditionalAndExpression', Expre
 /**
  * [[113]](https://www.w3.org/TR/sparql11-query/#rValueLogical)
  */
-export const valueLogical: RuleDef<'valueLogical', Expression> = {
+export const valueLogical: RuleDef<'valueLogical', Expression> = <const> {
   name: 'valueLogical',
   impl: ({ SUBRULE }) => () => SUBRULE(relationalExpression),
 };
@@ -176,7 +176,7 @@ export const valueLogical: RuleDef<'valueLogical', Expression> = {
 /**
  * [[114]](https://www.w3.org/TR/sparql11-query/#rRelationalExpression)
  */
-export const relationalExpression: RuleDef<'relationalExpression', Expression> = {
+export const relationalExpression: RuleDef<'relationalExpression', Expression> = <const> {
   name: 'relationalExpression',
   impl: ({ ACTION, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR, SUBRULE3, SUBRULE4, SUBRULE5, SUBRULE6, SUBRULE7 }) =>
     () => {
@@ -253,7 +253,7 @@ export const relationalExpression: RuleDef<'relationalExpression', Expression> =
 /**
  * [[115]](https://www.w3.org/TR/sparql11-query/#rNumericExpression)
  */
-export const numericExpression: RuleDef<'numericExpression', Expression> = {
+export const numericExpression: RuleDef<'numericExpression', Expression> = <const> {
   name: 'numericExpression',
   impl: ({ SUBRULE }) => () => SUBRULE(additiveExpression),
 };
@@ -261,7 +261,7 @@ export const numericExpression: RuleDef<'numericExpression', Expression> = {
 /**
  * [[116]](https://www.w3.org/TR/sparql11-query/#rAdditiveExpression)
  */
-export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
+export const additiveExpression: RuleDef<'additiveExpression', Expression> = <const> {
   name: 'additiveExpression',
   impl: ({ ACTION, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, MANY1, MANY2, OR1, OR2, OR3 }) => () =>
     constructLeftDeep(
@@ -358,7 +358,7 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = {
 /**
  * [[117]](https://www.w3.org/TR/sparql11-query/#rMultiplicativeExpression)
  */
-export const multiplicativeExpression: RuleDef<'multiplicativeExpression', Expression> = {
+export const multiplicativeExpression: RuleDef<'multiplicativeExpression', Expression> = <const> {
   name: 'multiplicativeExpression',
   impl: ({ ACTION, CONSUME, MANY, SUBRULE1, SUBRULE2, SUBRULE3, OR }) => () => constructLeftDeep(
     () => SUBRULE1(unaryExpression),
@@ -392,7 +392,7 @@ export const multiplicativeExpression: RuleDef<'multiplicativeExpression', Expre
 /**
  * [[118]](https://www.w3.org/TR/sparql11-query/#rUnaryExpression)
  */
-export const unaryExpression: RuleDef<'unaryExpression', Expression> = {
+export const unaryExpression: RuleDef<'unaryExpression', Expression> = <const> {
   name: 'unaryExpression',
   impl: ({ CONSUME, SUBRULE1, SUBRULE2, SUBRULE3, SUBRULE4, OR }) => () => OR<Expression>([
     {
@@ -435,7 +435,7 @@ export const unaryExpression: RuleDef<'unaryExpression', Expression> = {
 /**
  * [[119]](https://www.w3.org/TR/sparql11-query/#rPrimaryExpression)
  */
-export const primaryExpression: RuleDef<'primaryExpression', Expression> = {
+export const primaryExpression: RuleDef<'primaryExpression', Expression> = <const> {
   name: 'primaryExpression',
   impl: ({ SUBRULE, OR }) => () => OR([
     { ALT: () => SUBRULE(brackettedExpression) },
@@ -451,7 +451,7 @@ export const primaryExpression: RuleDef<'primaryExpression', Expression> = {
 /**
  * [[120]](https://www.w3.org/TR/sparql11-query/#rBrackettedExpression)
  */
-export const brackettedExpression: RuleDef<'brackettedExpression', Expression> = {
+export const brackettedExpression: RuleDef<'brackettedExpression', Expression> = <const> {
   name: 'brackettedExpression',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LParen);
@@ -465,7 +465,7 @@ export const brackettedExpression: RuleDef<'brackettedExpression', Expression> =
 /**
  * [[128]](https://www.w3.org/TR/sparql11-query/#ririOrFunction)
  */
-export const iriOrFunction: RuleDef<'iriOrFunction', IriTerm | (IArgList & { function: IriTerm })> = {
+export const iriOrFunction: RuleDef<'iriOrFunction', IriTerm | (IArgList & { function: IriTerm })> = <const> {
   name: 'iriOrFunction',
   impl: ({ SUBRULE, OPTION }) => () => {
     const iriVal = SUBRULE(iri);

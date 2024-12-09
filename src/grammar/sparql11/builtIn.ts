@@ -133,7 +133,7 @@ export function builtInCallList(SUBRULE: ImplArgs['SUBRULE']): IOrAlt<Expression
 /**
  * [[121]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const builtInCall: RuleDef<'builtInCall', Expression> = {
+export const builtInCall: RuleDef<'builtInCall', Expression> = <const> {
   name: 'builtInCall',
   impl: ({ OR, SUBRULE, cache }) => () => {
     const cached = <IOrAlt<Expression>[]>cache.get(builtInCall);
@@ -177,7 +177,7 @@ export const aggregateMin = baseAggregateFunc(l.builtIn.min);
 export const aggregateMax = baseAggregateFunc(l.builtIn.max);
 export const aggregateAvg = baseAggregateFunc(l.builtIn.avg);
 export const aggregateSample = baseAggregateFunc(l.builtIn.sample);
-export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpression> = {
+export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpression> = <const> {
   name: unCapitalize(l.builtIn.groupConcat.name),
   impl: ({ CONSUME, OPTION1, SUBRULE, OPTION2 }) => () => {
     CONSUME(l.builtIn.groupConcat);
@@ -205,7 +205,7 @@ export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpr
 /**
  * [[127]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
-export const aggregate: RuleDef<'aggregate', Expression> = {
+export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   name: 'aggregate',
   impl: ({ SUBRULE, OR }) => () => OR<Expression>([
     // TODO: Enable https://chevrotain.io/docs/guide/performance.html#caching-arrays-of-alternatives

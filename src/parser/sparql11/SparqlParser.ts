@@ -11,7 +11,12 @@ import {
   valuesClause,
 } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
-import type { Query, SparqlParser as ISparqlParser, SparqlQuery, Update } from '../../grammar/sparqlJSTypes.js';
+import type {
+  Query,
+  SparqlParser as ISparqlParser,
+  SparqlQuery,
+  Update,
+} from '../../grammar/sparqlJSTypes.js';
 import * as l from '../../lexer/sparql11/index.js';
 import { allTokens } from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';
@@ -79,14 +84,17 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
 };
 
 export const sparqlParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
-  .merge(updateParserBuilder, [])
+  .merge(updateParserBuilder, <const> [])
   .deleteRule('queryUnit')
   .deleteRule('query')
   .deleteRule('updateUnit')
   .addRule(queryOrUpdate);
 
 export class SparqlParser implements ISparqlParser {
-  private readonly parser: { queryOrUpdate: (input: string) => SparqlQuery };
+  private readonly parser: {
+    queryOrUpdate: (input: string) => SparqlQuery;
+  };
+
   private readonly dataFactory: DataFactory;
 
   public constructor(context: Partial<ImplArgs['context']> = {}) {

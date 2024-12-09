@@ -46,7 +46,7 @@ const rules = <const> [
 ];
 
 export const subSelectParserBuilder = Builder.createBuilder(rules)
-  .merge(expressionParserBuilder, [])
+  .merge(expressionParserBuilder, <const> [])
   .patchRule(builtInCall)
   .addMany(
     existsFunc,
@@ -54,7 +54,7 @@ export const subSelectParserBuilder = Builder.createBuilder(rules)
     groupGraphPattern,
     groupGraphPatternSub,
   )
-  .merge(triplesBlockParserBuilder, [])
+  .merge(triplesBlockParserBuilder, <const> [])
   .addMany(
     graphPatternNotTriples,
     groupOrUnionGraphPattern,

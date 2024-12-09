@@ -10,7 +10,7 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)
  */
-export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = {
+export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = <const> {
   name: 'triplesBlock',
   impl: ({ ACTION, SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples = SUBRULE(triplesSameSubjectPath);
@@ -145,7 +145,7 @@ export const propertyListPathNotEmpty = propertyListNotEmptyImplementation('prop
 /**
  * [[84]](https://www.w3.org/TR/sparql11-query/#rVerbPath)
  */
-export const verbPath: RuleDef<'verbPath', PropertyPath | IriTerm> = {
+export const verbPath: RuleDef<'verbPath', PropertyPath | IriTerm> = <const> {
   name: 'verbPath',
   impl: ({ SUBRULE }) => () => SUBRULE(path),
 };
@@ -153,7 +153,7 @@ export const verbPath: RuleDef<'verbPath', PropertyPath | IriTerm> = {
 /**
  * [[85]](https://www.w3.org/TR/sparql11-query/#rVerbSimple)
  */
-export const verbSimple: RuleDef<'verbSimple', VariableTerm> = {
+export const verbSimple: RuleDef<'verbSimple', VariableTerm> = <const> {
   name: 'verbSimple',
   impl: ({ SUBRULE }) => () => SUBRULE(var_),
 };
@@ -191,11 +191,11 @@ export const objectListPath = objectListImpl('objectListPath', true);
  * [[80]](https://www.w3.org/TR/sparql11-query/#rObject)
  * [[87]](https://www.w3.org/TR/sparql11-query/#rObjectPath)
  */
-export const object: RuleDef<'object', IGraphNode> = {
+export const object: RuleDef<'object', IGraphNode> = <const> {
   name: 'object',
   impl: ({ SUBRULE }) => () => SUBRULE(graphNode),
 };
-export const objectPath: RuleDef<'objectPath', IGraphNode> = {
+export const objectPath: RuleDef<'objectPath', IGraphNode> = <const> {
   name: 'objectPath',
   impl: ({ SUBRULE }) => () => SUBRULE(graphNodePath),
 };
@@ -209,14 +209,14 @@ export interface ITriplesNode {
  * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
  * [[100]](https://www.w3.org/TR/sparql11-query/#rTriplesNodePath)
  */
-export const triplesNode: RuleDef<'triplesNode', ITriplesNode> = {
+export const triplesNode: RuleDef<'triplesNode', ITriplesNode> = <const> {
   name: 'triplesNode',
   impl: ({ SUBRULE, OR }) => () => OR<ITriplesNode>([
     { ALT: () => SUBRULE(collection) },
     { ALT: () => SUBRULE(blankNodePropertyList) },
   ]),
 };
-export const triplesNodePath: RuleDef<'triplesNodePath', ITriplesNode> = {
+export const triplesNodePath: RuleDef<'triplesNodePath', ITriplesNode> = <const> {
   name: 'triplesNodePath',
   impl: ({ SUBRULE, OR }) => () => OR<ITriplesNode>([
     { ALT: () => SUBRULE(collectionPath) },

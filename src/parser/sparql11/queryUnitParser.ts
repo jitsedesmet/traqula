@@ -35,12 +35,12 @@ const rules = <const> [
 
 export const queryUnitParserBuilder = Builder.createBuilder(rules)
   // Select Query
-  .merge(subSelectParserBuilder, [])
+  .merge(subSelectParserBuilder, <const> [])
   .addRule(datasetClause)
   .addRule(defaultGraphClause)
   .addRule(namedGraphClause)
   .addRule(sourceSelector)
   // Construct Query
   .addRule(constructTemplate)
-  .merge(triplesTemplateParserBuilder, [])
+  .merge(triplesTemplateParserBuilder, <const> [])
   .addRule(constructTriples);

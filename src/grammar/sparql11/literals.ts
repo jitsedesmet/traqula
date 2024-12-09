@@ -12,7 +12,7 @@ const uriDoubleType = 'http://www.w3.org/2001/XMLSchema#double';
 /**
  * [[129]](https://www.w3.org/TR/sparql11-query/#rRDFLiteral)
  */
-export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
+export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = <const> {
   name: 'rdfLiteral',
   impl: ({ SUBRULE, CONSUME, OPTION, OR, context }) => () => {
     const value = SUBRULE(string);
@@ -32,7 +32,7 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = {
 /**
  * [[130]](https://www.w3.org/TR/sparql11-query/#rNumericLiteral)
  */
-export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = {
+export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = <const> {
   name: 'numericLiteral',
   impl: ({ SUBRULE, OR }) => () => OR([
     { ALT: () => SUBRULE(numericLiteralUnsigned) },
@@ -44,7 +44,7 @@ export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = {
 /**
  * [[131]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralUnsigned)
  */
-export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTerm> = {
+export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTerm> = <const> {
   name: 'numericLiteralUnsigned',
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
@@ -65,7 +65,7 @@ export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTe
 /**
  * [[132]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralPositive)
  */
-export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTerm> = {
+export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTerm> = <const> {
   name: 'numericLiteralPositive',
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
@@ -86,7 +86,7 @@ export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTe
 /**
  * [[133]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralNegative)
  */
-export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTerm> = {
+export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTerm> = <const> {
   name: 'numericLiteralNegative',
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
@@ -107,7 +107,7 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
 /**
  * [[134]](https://www.w3.org/TR/sparql11-query/#rBooleanLiteral)
  */
-export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
+export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = <const> {
   name: 'booleanLiteral',
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
@@ -124,7 +124,7 @@ export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = {
 /**
  * [[135]](https://www.w3.org/TR/sparql11-query/#rString)
  */
-export const string: RuleDef<'string', string> = {
+export const string: RuleDef<'string', string> = <const> {
   name: 'string',
   impl: ({ ACTION, CONSUME, OR }) => () => {
     const rawString = OR([
@@ -149,7 +149,7 @@ export const string: RuleDef<'string', string> = {
 /**
  * [[136]](https://www.w3.org/TR/sparql11-query/#riri)
  */
-export const iri: RuleDef<'iri', IriTerm> = {
+export const iri: RuleDef<'iri', IriTerm> = <const> {
   name: 'iri',
   impl: ({ ACTION, SUBRULE, CONSUME, OR, context }) => () => OR([
     { ALT: () => {
@@ -163,7 +163,7 @@ export const iri: RuleDef<'iri', IriTerm> = {
 /**
  * [[137]](https://www.w3.org/TR/sparql11-query/#rPrefixedName)
  */
-export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
+export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
   name: 'prefixedName',
   impl: ({ ACTION, CONSUME, OR, context }) => () => {
     const fullStr = OR([
@@ -180,7 +180,7 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = {
 /**
  * [[138]](https://www.w3.org/TR/sparql11-query/#rBlankNode)
  */
-export const blankNode: RuleDef<'blankNode', BlankTerm> = {
+export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
   name: 'blankNode',
   impl: ({ ACTION, CONSUME, OR, context }) => () => OR([
     { ALT: () => {

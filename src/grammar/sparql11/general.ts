@@ -9,7 +9,7 @@ const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)
  */
-export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>> = {
+export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>> = <const> {
   name: 'prologue',
   impl: ({ ACTION, SUBRULE, MANY, OR }) => () => {
     const result: Pick<BaseQuery, 'base' | 'prefixes'> = {
@@ -40,7 +40,7 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
 /**
  * [[5]](https://www.w3.org/TR/sparql11-query/#rBaseDecl)
  */
-export const baseDecl: RuleDef<'baseDecl', string> = {
+export const baseDecl: RuleDef<'baseDecl', string> = <const> {
   name: 'baseDecl',
   impl: ({ CONSUME, ACTION, context }) => () => {
     CONSUME(l.baseDecl);
@@ -55,7 +55,7 @@ export const baseDecl: RuleDef<'baseDecl', string> = {
 /**
  * [[6]](https://www.w3.org/TR/sparql11-query/#rPrefixDecl)
  */
-export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
+export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = <const> {
   name: 'prefixDecl',
   impl: ({ CONSUME, ACTION, context }) => () => {
     CONSUME(l.prefixDecl);
@@ -69,7 +69,7 @@ export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = {
 /**
  * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
  */
-export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
+export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = <const> {
   name: 'triplesTemplate',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];
@@ -89,7 +89,7 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = {
 /**
  * [[78]](https://www.w3.org/TR/sparql11-query/#rVerb)
  */
-export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
+export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
   name: 'verb',
   impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR([
     { ALT: () => SUBRULE(varOrIri) },
@@ -105,7 +105,7 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm> = {
 /**
  * [[106]](https://www.w3.org/TR/sparql11-query/#rVarOrTerm)
  */
-export const varOrTerm: RuleDef<'varOrTerm', Term> = {
+export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
   name: 'varOrTerm',
   impl: ({ SUBRULE, OR }) => () => OR([
     { ALT: () => SUBRULE(var_) },
@@ -116,7 +116,7 @@ export const varOrTerm: RuleDef<'varOrTerm', Term> = {
 /**
  * [[107]](https://www.w3.org/TR/sparql11-query/#rVarOrIri)
  */
-export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
+export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = <const> {
   name: 'varOrIri',
   impl: ({ SUBRULE, OR }) => () => OR<IriTerm | VariableTerm>([
     { ALT: () => SUBRULE(var_) },
@@ -127,7 +127,7 @@ export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = {
 /**
  * [[108]](https://www.w3.org/TR/sparql11-query/#rVar)
  */
-export const var_: RuleDef<'var', VariableTerm> = {
+export const var_: RuleDef<'var', VariableTerm> = <const> {
   name: 'var',
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
@@ -138,7 +138,7 @@ export const var_: RuleDef<'var', VariableTerm> = {
 /**
  * [[109]](https://www.w3.org/TR/sparql11-query/#rGraphTerm)
  */
-export const graphTerm: RuleDef<'graphTerm', Term> = {
+export const graphTerm: RuleDef<'graphTerm', Term> = <const> {
   name: 'graphTerm',
   impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<Term>([
     { ALT: () => SUBRULE(iri) },

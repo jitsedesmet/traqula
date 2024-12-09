@@ -11,7 +11,7 @@ export interface IDatasetClause {
   value: IriTerm;
   type: 'default' | 'named';
 }
-export const datasetClause: RuleDef<'datasetClause', IDatasetClause> = {
+export const datasetClause: RuleDef<'datasetClause', IDatasetClause> = <const> {
   name: 'datasetClause',
   impl: ({ SUBRULE, CONSUME, OR }) => () => {
     CONSUME(l.from);
@@ -25,7 +25,7 @@ export const datasetClause: RuleDef<'datasetClause', IDatasetClause> = {
 /**
  * [[14]](https://www.w3.org/TR/sparql11-query/#rDefaultGraphClause)
  */
-export const defaultGraphClause: RuleDef<'defaultGraphClause', IriTerm> = {
+export const defaultGraphClause: RuleDef<'defaultGraphClause', IriTerm> = <const> {
   name: 'defaultGraphClause',
   impl: ({ SUBRULE }) => () => SUBRULE(sourceSelector),
 };
@@ -33,7 +33,7 @@ export const defaultGraphClause: RuleDef<'defaultGraphClause', IriTerm> = {
 /**
  * [[15]](https://www.w3.org/TR/sparql11-query/#rNamedGraphClause)
  */
-export const namedGraphClause: RuleDef<'namedGraphClause', IriTerm> = {
+export const namedGraphClause: RuleDef<'namedGraphClause', IriTerm> = <const> {
   name: 'namedGraphClause',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.named);
@@ -44,7 +44,7 @@ export const namedGraphClause: RuleDef<'namedGraphClause', IriTerm> = {
 /**
  * [[16]](https://www.w3.org/TR/sparql11-query/#rSourceSelector)
  */
-export const sourceSelector: RuleDef<'sourceSelector', IriTerm> = {
+export const sourceSelector: RuleDef<'sourceSelector', IriTerm> = <const> {
   name: 'sourceSelector',
   impl: ({ SUBRULE }) => () => SUBRULE(iri),
 };

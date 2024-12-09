@@ -15,5 +15,5 @@ export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBui
   .patchRule(update1)
   .addMany(modify, deleteClause, insertClause, usingClause, groupGraphPattern)
   // This substitutes all of propertyListNotEmpty
-  .merge(objectListBuilder, [])
-  .merge(subSelectParserBuilder, []);
+  .merge(objectListBuilder, <const> [])
+  .merge(subSelectParserBuilder, <const> []);

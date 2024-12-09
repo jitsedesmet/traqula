@@ -410,24 +410,34 @@ export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : ne
 export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
 export type RuleNames<T extends readonly RuleDef[]> = T[number]['name'];
 // TAIL RECURSION! https://github.com/Beppobert/ts-prevent-recursion-limit
-export type OmitRuleDef<T extends readonly RuleDef[], Name extends RuleNames<T>, Agg extends RuleDef[] = []> =
-  T extends readonly [infer First, infer Second, ...infer Rest] ? (
+export type OmitRuleDef<Rules extends readonly RuleDef[], ToOmit extends string, Agg extends RuleDef[] = []> =
+  Rules extends readonly [infer First, infer Second, ...infer Rest] ? (
     First extends RuleDef ? (
       Second extends RuleDef ? (
         Rest extends RuleDef[] ? (
           OmitRuleDef<
             Rest,
-            Name,
-            First['name'] extends Name ? (
-              Second['name'] extends Name ? Agg : [...Agg, Second]
+            ToOmit,
+            First['name'] extends ToOmit ? (
+              Second['name'] extends ToOmit ?
+                Agg : [...Agg, Second]
             ) : (
-              Second['name'] extends Name ? [...Agg, First] : [...Agg, First, Second]
+              Second['name'] extends ToOmit ?
+                  [...Agg, First] : [...Agg, First, Second]
             )
 >
         ) : never
       ) : never
     ) : never
-  ) : T extends [infer First] ? [...Agg, First] : Agg;
+  ) : (
+    Rules extends [infer First] ? (
+      First extends RuleDef ? (
+        First['name'] extends ToOmit ? Agg : [...Agg, First]
+      ) : never
+    ) : Agg
+  );
+export type OmitContainingRule<T extends readonly RuleDef[], Name extends RuleNames<T>> =
+  OmitRuleDef<T, Name>;
 export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
   CheckOverlap<T['name'], RuleNames<U>, T>;
 export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =

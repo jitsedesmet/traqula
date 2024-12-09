@@ -26,7 +26,7 @@ import {
 } from '../../grammar/sparql11/tripleBlock.js';
 import { objectListBuilder } from './objectListParser.js';
 
-export const triplesBlockParserBuilder = Builder.createBuilder([
+export const triplesBlockParserBuilder = Builder.createBuilder(<const> [
   triplesBlock,
   triplesSameSubjectPath,
   // VarOrTerm is included in the required ObjectList rule
@@ -38,7 +38,7 @@ export const triplesBlockParserBuilder = Builder.createBuilder([
   verbSimple,
   objectListPath,
 ])
-  .merge(objectListBuilder, [])
+  .merge(objectListBuilder, <const> [])
   // Verb path
   .addMany(
     path,

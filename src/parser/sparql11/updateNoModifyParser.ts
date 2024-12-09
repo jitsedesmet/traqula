@@ -76,6 +76,6 @@ const rulesNoUpdate1 = <const>[
 export const updateNoModifyParserBuilder = Builder
   .createBuilder(rulesNoUpdate1)
   .addRule(update1Patch)
-  .merge(triplesTemplateParserBuilder, [])
+  .merge(triplesTemplateParserBuilder, <const> [])
   .addRule(quadPattern)
   .addRule(quadsNotTriples);

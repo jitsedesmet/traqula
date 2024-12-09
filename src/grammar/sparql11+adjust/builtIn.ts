@@ -8,7 +8,7 @@ export const BuiltInAdjust = createToken({ name: 'BuiltInAdjust', pattern: 'ADJU
 
 export const builtInAdjust = funcExpr2(BuiltInAdjust);
 
-export const existingBuildInCall: RuleDef<'existingBuildInCall', Expression> = {
+export const existingBuildInCall: RuleDef<'existingBuildInCall', Expression> = <const> {
   name: 'existingBuildInCall',
   impl: builtInCall.impl,
 };
