@@ -1,4 +1,5 @@
-import type { RuleDef } from '../../grammar/parserBuilder.js';
+import { DataFactory } from 'rdf-data-factory';
+import type { ImplArgs, RuleDef } from '../../grammar/parserBuilder.js';
 import { Builder } from '../../grammar/parserBuilder.js';
 import { prologue } from '../../grammar/sparql11/general.js';
 import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit.js';
@@ -10,8 +11,9 @@ import {
   valuesClause,
 } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
-import type { Query, Update } from '../../grammar/sparqlJSTypes.js';
+import type { Query, SparqlParser as ISparqlParser, SparqlQuery, Update } from '../../grammar/sparqlJSTypes.js';
 import * as l from '../../lexer/sparql11/index.js';
+import { allTokens } from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';
 import { updateParserBuilder } from './updateUnitParser.js';
 
@@ -82,3 +84,26 @@ export const sparqlParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
   .deleteRule('query')
   .deleteRule('updateUnit')
   .addRule(queryOrUpdate);
+
+export class SparqlParser implements ISparqlParser {
+  private readonly parser: { queryOrUpdate: (input: string) => SparqlQuery };
+  private readonly dataFactory: DataFactory;
+
+  public constructor(context: Partial<ImplArgs['context']> = {}) {
+    this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
+    this.parser = sparqlParserBuilder.consumeToParser({
+      tokenVocabulary: allTokens,
+    }, {
+      ...context,
+      dataFactory: this.dataFactory,
+    });
+  }
+
+  public _resetBlanks(): void {
+    this.dataFactory.resetBlankNodeCounter();
+  }
+
+  public parse(query: string): SparqlQuery {
+    return this.parser.queryOrUpdate(query);
+  }
+}

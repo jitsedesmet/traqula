@@ -2,10 +2,8 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import {describe, it} from 'vitest';
-import {allTokens} from '../src/lexer/sparql11/index.js';
 import './matchers/toEqualParsedQuery.js';
-import {WrappedParser} from "../src/wrappedParser/WrappedParser.js";
-import {sparqlParserBuilder} from "../src/parser/sparql11/SparqlParser.js";
+import {SparqlParser} from "../src/parser/sparql11/SparqlParser.js";
 
 describe('A SPARQL parser', () => {
   describe('confirms to SPARQL tests', () => {
@@ -19,7 +17,7 @@ describe('A SPARQL parser', () => {
           const json = JSON.parse(result);
 
 
-          const parser = new WrappedParser(sparqlParserBuilder, { tokenVocabulary: allTokens });
+          const parser = new SparqlParser();
           const res = parser.parse(query);
           expect(res).toEqualParsedQuery(json);
         });

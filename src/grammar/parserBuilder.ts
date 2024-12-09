@@ -4,6 +4,7 @@ import type {
   DSLMethodOpts,
   DSLMethodOptsWithErr,
   GrammarAction,
+  ILexerConfig,
   IOrAlt,
   IParserConfig,
   ManySepMethodOpts,
@@ -11,6 +12,7 @@ import type {
 } from '@chevrotain/types';
 import {
   EmbeddedActionsParser,
+  Lexer,
 } from 'chevrotain';
 import type { ParserMethod, ConsumeMethodOpts, IToken, TokenType, TokenVocabulary } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
@@ -453,6 +455,22 @@ export type RuleDefsToParserMethods<
   ) : never
 ) : Agg;
 
+export type RuleDefsToSelfSufficientParser<
+  T extends readonly RuleDef[],
+  Agg extends Record<
+    string,
+    (input: string, args: unknown[]) => unknown
+> = Record<string, (input: string, args: unknown[]) => unknown>,
+> = T extends readonly [infer First, ...infer Rest] ? (
+  First extends RuleDef ? (
+    Rest extends readonly RuleDef[] ? (
+      First extends RuleDef<string, infer RET, infer ARGS> ? (
+        RuleDefsToSelfSufficientParser<Rest, Agg & Record<First['name'], (input: string, ...args: ARGS) => RET>>
+      ) : never
+    ) : never
+  ) : never
+) : Agg;
+
 export class Builder<T extends RuleDef[]> {
   public static createBuilder<
     T extends readonly RuleDef[] | Builder<U>,
@@ -550,11 +568,36 @@ export class Builder<T extends RuleDef[]> {
     return this;
   }
 
+  public consumeToParser({ tokenVocabulary, parserConfig = {}, lexerConfig = {}}: {
+    tokenVocabulary: TokenType[];
+    parserConfig?: IParserConfig;
+    lexerConfig?: ILexerConfig;
+  }, context: Partial<ImplArgs['context']> = {}): RuleDefsToSelfSufficientParser<T> {
+    const lexer: Lexer = new Lexer(tokenVocabulary, {
+      positionTracking: 'onlyOffset',
+      recoveryEnabled: false,
+      skipValidations: true,
+      ensureOptimizations: true,
+      ...lexerConfig,
+    });
+    const parser = this.consume({ tokenVocabulary, config: parserConfig }, context);
+    const selfSufficientParser: Partial<RuleDefsToSelfSufficientParser<T>> = {};
+    for (const rule of Object.values(<Record<string, RuleDef>> this.rules)) {
+      // @ts-expect-error TS7053
+      selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {
+        const lexResult = lexer.tokenize(input);
+        parser.reset();
+        parser.input = lexResult.tokens;
+        return parser[rule.name](...args);
+      };
+    }
+    return <RuleDefsToSelfSufficientParser<T>> selfSufficientParser;
+  }
+
   public consume({ tokenVocabulary, config = {}}: {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
-  }, context: Partial<ImplArgs['context']> = {}):
-    EmbeddedActionsParser & RuleDefsToParserMethods<T> {
+  }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & RuleDefsToParserMethods<T> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       public constructor() {

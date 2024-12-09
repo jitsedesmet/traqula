@@ -40,7 +40,7 @@ export type LiteralTerm = RdfJs.Literal;
 export type BlankTerm = RdfJs.BlankNode;
 export type QuadTerm = RdfJs.Quad;
 
-export type SparqlQuery = Query | Update;
+export type SparqlQuery = Query | Update | Pick<Update, 'base' | 'prefixes'>;
 
 export type Query = SelectQuery | ConstructQuery | AskQuery | DescribeQuery;
 
