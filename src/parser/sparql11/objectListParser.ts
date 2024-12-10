@@ -50,4 +50,4 @@ const rules = <const> [
 
 export type ObjectListParserArgs = [...typeof rules];
 
-export const objectListBuilder: Builder<ObjectListParserArgs> = Builder.createBuilder(rules);
+export const objectListBuilder = Builder.createBuilder(rules);

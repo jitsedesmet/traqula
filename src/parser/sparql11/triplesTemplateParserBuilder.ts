@@ -54,4 +54,4 @@ const rules = <const> [
 
 export type TriplesTemplateParserArgs = [...typeof rules];
 
-export const triplesTemplateParserBuilder: Builder<TriplesTemplateParserArgs> = Builder.createBuilder(rules);
+export const triplesTemplateParserBuilder = Builder.createBuilder(rules);

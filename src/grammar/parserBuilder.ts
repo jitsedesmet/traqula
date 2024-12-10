@@ -406,6 +406,8 @@ export type RuleDef<
 
 export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
 
+export type WiddenKey<T> = T extends { name: infer U } & W ? W : never;
+
 // Check if 2 types are overlap, if they do, return never, else return V
 export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
 export type RuleNames<T extends readonly RuleDef[]> = T[number]['name'];
@@ -438,10 +440,14 @@ export type OmitRuleDef<Rules extends readonly RuleDef[], ToOmit extends string,
   );
 export type OmitContainingRule<T extends readonly RuleDef[], Name extends RuleNames<T>> =
   OmitRuleDef<T, Name>;
-export type RuleCheckOverlap<T extends RuleDef, U extends readonly RuleDef[]> =
-  CheckOverlap<T['name'], RuleNames<U>, T>;
+export type RuleCheckOverlap<T extends RuleDef, U extends string> =
+  CheckOverlap<T['name'], U, T>;
 export type RuleDefsCheckOverlap<T extends readonly RuleDef[], U extends readonly RuleDef[]> =
   CheckOverlap<RuleNames<T>, RuleNames<U>, T>;
+
+/**
+ * Convert a list of RuleDefs to a Record with the name of the RuleDef as the key, matching the RuleDefMap type.
+ */
 export type RuleDefsToRecord<
   T extends readonly RuleDef[],
   Agg extends Record<string, RuleDef> = Record<string, RuleDef>,
@@ -452,6 +458,7 @@ export type RuleDefsToRecord<
     ) : never
   ) : never
 ) : Agg;
+
 export type RuleDefsToParserMethods<
   T extends readonly RuleDef[],
   Agg extends Record<string, ParserMethod<unknown[], unknown>> = Record<string, ParserMethod<unknown[], unknown>>,
@@ -481,40 +488,49 @@ export type RuleDefsToSelfSufficientParser<
   ) : never
 ) : Agg;
 
-export class Builder<T extends RuleDef[]> {
-  public static createBuilder<
-    T extends readonly RuleDef[] | Builder<U>,
-    U extends RuleDef[] = T extends Builder<infer X> ? X : RuleDef[],
-    // eslint-disable-next-line antfu/consistent-list-newline
-  >(start: T): T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U> {
-    if (start instanceof Builder) {
-      return <T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U>><unknown> new Builder({ ...start.rules });
-    }
-    const rules: Record<string, RuleDef> = {};
+type RuleDefMap<RuleNames extends string> = {[Key in RuleNames]: RuleDef<Key> };
 
-    for (const rule of <RuleDef[]>start) {
-      rules[rule.name] = rule;
+function listToRuleDefMap<T extends readonly RuleDef[]>(rules: T): RuleDefsToRecord<T> {
+  const newRules: Record<string, RuleDef> = {};
+  for (const rule of rules) {
+    newRules[rule.name] = rule;
+  }
+  return <RuleDefsToRecord<T>>newRules;
+}
+
+export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
+  public static createBuilder<
+    Rules extends readonly RuleDef[] = RuleDef[],
+    Names extends string = RuleNames<Rules>,
+    // @ts-expect-error TS2344
+    RuleDefs extends RuleDefMap<Names> = RuleDefsToRecord<Rules>,
+// eslint-disable-next-line antfu/consistent-list-newline
+>(start: Rules | Builder<Names, RuleDefs>): Builder<Names, RuleDefs> {
+    if (start instanceof Builder) {
+      return new Builder({ ...start.rules });
     }
-    return <T extends readonly RuleDef[] ? Builder<[...T]> : Builder<U>> new Builder<T & RuleDef[]>(
-      <RuleDefsToRecord<T & RuleDef[]>>rules,
-    );
+    // @ts-expect-error TS2344
+    return new Builder(listToRuleDefMap(start));
   }
 
-  private rules: RuleDefsToRecord<T>;
+  private rules: RuleDefs;
 
-  private constructor(startRules: RuleDefsToRecord<T>) {
+  private constructor(startRules: RuleDefs) {
     this.rules = startRules;
   }
 
-  public patchRule<U extends RuleNames<T>, RET, ARGS extends unknown[]>(patch: RuleDef<U, RET, ARGS>):
-  Builder<[...OmitRuleDef<T, U>, RuleDef<U, RET, ARGS>]> {
+  public patchRule<U extends Names, RET, ARGS extends unknown[]>(patch: RuleDef<U, RET, ARGS>):
+  // @ts-expect-error TS2344
+  Builder<Names, Omit<RuleDefs, U> & Record<U, RuleDef<U, RET, ARGS>>> {
     // @ts-expect-error TS2322
     this.rules[patch.name] = patch;
-    return <Builder<[...OmitRuleDef<T, U>, RuleDef<U, RET, ARGS>]>> <unknown> this;
+    // @ts-expect-error TS2344
+    return <Builder<Names, Omit<RuleDefs, U> & Record<U, RuleDef<U, RET, ARGS>>>> this;
   }
 
   public addRuleRedundant<U extends string, RET, ARGS extends undefined[]>(rule: RuleDef<U, RET, ARGS>):
-  Builder<U extends RuleNames<T> ? T : [...T, RuleDef<U, RET, ARGS>]> {
+  // @ts-expect-error TS2536
+  Builder<Names | U, RuleDefs & Record<U, RuleDef<U, RET, ARGS>>> {
     const rules = <Record<string, RuleDef>> this.rules;
     if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
       throw new Error(`Rule ${rule.name} already exists in the builder`);
@@ -522,34 +538,43 @@ export class Builder<T extends RuleDef[]> {
 
     // @ts-expect-error TS2536
     this.rules[rule.name] = rule;
-    return <Builder<U extends RuleNames<T> ? T : [...T, RuleDef<U, RET, ARGS>]>> <unknown> this;
+    // @ts-expect-error TS2536
+    return <Builder<Names | U, RuleDefs | Record<U, RuleDef<U, RET, ARGS>>>> <unknown> this;
   }
 
-  public addRule<U extends string, RET, ARGS extends undefined[]>(
-    rule: RuleCheckOverlap<RuleDef<U, RET, ARGS>, T>,
-  ): Builder<[...T, RuleDef<U, RET, ARGS>]> {
-    return <Builder<[...T, RuleDef<U, RET, ARGS>]>> this.addRuleRedundant(rule);
+  public addRule<U extends string, RET, ARGS extends unknown[]>(
+    rule: CheckOverlap<U, Names, RuleDef<U, RET, ARGS>>,
+    // @ts-expect-error TS2536
+  ): Builder<Names | U, RuleDefs & Record<U, RuleDef<U, RET, ARGS>>> {
+    return this.addRuleRedundant(rule);
   }
 
   public addMany<U extends RuleDef[]>(
-    ...rules: RuleDefsCheckOverlap<U, T>
-  ):
-    Builder<[...T, ...U]> {
-    const newRules: Record<string, RuleDef> = {};
-    for (const rule of rules) {
-      newRules[rule.name] = rule;
-    }
-    this.rules = { ...this.rules, ...newRules };
-    return <Builder<[...T, ...U]>> <unknown> this;
+    ...rules: CheckOverlap<RuleNames<U>, Names, U>
+    // @ts-expect-error TS2536
+  ): Builder<Names | RuleNames<U>, RuleDefs & RuleDefsToRecord<U>> {
+    this.rules = { ...this.rules, ...listToRuleDefMap(rules) };
+    // @ts-expect-error TS2536
+    return <Builder<Names | RuleNames<U>, RuleDefs & RuleDefsToRecord<U>>> <unknown> this;
   }
 
-  public deleteRule<U extends RuleNames<T>>(ruleName: U): Builder<OmitRuleDef<T, U>> {
+  public deleteRule<U extends Names>(ruleName: U):
+  // @ts-expect-error TS2536
+  Builder<Exclude<Names, U>, Omit<RuleDefs, U>> {
     delete this.rules[ruleName];
-    return <Builder<OmitRuleDef<T, U>>> <unknown> this;
+    // @ts-expect-error TS2536
+    return <Builder<Exclude<Names, U>, Omit<RuleDefs, U>>> <unknown> this;
   }
 
-  public merge<U extends RuleDef[], OW extends RuleDef[]>(builder: Builder<U>, overridingRules: OW):
-  Builder<[...OmitRuleDef<T, RuleNames<OW>>, ...OmitRuleDef<U, RuleNames<OW> | RuleNames<T>>, ...OW]> {
+  public merge<OtherNames extends string, OtherRules extends RuleDefMap<OtherNames>, OW extends RuleDef[]>(
+    builder: Builder<OtherNames, OtherRules>,
+    overridingRules: OW,
+  ):
+    Builder<
+      Names | OtherNames | RuleNames<OW>,
+      // @ts-expect-error TS2536
+      Omit<RuleDefs, RuleNames<OW>> & Omit<OtherRules, RuleNames<OW>> & RuleDefsToRecord<OW>
+    > {
     // Assume the other grammar is bigger than yours. So start from that one and add this one
     const otherRules: Record<string, RuleDef> = { ...builder.rules };
     const myRules: Record<string, RuleDef> = this.rules;
@@ -582,7 +607,7 @@ export class Builder<T extends RuleDef[]> {
     tokenVocabulary: TokenType[];
     parserConfig?: IParserConfig;
     lexerConfig?: ILexerConfig;
-  }, context: Partial<ImplArgs['context']> = {}): RuleDefsToSelfSufficientParser<T> {
+  }, context: Partial<ImplArgs['context']> = {}): RuleDefsToSelfSufficientParser<RuleNames> {
     const lexer: Lexer = new Lexer(tokenVocabulary, {
       positionTracking: 'onlyOffset',
       recoveryEnabled: false,
@@ -591,7 +616,7 @@ export class Builder<T extends RuleDef[]> {
       ...lexerConfig,
     });
     const parser = this.consume({ tokenVocabulary, config: parserConfig }, context);
-    const selfSufficientParser: Partial<RuleDefsToSelfSufficientParser<T>> = {};
+    const selfSufficientParser: Partial<RuleDefsToSelfSufficientParser<RuleNames>> = {};
     for (const rule of Object.values(<Record<string, RuleDef>> this.rules)) {
       // @ts-expect-error TS7053
       selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {
@@ -601,13 +626,13 @@ export class Builder<T extends RuleDef[]> {
         return parser[rule.name](...args);
       };
     }
-    return <RuleDefsToSelfSufficientParser<T>> selfSufficientParser;
+    return selfSufficientParser;
   }
 
   public consume({ tokenVocabulary, config = {}}: {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
-  }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & RuleDefsToParserMethods<T> {
+  }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & RuleDefsToParserMethods<RuleNames> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       private readonly initialParseContext: ImplArgs['context'];
@@ -846,6 +871,6 @@ export class Builder<T extends RuleDef[]> {
         };
       }
     }
-    return <EmbeddedActionsParser & RuleDefsToParserMethods<T>><unknown> new MyParser();
+    return <EmbeddedActionsParser & RuleDefsToParserMethods<RuleNames>><unknown> new MyParser();
   }
 }

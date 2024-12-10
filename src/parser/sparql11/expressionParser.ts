@@ -185,7 +185,5 @@ const builtInPatch: typeof builtInCall = {
   impl: ({ OR, SUBRULE }) => () => OR(builtInCallList(SUBRULE).slice(0, -2)),
 };
 
-type ExpressionParserBuilderArgs = [...typeof rulesNoBuiltIn, typeof builtInPatch];
-
-export const expressionParserBuilder: Builder<ExpressionParserBuilderArgs> = Builder.createBuilder(rulesNoBuiltIn)
+export const expressionParserBuilder = Builder.createBuilder(rulesNoBuiltIn)
   .addRule(builtInPatch);
