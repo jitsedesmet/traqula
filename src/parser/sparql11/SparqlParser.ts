@@ -12,6 +12,8 @@ import {
 } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
 import type {
+  IriTerm,
+  PropertyPath,
   Query,
   SparqlParser as ISparqlParser,
   SparqlQuery,
@@ -93,6 +95,7 @@ export const sparqlParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
 export class SparqlParser implements ISparqlParser {
   private readonly parser: {
     queryOrUpdate: (input: string) => SparqlQuery;
+    path: (input: string) => PropertyPath | IriTerm;
   };
 
   private readonly dataFactory: DataFactory;

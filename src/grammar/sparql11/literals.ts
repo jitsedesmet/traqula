@@ -1,5 +1,6 @@
 import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
+import type { RuleListToObject } from '../builder/builderTypes';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJsTypes';
 import { resolveIRI } from '../utils.js';
@@ -28,6 +29,9 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = <const> {
     return context.dataFactory.literal(value, languageOrDatatype);
   },
 };
+
+const a = <const> [ rdfLiteral ];
+type test = RuleListToObject<typeof a>;
 
 /**
  * [[130]](https://www.w3.org/TR/sparql11-query/#rNumericLiteral)

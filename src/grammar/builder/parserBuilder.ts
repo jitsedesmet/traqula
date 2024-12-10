@@ -1,23 +1,30 @@
 /* eslint-disable ts/ban-ts-comment */
 import type { ILexerConfig, IParserConfig } from '@chevrotain/types';
-import type { ParserMethod, TokenType, TokenVocabulary } from 'chevrotain';
+import type { TokenType, TokenVocabulary } from 'chevrotain';
 import { EmbeddedActionsParser, Lexer } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
-import type { CheckOverlap, RuleDefMap, RuleDefsToRecord, RuleNames } from './builderTypes.js';
+import type {
+  CheckOverlap,
+  RuleDefMap,
+  ParserFromRules,
+  RuleListToObject,
+  RuleNamesFromList,
+  ParseMethodsFromRules,
+} from './builderTypes.js';
 import type { CstDef, ImplArgs, RuleDef } from './ruleDefTypes.js';
 
-function listToRuleDefMap<T extends readonly RuleDef[]>(rules: T): RuleDefsToRecord<T> {
+function listToRuleDefMap<T extends readonly RuleDef[]>(rules: T): RuleListToObject<T> {
   const newRules: Record<string, RuleDef> = {};
   for (const rule of rules) {
     newRules[rule.name] = rule;
   }
-  return <RuleDefsToRecord<T>>newRules;
+  return <RuleListToObject<T>>newRules;
 }
 
 export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
   public static createBuilder<
     Rules extends readonly RuleDef[] = RuleDef[],
-    Names extends string = RuleNames<Rules>,
+    Names extends string = RuleNamesFromList<Rules>,
     // @ts-expect-error TS2344
     RuleDefs extends RuleDefMap<Names> = RuleDefsToRecord<Rules>,
 // eslint-disable-next-line antfu/consistent-list-newline
@@ -37,7 +44,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
 
   public patchRule<U extends Names, RET, ARGS extends unknown[]>(patch: RuleDef<U, RET, ARGS>):
   // @ts-expect-error TS2344
-  Builder<Names, Omit<RuleDefs, U> & Record<U, RuleDef<U, RET, ARGS>>> {
+  Builder<Names, {[Key in Names]: Key extends U ? RuleDef<Key, RET, ARGS> : RuleDefs[Key] }> {
     // @ts-expect-error TS2322
     this.rules[patch.name] = patch;
     // @ts-expect-error TS2344
@@ -46,12 +53,11 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
 
   public addRuleRedundant<U extends string, RET, ARGS extends undefined[]>(rule: RuleDef<U, RET, ARGS>):
   // @ts-expect-error TS2344
-  Builder<Names | U, {[K in Names | U]: K extends Names ? RuleDefs[K] : RuleDef<K, RET, ARGS> }> {
+  Builder<Names | U, {[K in Names | U]: K extends U ? RuleDef<K, RET, ARGS> : RuleDefs[K] }> {
     const rules = <Record<string, RuleDef>> this.rules;
     if (rules[rule.name] !== undefined && rules[rule.name] !== rule) {
       throw new Error(`Rule ${rule.name} already exists in the builder`);
     }
-
     // @ts-expect-error TS2536
     this.rules[rule.name] = rule;
     // @ts-expect-error TS2536
@@ -61,17 +67,17 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
   public addRule<U extends string, RET, ARGS extends unknown[]>(
     rule: CheckOverlap<U, Names, RuleDef<U, RET, ARGS>>,
     // @ts-expect-error TS2536
-  ): Builder<Names | U, {[K in Names | U]: K extends Names ? RuleDefs[K] : RuleDef<K, RET, ARGS> }> {
+  ): Builder<Names | U, {[K in Names | U]: K extends U ? RuleDef<K, RET, ARGS> : RuleDefs[K] }> {
     return this.addRuleRedundant(rule);
   }
 
   public addMany<U extends RuleDef[]>(
-    ...rules: CheckOverlap<RuleNames<U>, Names, U>
+    ...rules: CheckOverlap<RuleNamesFromList<U>, Names, U>
     // @ts-expect-error TS2536
-  ): Builder<Names | RuleNames<U>, RuleDefs & RuleDefsToRecord<U>> {
+  ): Builder<Names | RuleNamesFromList<U>, RuleDefs & RuleListToObject<U>> {
     this.rules = { ...this.rules, ...listToRuleDefMap(rules) };
     // @ts-expect-error TS2536
-    return <Builder<Names | RuleNames<U>, RuleDefs & RuleDefsToRecord<U>>> <unknown> this;
+    return <Builder<Names | RuleNamesFromList<U>, RuleDefs & RuleListToObject<U>>> <unknown> this;
   }
 
   public deleteRule<U extends Names>(ruleName: U):
@@ -87,11 +93,11 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     overridingRules: OW,
   ):
     Builder<
-      Names | OtherNames | RuleNames<OW>,
+      Names | OtherNames | RuleNamesFromList<OW>,
       // @ts-expect-error TS2344
-      {[K in Names | OtherNames | RuleNames<OW>]: K extends Names | OtherNames ? (
+      {[K in Names | OtherNames | RuleNamesFromList<OW>]: K extends Names | OtherNames ? (
         K extends Names ? RuleDefs[K] : (K extends OtherNames ? OtherRules[K] : never)
-      ) : RuleDefsToRecord<OW>[K] }
+      ) : (K extends keyof RuleListToObject<OW> ? RuleListToObject<OW>[K] : never) }
     > {
     // Assume the other grammar is bigger than yours. So start from that one and add this one
     const otherRules: Record<string, RuleDef> = { ...builder.rules };
@@ -125,9 +131,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     tokenVocabulary: TokenType[];
     parserConfig?: IParserConfig;
     lexerConfig?: ILexerConfig;
-  }, context: Partial<ImplArgs['context']> = {}): {
-      [K in Names]: RuleDefs[K] extends RuleDef<K, infer RET, infer ARGS> ? (...args: ARGS) => RET : never
-    } {
+  }, context: Partial<ImplArgs['context']> = {}): ParserFromRules<Names, RuleDefs> {
     const lexer: Lexer = new Lexer(tokenVocabulary, {
       positionTracking: 'onlyOffset',
       recoveryEnabled: false,
@@ -136,9 +140,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
       ...lexerConfig,
     });
     const parser = this.consume({ tokenVocabulary, config: parserConfig }, context);
-    const selfSufficientParser: Partial<{
-      [K in Names]: RuleDefs[K] extends RuleDef<K, infer RET, infer ARGS> ? (...args: ARGS) => RET : never
-    }> = {};
+    const selfSufficientParser: Partial<ParserFromRules<Names, RuleDefs>> = {};
     // eslint-disable-next-line ts/no-unnecessary-type-assertion
     for (const rule of <RuleDef<Names>[]> Object.values(this.rules)) {
       // @ts-expect-error TS7053
@@ -149,17 +151,13 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
         return parser[rule.name](...args);
       };
     }
-    return <{
-      [K in Names]: RuleDefs[K] extends RuleDef<K, infer RET, infer ARGS> ? (...args: ARGS) => RET : never
-    }> selfSufficientParser;
+    return <ParserFromRules<Names, RuleDefs>> selfSufficientParser;
   }
 
   public consume({ tokenVocabulary, config = {}}: {
     tokenVocabulary: TokenVocabulary;
     config?: IParserConfig;
-  }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & {
-    [K in Names]: RuleDefs[K] extends RuleDef<K, infer RET, infer ARGS> ? ParserMethod<ARGS, RET> : never
-  } {
+  }, context: Partial<ImplArgs['context']> = {}): EmbeddedActionsParser & ParseMethodsFromRules<Names, RuleDefs> {
     const rules = this.rules;
     class MyParser extends EmbeddedActionsParser {
       private readonly initialParseContext: ImplArgs['context'];
@@ -398,8 +396,6 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
         };
       }
     }
-    return <EmbeddedActionsParser & {
-      [K in Names]: RuleDefs[K] extends RuleDef<K, infer RET, infer ARGS> ? ParserMethod<ARGS, RET> : never
-    }><unknown> new MyParser();
+    return <EmbeddedActionsParser & ParseMethodsFromRules<Names, RuleDefs>><unknown> new MyParser();
   }
 }

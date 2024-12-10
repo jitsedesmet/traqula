@@ -19,6 +19,8 @@ export type RuleDef<
   impl: (def: ImplArgs) => (...args: ArrayElementsUndefinable<ParamType>) => ReturnType;
 };
 
+export type RuleDefReturn<T> = T extends RuleDef<any, infer Ret, any> ? Ret : never;
+
 type ArrayElementsUndefinable<ArrayType extends any[]> =
   ArrayType extends [infer First, ...infer Rest] ? [First | undefined, ...ArrayElementsUndefinable<Rest>] : [];
 

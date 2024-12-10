@@ -1,7 +1,6 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../../lexer/sparql11/index.js';
-import type { RuleDefReturn } from '../../builder/builderTypes';
-import type { RuleDef } from '../../builder/ruleDefTypes.js';
+import type { RuleDef, RuleDefReturn } from '../../builder/ruleDefTypes.js';
 import type {
   ClearDropOperation,
   GraphOrDefault,
