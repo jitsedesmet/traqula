@@ -1,7 +1,7 @@
 import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../../lexer/sparql11/index.js';
-import type { ImplArgs, RuleDef } from '../parserBuilder.js';
-import type { AggregateExpression, Expression } from '../sparqlJSTypes.js';
+import type { ImplArgs, RuleDef } from '../builder/ruleDefTypes.js';
+import type { AggregateExpression, Expression } from '../sparqlJsTypes.js';
 import {
   unCapitalize,
 } from '../utils.js';

@@ -1,5 +1,5 @@
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type {
   BindPattern,
   BlankTerm,
@@ -19,7 +19,7 @@ import type {
   ValuePatternRow,
   ValuesPattern,
   VariableTerm,
-} from '../sparqlJSTypes.js';
+} from '../sparqlJsTypes';
 import { deGroupSingle } from '../utils.js';
 import { builtInCall } from './builtIn.js';
 import { argList, brackettedExpression, expression } from './expression.js';

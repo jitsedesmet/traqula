@@ -1,4 +1,4 @@
-import type { GroupPattern, Pattern } from './sparqlJSTypes';
+import type { GroupPattern, Pattern } from './sparqlJsTypes';
 
 export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
   return <Uncapitalize<T>> (str.charAt(0).toLowerCase() + str.slice(1));

@@ -1,7 +1,7 @@
 import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
-import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJSTypes.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
+import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJsTypes';
 import { resolveIRI } from '../utils.js';
 
 const uriBooleanType = 'http://www.w3.org/2001/XMLSchema#boolean';

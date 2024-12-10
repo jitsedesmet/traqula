@@ -1,6 +1,6 @@
 import { DataFactory } from 'rdf-data-factory';
-import type { ImplArgs, RuleDef } from '../../grammar/parserBuilder.js';
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder.js';
+import type { ImplArgs, RuleDef } from '../../grammar/builder/ruleDefTypes.js';
 import { prologue } from '../../grammar/sparql11/general.js';
 import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import {
@@ -16,7 +16,7 @@ import type {
   SparqlParser as ISparqlParser,
   SparqlQuery,
   Update,
-} from '../../grammar/sparqlJSTypes.js';
+} from '../../grammar/sparqlJsTypes';
 import * as l from '../../lexer/sparql11/index.js';
 import { allTokens } from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';

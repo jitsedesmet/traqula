@@ -1,8 +1,8 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
 
-import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from '../sparqlJSTypes.js';
+import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from '../sparqlJsTypes';
 import { iri } from './literals.js';
 
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';

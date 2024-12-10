@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import type { builtInCall } from '../../grammar/sparql11/builtIn.js';
 import {
   aggregate,

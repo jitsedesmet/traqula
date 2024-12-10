@@ -1,6 +1,7 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../../lexer/sparql11/index.js';
-import type { RuleDef, RuleDefReturn } from '../../parserBuilder.js';
+import type { RuleDefReturn } from '../../builder/builderTypes';
+import type { RuleDef } from '../../builder/ruleDefTypes.js';
 import type {
   ClearDropOperation,
   GraphOrDefault,
@@ -12,7 +13,7 @@ import type {
   Quads,
   Update,
   UpdateOperation,
-} from '../../sparqlJSTypes.js';
+} from '../../sparqlJsTypes';
 import { unCapitalize } from '../../utils.js';
 import { prologue, triplesTemplate, varOrIri } from '../general.js';
 import { iri } from '../literals.js';

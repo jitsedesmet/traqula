@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import { builtInCall, existsFunc, notExistsFunc } from '../../grammar/sparql11/builtIn.js';
 import { selectClause, subSelect, valuesClause } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import {

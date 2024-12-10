@@ -1,4 +1,4 @@
-import type { Wildcard as IWildcard } from '../grammar/sparqlJSTypes.js';
+import type { Wildcard as IWildcard } from '../grammar/sparqlJsTypes';
 
 // Wildcard constructor
 export class Wildcard implements IWildcard {

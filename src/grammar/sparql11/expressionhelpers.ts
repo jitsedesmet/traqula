@@ -1,8 +1,8 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../lexer/sparql11/index.js';
 import { Wildcard } from '../../misc/Wildcard.js';
-import type { RuleDef } from '../parserBuilder.js';
-import type { Expression, Pattern, VariableTerm } from '../sparqlJSTypes.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
+import type { Expression, Pattern, VariableTerm } from '../sparqlJsTypes';
 import { deGroupSingle, unCapitalize } from '../utils.js';
 import { expression, expressionList } from './expression.js';
 import { var_ } from './general.js';

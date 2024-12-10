@@ -1,6 +1,6 @@
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
-import type { Expression, Grouping, Ordering, SelectQuery } from '../sparqlJSTypes.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
+import type { Expression, Grouping, Ordering, SelectQuery } from '../sparqlJsTypes';
 import { builtInCall } from './builtIn.js';
 import { brackettedExpression, expression } from './expression.js';
 import { var_ } from './general.js';

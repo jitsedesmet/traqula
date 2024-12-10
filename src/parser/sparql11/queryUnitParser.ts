@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import {
   datasetClause,
   defaultGraphClause,

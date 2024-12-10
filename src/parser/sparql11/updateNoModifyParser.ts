@@ -1,11 +1,12 @@
-import type { RuleDef, RuleDefsToRecord, RuleNames } from '../../grammar/parserBuilder.js';
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general.js';
 import { iri, prefixedName } from '../../grammar/sparql11/literals.js';
 import type {
   update1,
 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
 import {
+  quadPattern,
+  quadsNotTriples,
   add,
   clear,
   copy,
@@ -75,19 +76,28 @@ const rulesNoUpdate1 = <const>[
 export const updateNoModifyParserBuilder = Builder
   .createBuilder(rulesNoUpdate1)
   .addRule(update1Patch)
-  .merge(triplesTemplateParserBuilder, <const> []);
-  // .addRule(quadPattern)
-  // .addRule(quadsNotTriples);
+  .merge(triplesTemplateParserBuilder, <const> [])
+  .addRule(quadPattern)
+  .addRule(quadsNotTriples);
 
-export type A = typeof triplesTemplateParserBuilder;
-export type B = A extends Builder<infer T, any> ? T : never;
-export const a = <const> [];
-export type C = B | RuleNames<typeof a>;
-export type D = RuleDefsToRecord<typeof a>;
-export type E = A extends Builder<any, infer U> ? U : never;
-export type F = Omit<E, RuleNames<typeof a>>;
-export type G = Omit<E, 'triplesTemplate'>;
-export type H = E | Record<'triplesTemplate', RuleDef>;
-// Export type G = Exclude<E, Record<, any>>
-
-export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder);
+// Export type A = typeof triplesTemplateParserBuilder;
+// export type B = A extends Builder<infer T, any> ? T : never;
+// export const a = <const> [];
+// export type C = B | RuleNames<typeof a>;
+// export type D = RuleDefsToRecord<typeof a>;
+// export type E = A extends Builder<any, infer U> ? U : never;
+// export type F = Omit<E, RuleNames<typeof a>>;
+// export type G = Omit<E, 'triplesTemplate'>;
+// export type H = E & Record<'triplesTemplate', never>;
+// const a2: G = <G> <unknown> null;
+// a2.string = null;
+//
+// export type I = typeof updateNoModifyParserBuilder;
+// export type J = I extends Builder<infer T, any> ? T : never;
+// export type K = I extends Builder<any, infer U> ? U : never;
+//
+// // Export type G = Exclude<E, Record<, any>>
+// const a1: K = <any> null;
+// a1.quadPattern = null;
+//
+// export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder);

@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general.js';
 import {
   blankNode,
@@ -49,9 +49,9 @@ const rules = <const> [
   object,
   collection,
   blankNodePropertyList,
-  graphNode,
 ];
 
 export type TriplesTemplateParserArgs = [...typeof rules];
 
-export const triplesTemplateParserBuilder = Builder.createBuilder(rules);
+export const triplesTemplateParserBuilder = Builder.createBuilder(rules)
+  .addRule(graphNode);

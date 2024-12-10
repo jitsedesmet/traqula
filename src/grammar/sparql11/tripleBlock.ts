@@ -1,7 +1,7 @@
 import type { BlankNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
-import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJSTypes.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
+import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJsTypes';
 import { var_, varOrTerm, verb } from './general.js';
 import { path } from './propertyPaths.js';
 

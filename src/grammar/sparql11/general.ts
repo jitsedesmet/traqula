@@ -1,6 +1,6 @@
 import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../parserBuilder.js';
-import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJSTypes.js';
+import type { RuleDef } from '../builder/ruleDefTypes.js';
+import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJsTypes';
 import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
 import { triplesSameSubject } from './tripleBlock.js';
 

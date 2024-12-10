@@ -1,7 +1,7 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import type { builtInCall } from '../../grammar/sparql11/builtIn.js';
 import { builtInAdjust, existingBuildInCall } from '../../grammar/sparql11+adjust/builtIn.js';
-import type { Expression } from '../../grammar/sparqlJSTypes.js';
+import type { Expression } from '../../grammar/sparqlJsTypes';
 import { sparqlParserBuilder } from '../sparql11/SparqlParser.js';
 
 const builtInPatch: typeof builtInCall = {

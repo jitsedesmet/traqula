@@ -1,6 +1,6 @@
 import * as l from '../../../lexer/sparql11/index.js';
 import { Wildcard } from '../../../misc/Wildcard.js';
-import type { ImplArgs, RuleDef } from '../../parserBuilder.js';
+import type { RuleDef, ImplArgs } from '../../builder/ruleDefTypes.js';
 import type {
   AskQuery,
   ConstructQuery,
@@ -14,8 +14,7 @@ import type {
   Variable,
   VariableExpression,
   VariableTerm,
-} from '../../sparqlJSTypes.js';
-
+} from '../../sparqlJsTypes';
 import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
 import { expression } from '../expression.js';
 import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';

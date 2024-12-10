@@ -1,4 +1,4 @@
-import { Builder } from '../../grammar/parserBuilder.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
 import { graphTerm, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general.js';
 import {
   blankNode,

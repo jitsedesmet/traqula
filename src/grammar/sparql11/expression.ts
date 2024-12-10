@@ -1,6 +1,6 @@
 import * as l from '../../lexer/sparql11/index.js';
-import type { ImplArgs, RuleDef } from '../parserBuilder.js';
-import type { Expression, IriTerm } from '../sparqlJSTypes.js';
+import type { RuleDef, ImplArgs } from '../builder/ruleDefTypes.js';
+import type { Expression, IriTerm } from '../sparqlJsTypes';
 import { builtInCall } from './builtIn.js';
 import {
   var_,
