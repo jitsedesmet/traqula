@@ -6,6 +6,7 @@
       "es2021",
       "dom"
     ],
+    "types": ["vitest/globals"],
     "module": "ES2020",
     "moduleResolution": "Bundler",
 
@@ -19,13 +20,10 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
-    //  From Jitse
-    //  "noImplicitAny": false,
 
     "esModuleInterop": true
   },
   "include": [
-    "bench/**/*.ts",
     "src/**/*.ts",
     "test/**/*.ts"
   ],

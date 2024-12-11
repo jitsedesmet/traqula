@@ -17,8 +17,8 @@
     "lint-fix": "eslint . --fix",
     "build & run ESM": "yarn build && node src/index.js",
     "build & run CJS": "yarn build && node out/index.cjs",
-    "test": "yarn build && vitest run",
-    "bench": "yarn build && node bench/benchmark.js"
+    "test": "yarn build && vitest test --run",
+    "bench": "yarn build && vitest bench --run"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",
@@ -32,7 +32,6 @@
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "sparqljs": "^3.7.3",
-    "tinybench": "^3.0.7",
     "ts-jest": "^29.2.5",
     "typescript": "^5.3.3",
     "vitest": "^2.1.8"
