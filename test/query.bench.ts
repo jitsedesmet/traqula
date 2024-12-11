@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable test/consistent-test-it */
 import { Parser } from 'sparqljs';
 import { describe, bench } from 'vitest';
 import { SparqlParser } from '../src/parser/sparql11/SparqlParser.js';
@@ -16,10 +16,10 @@ SELECT ?president ?party ?page WHERE {
 }
 `;
 
-  bench('TRAQULA parse', () => {
-    const res = newParser.parse(query);
+  bench('traqula parse', () => {
+    newParser.parse(query);
   });
   bench('sparqljs', () => {
-    const res = oldParser.parse(query);
+    oldParser.parse(query);
   });
 });
