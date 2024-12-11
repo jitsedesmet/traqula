@@ -135,7 +135,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     const lexer: Lexer = new Lexer(tokenVocabulary, {
       positionTracking: 'onlyStart',
       recoveryEnabled: false,
-      skipValidations: true,
+      // SkipValidations: true,
       ensureOptimizations: true,
       ...lexerConfig,
     });
@@ -150,7 +150,8 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
         parser.input = lexResult.tokens;
         const result = parser[rule.name](...args);
         if (parser.errors.length > 0) {
-          throw new Error(`Parse error on line ${parser.errors[0].token.startLine}`);
+          throw new Error(`Parse error on line ${parser.errors.map(x => x.token.startLine).join(', ')}
+${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         }
         return result;
       };
