@@ -30,6 +30,24 @@ describe('a SPARQL parser', () => {
     }
   });
 
+  describe('confirms to SPARQL-PATH tests', () => {
+    const prefix = './test/statics/paths';
+    const statics = fs.readdirSync(prefix);
+    const parser = new SparqlParser({ prefixes: { ex: 'http://example.org/' }});
+    for (const file of statics) {
+      if (file.endsWith('.sparql')) {
+        it(`should parse ${file}`, async({ expect }) => {
+          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
+          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
+          const json: unknown = JSON.parse(result);
+
+          const res = parser.parsePath(query);
+          expect(res).toEqualParsedQuery(json);
+        });
+      }
+    }
+  });
+
   function testErrorousQuery(testName: string, query: string, errorMsg: string): void {
     it(`should throw an error on ${testName}`, ({ expect }) => {
       let error: any = null;

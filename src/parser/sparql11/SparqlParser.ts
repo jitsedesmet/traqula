@@ -117,4 +117,15 @@ export class SparqlParser implements ISparqlParser {
   public parse(query: string): SparqlQuery {
     return this.parser.queryOrUpdate(query);
   }
+
+  public parsePath(query: string): (PropertyPath & { prefixes: object }) | IriTerm {
+    const result = this.parser.path(query);
+    if ('type' in result) {
+      return {
+        ...result,
+        prefixes: {},
+      };
+    }
+    return result;
+  }
 }
