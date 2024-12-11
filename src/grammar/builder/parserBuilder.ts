@@ -133,7 +133,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     lexerConfig?: ILexerConfig;
   }, context: Partial<ImplArgs['context']> = {}): ParserFromRules<Names, RuleDefs> {
     const lexer: Lexer = new Lexer(tokenVocabulary, {
-      positionTracking: 'onlyOffset',
+      positionTracking: 'onlyStart',
       recoveryEnabled: false,
       skipValidations: true,
       ensureOptimizations: true,
@@ -148,7 +148,11 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
         const lexResult = lexer.tokenize(input);
         parser.reset();
         parser.input = lexResult.tokens;
-        return parser[rule.name](...args);
+        const result = parser[rule.name](...args);
+        if (parser.errors.length > 0) {
+          throw new Error(`Parse error on line ${parser.errors[0].token.startLine}`);
+        }
+        return result;
       };
     }
     return <ParserFromRules<Names, RuleDefs>> selfSufficientParser;
