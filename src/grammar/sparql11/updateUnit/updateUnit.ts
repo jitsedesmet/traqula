@@ -403,7 +403,7 @@ export const quadPattern: RuleDef<'quadPattern', Quads[]> = <const> {
   name: 'quadPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
-    const val = SUBRULE(quads);
+    const val = SUBRULE(quads, true);
     CONSUME(l.symbols.RCurly);
     return val;
   },
@@ -414,19 +414,24 @@ export const quadPattern: RuleDef<'quadPattern', Quads[]> = <const> {
  */
 export const quadData: RuleDef<'quadData', Quads[]> = <const> {
   name: 'quadData',
-  impl: quadPattern.impl,
+  impl: ({ SUBRULE, CONSUME }) => () => {
+    CONSUME(l.symbols.LCurly);
+    const val = SUBRULE(quads, false);
+    CONSUME(l.symbols.RCurly);
+    return val;
+  },
 };
 
 /**
  * [[50]](https://www.w3.org/TR/sparql11-query/#rQuads)
  */
-export const quads: RuleDef<'quads', Quads[]> = <const> {
+export const quads: RuleDef<'quads', Quads[], [boolean]> = <const> {
   name: 'quads',
-  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
+  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => (allowVariables) => {
     const quads: Quads[] = [];
 
     OPTION1(() => {
-      const triples = SUBRULE1(triplesTemplate);
+      const triples = SUBRULE1(triplesTemplate, allowVariables);
       quads.push({
         type: 'bgp',
         triples,
@@ -434,10 +439,10 @@ export const quads: RuleDef<'quads', Quads[]> = <const> {
     });
 
     MANY(() => {
-      quads.push(SUBRULE(quadsNotTriples));
+      quads.push(SUBRULE(quadsNotTriples, allowVariables));
       OPTION2(() => CONSUME(l.symbols.dot));
       OPTION3(() => {
-        const triples = SUBRULE2(triplesTemplate);
+        const triples = SUBRULE2(triplesTemplate, allowVariables);
         quads.push({
           type: 'bgp',
           triples,
@@ -452,13 +457,13 @@ export const quads: RuleDef<'quads', Quads[]> = <const> {
 /**
  * [[51]](https://www.w3.org/TR/sparql11-query/#rQuadsNotTriples)
  */
-export const quadsNotTriples: RuleDef<'quadsNotTriples', GraphQuads> = <const> {
+export const quadsNotTriples: RuleDef<'quadsNotTriples', GraphQuads, [boolean]> = <const> {
   name: 'quadsNotTriples',
-  impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
+  impl: ({ SUBRULE, CONSUME, OPTION }) => (allowVariables) => {
     CONSUME(l.graph.graph);
-    const name = SUBRULE(varOrIri);
+    const name = SUBRULE(varOrIri, allowVariables);
     CONSUME(l.symbols.LCurly);
-    const triples = OPTION(() => SUBRULE(triplesTemplate)) ?? [];
+    const triples = OPTION(() => SUBRULE(triplesTemplate, allowVariables)) ?? [];
     CONSUME(l.symbols.RCurly);
 
     return {
