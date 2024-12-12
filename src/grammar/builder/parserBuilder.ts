@@ -183,6 +183,8 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         this.initialParseContext = {
           dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
           baseIRI: undefined,
+          canParseVars: true,
+          canParseBlankNodes: true,
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},
         };

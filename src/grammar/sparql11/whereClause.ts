@@ -133,7 +133,7 @@ export const graphGraphPattern: RuleDef<'graphGraphPattern', GraphPattern> = <co
   name: 'graphGraphPattern',
   impl: ({ ACTION, SUBRULE, CONSUME }) => () => {
     CONSUME(l.graph.graph);
-    const name = SUBRULE(varOrIri, true);
+    const name = SUBRULE(varOrIri);
     const group = SUBRULE(groupGraphPattern);
 
     return ACTION(() => ({
@@ -152,7 +152,7 @@ export const serviceGraphPattern: RuleDef<'serviceGraphPattern', ServicePattern>
   impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.service);
     const silent = Boolean(OPTION(() => CONSUME(l.silent)));
-    const name = SUBRULE(varOrIri, true);
+    const name = SUBRULE(varOrIri);
     const group = SUBRULE(groupGraphPattern);
 
     return {

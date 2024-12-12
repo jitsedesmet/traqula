@@ -69,16 +69,16 @@ export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = <const> {
 /**
  * [[52]](https://www.w3.org/TR/sparql11-query/#rTriplesTemplate)
  */
-export const triplesTemplate: RuleDef<'triplesTemplate', Triple[], [boolean]> = <const> {
+export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = <const> {
   name: 'triplesTemplate',
-  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => (allowVariables) => {
+  impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];
 
-    triples.push(SUBRULE(triplesSameSubject, allowVariables));
+    triples.push(SUBRULE(triplesSameSubject));
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {
-        triples.push(SUBRULE(triplesTemplate, allowVariables));
+        triples.push(SUBRULE(triplesTemplate));
       });
     });
 
@@ -89,10 +89,10 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[], [boolean]> = 
 /**
  * [[78]](https://www.w3.org/TR/sparql11-query/#rVerb)
  */
-export const verb: RuleDef<'verb', VariableTerm | IriTerm, [boolean]> = <const> {
+export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
   name: 'verb',
-  impl: ({ SUBRULE, CONSUME, OR, context }) => allowVariables => OR([
-    { ALT: () => SUBRULE(varOrIri, allowVariables) },
+  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR([
+    { ALT: () => SUBRULE(varOrIri) },
     {
       ALT: () => {
         CONSUME(l.a);
@@ -105,10 +105,10 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm, [boolean]> = <const> 
 /**
  * [[106]](https://www.w3.org/TR/sparql11-query/#rVarOrTerm)
  */
-export const varOrTerm: RuleDef<'varOrTerm', Term, [boolean]> = <const> {
+export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
   name: 'varOrTerm',
-  impl: ({ SUBRULE, OR }) => allowVariables => OR([
-    { GATE: () => Boolean(allowVariables), ALT: () => SUBRULE(var_) },
+  impl: ({ SUBRULE, OR, context }) => () => OR([
+    { GATE: () => context.canParseVars, ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(graphTerm) },
   ]),
 };
@@ -116,10 +116,10 @@ export const varOrTerm: RuleDef<'varOrTerm', Term, [boolean]> = <const> {
 /**
  * [[107]](https://www.w3.org/TR/sparql11-query/#rVarOrIri)
  */
-export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm, [boolean]> = <const> {
+export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = <const> {
   name: 'varOrIri',
-  impl: ({ SUBRULE, OR }) => allowVariables => OR<IriTerm | VariableTerm>([
-    { GATE: () => Boolean(allowVariables), ALT: () => SUBRULE(var_) },
+  impl: ({ SUBRULE, OR, context }) => () => OR<IriTerm | VariableTerm>([
+    { GATE: () => context.canParseVars, ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(iri) },
   ]),
 };
@@ -129,10 +129,18 @@ export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm, [boolean]> = 
  */
 export const var_: RuleDef<'var', VariableTerm> = <const> {
   name: 'var',
-  impl: ({ CONSUME, OR, context }) => () => OR([
-    { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
-    { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
-  ]),
+  impl: ({ ACTION, CONSUME, OR, context }) => () => {
+    const result = OR([
+      { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var1).image.slice(1)) },
+      { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
+    ]);
+    ACTION(() => {
+      if (!context.canParseVars) {
+        throw new Error('Variables are not allowed here');
+      }
+    });
+    return result;
+  },
 };
 
 /**

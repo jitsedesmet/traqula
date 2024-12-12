@@ -30,6 +30,8 @@ export interface ImplArgs extends CstDef {
     dataFactory: DataFactory;
     prefixes: Record<string, string>;
     baseIRI: string | undefined;
+    canParseVars: boolean;
+    canParseBlankNodes: boolean;
   };
 }
 

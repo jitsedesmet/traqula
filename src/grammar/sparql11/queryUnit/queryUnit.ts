@@ -203,7 +203,7 @@ export const constructQuery: RuleDef<'constructQuery', Omit<ConstructQuery, Hand
           const from = extractFromOfDataSetClauses(ACTION, MANY2, SUBRULE2);
           CONSUME(l.where);
           CONSUME(l.symbols.LCurly);
-          const template = OPTION(() => SUBRULE(triplesTemplate, true));
+          const template = OPTION(() => SUBRULE(triplesTemplate));
           CONSUME(l.symbols.RCurly);
           const modifiers = SUBRULE2(solutionModifier);
           const where: Pattern[] = template ?
@@ -237,7 +237,7 @@ export const describeQuery: RuleDef<'describeQuery', Omit<DescribeQuery, Handled
       { ALT: () => {
         const variables: (VariableTerm | IriTerm)[] = [];
         AT_LEAST_ONE(() => {
-          variables.push(SUBRULE(varOrIri, true));
+          variables.push(SUBRULE(varOrIri));
         });
         return variables;
       } },
@@ -309,7 +309,7 @@ export const constructTriples: RuleDef<'constructTriples', Triple[]> = <const> {
   name: 'constructTriples',
   impl: ({ SUBRULE, CONSUME, OPTION1, OPTION2 }) => () => {
     const triples: Triple[][] = [];
-    triples.push(SUBRULE(triplesSameSubject, true));
+    triples.push(SUBRULE(triplesSameSubject));
     OPTION1(() => {
       CONSUME(l.symbols.dot);
       OPTION2(() => {

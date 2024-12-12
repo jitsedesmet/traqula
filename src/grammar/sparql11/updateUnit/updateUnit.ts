@@ -217,6 +217,7 @@ export const insertData: RuleDef<'insertData', InsertDeleteOperation> = <const> 
 export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> {
   name: 'deleteData',
   impl: ({ SUBRULE, CONSUME }) => () => {
+    CONSUME(l.deleteClause);
     CONSUME(l.dataClause);
     const del = SUBRULE(quadData);
     return {
@@ -232,6 +233,7 @@ export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> 
 export const deleteWhere: RuleDef<'deleteWhere', InsertDeleteOperation> = <const> {
   name: 'deleteWhere',
   impl: ({ SUBRULE, CONSUME }) => () => {
+    CONSUME(l.deleteClause);
     CONSUME(l.where);
     const del = SUBRULE(quadPattern);
     return {
@@ -404,7 +406,7 @@ export const quadPattern: RuleDef<'quadPattern', Quads[]> = <const> {
   name: 'quadPattern',
   impl: ({ SUBRULE, CONSUME }) => () => {
     CONSUME(l.symbols.LCurly);
-    const val = SUBRULE(quads, true);
+    const val = SUBRULE(quads);
     CONSUME(l.symbols.RCurly);
     return val;
   },
@@ -415,9 +417,16 @@ export const quadPattern: RuleDef<'quadPattern', Quads[]> = <const> {
  */
 export const quadData: RuleDef<'quadData', Quads[]> = <const> {
   name: 'quadData',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.symbols.LCurly);
-    const val = SUBRULE(quads, false);
+
+    const couldParseVars = context.canParseVars;
+    context.canParseVars = false;
+
+    const val = SUBRULE(quads);
+
+    context.canParseVars = couldParseVars;
+
     CONSUME(l.symbols.RCurly);
     return val;
   },
@@ -426,13 +435,13 @@ export const quadData: RuleDef<'quadData', Quads[]> = <const> {
 /**
  * [[50]](https://www.w3.org/TR/sparql11-query/#rQuads)
  */
-export const quads: RuleDef<'quads', Quads[], [boolean]> = <const> {
+export const quads: RuleDef<'quads', Quads[]> = <const> {
   name: 'quads',
-  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => (allowVariables) => {
+  impl: ({ SUBRULE, CONSUME, MANY, SUBRULE1, SUBRULE2, OPTION1, OPTION2, OPTION3 }) => () => {
     const quads: Quads[] = [];
 
     OPTION1(() => {
-      const triples = SUBRULE1(triplesTemplate, allowVariables);
+      const triples = SUBRULE1(triplesTemplate);
       quads.push({
         type: 'bgp',
         triples,
@@ -440,10 +449,10 @@ export const quads: RuleDef<'quads', Quads[], [boolean]> = <const> {
     });
 
     MANY(() => {
-      quads.push(SUBRULE(quadsNotTriples, allowVariables));
+      quads.push(SUBRULE(quadsNotTriples));
       OPTION2(() => CONSUME(l.symbols.dot));
       OPTION3(() => {
-        const triples = SUBRULE2(triplesTemplate, allowVariables);
+        const triples = SUBRULE2(triplesTemplate);
         quads.push({
           type: 'bgp',
           triples,
@@ -458,13 +467,13 @@ export const quads: RuleDef<'quads', Quads[], [boolean]> = <const> {
 /**
  * [[51]](https://www.w3.org/TR/sparql11-query/#rQuadsNotTriples)
  */
-export const quadsNotTriples: RuleDef<'quadsNotTriples', GraphQuads, [boolean]> = <const> {
+export const quadsNotTriples: RuleDef<'quadsNotTriples', GraphQuads> = <const> {
   name: 'quadsNotTriples',
-  impl: ({ SUBRULE, CONSUME, OPTION }) => (allowVariables) => {
+  impl: ({ SUBRULE, CONSUME, OPTION }) => () => {
     CONSUME(l.graph.graph);
-    const name = SUBRULE(varOrIri, allowVariables);
+    const name = SUBRULE(varOrIri);
     CONSUME(l.symbols.LCurly);
-    const triples = OPTION(() => SUBRULE(triplesTemplate, allowVariables)) ?? [];
+    const triples = OPTION(() => SUBRULE(triplesTemplate)) ?? [];
     CONSUME(l.symbols.RCurly);
 
     return {
