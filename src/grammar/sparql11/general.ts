@@ -153,7 +153,7 @@ export const graphTerm: RuleDef<'graphTerm', Term> = <const> {
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
     { ALT: () => SUBRULE(booleanLiteral) },
-    { ALT: () => SUBRULE(blankNode) },
+    { GATE: () => context.canParseBlankNodes, ALT: () => SUBRULE(blankNode) },
     {
       ALT: () => {
         CONSUME(l.terminals.nil);

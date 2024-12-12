@@ -325,7 +325,7 @@ export interface IGraphNode {
 function graphNodeImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, IGraphNode> {
   return {
     name,
-    impl: ({ SUBRULE, OR }) => () => OR<IGraphNode>([
+    impl: ({ SUBRULE, OR, context }) => () => OR<IGraphNode>([
       {
         ALT: () => {
           const val = SUBRULE(varOrTerm);
@@ -335,7 +335,7 @@ function graphNodeImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<
           };
         },
       },
-      { ALT: () => SUBRULE(allowPaths ? triplesNodePath : triplesNode) },
+      { GATE: () => context.canParseBlankNodes, ALT: () => SUBRULE(allowPaths ? triplesNodePath : triplesNode) },
     ]),
   };
 }

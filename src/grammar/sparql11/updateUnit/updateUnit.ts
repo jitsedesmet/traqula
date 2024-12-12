@@ -216,10 +216,17 @@ export const insertData: RuleDef<'insertData', InsertDeleteOperation> = <const> 
  */
 export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> {
   name: 'deleteData',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.deleteClause);
     CONSUME(l.dataClause);
+
+    const couldParseBlankNodes = context.canParseBlankNodes;
+    context.canParseBlankNodes = false;
+
     const del = SUBRULE(quadData);
+
+    context.canParseBlankNodes = couldParseBlankNodes;
+
     return {
       updateType: 'delete',
       delete: del,
@@ -232,10 +239,17 @@ export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> 
  */
 export const deleteWhere: RuleDef<'deleteWhere', InsertDeleteOperation> = <const> {
   name: 'deleteWhere',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.deleteClause);
     CONSUME(l.where);
+
+    const couldParseBlankNodes = context.canParseBlankNodes;
+    context.canParseBlankNodes = false;
+
     const del = SUBRULE(quadPattern);
+
+    context.canParseBlankNodes = couldParseBlankNodes;
+
     return {
       updateType: 'deletewhere',
       delete: del,
@@ -300,9 +314,17 @@ export const modify: RuleDef<'modify', UpdateOperation> = <const> {
  */
 export const deleteClause: RuleDef<'deleteClause', Quads[]> = <const> {
   name: 'deleteClause',
-  impl: ({ SUBRULE, CONSUME }) => () => {
+  impl: ({ SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.deleteClause);
-    return SUBRULE(quadPattern);
+
+    const couldParseBlankNodes = context.canParseBlankNodes;
+    context.canParseBlankNodes = false;
+
+    const del = SUBRULE(quadPattern);
+
+    context.canParseBlankNodes = couldParseBlankNodes;
+
+    return del;
   },
 };
 

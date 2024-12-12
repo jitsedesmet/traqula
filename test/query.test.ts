@@ -65,11 +65,6 @@ describe('a SPARQL parser', () => {
 
   it('should throw an error on an invalid query', testErroneousQuery('invalid', 'Parse error on line 1'));
 
-  it('should throw an error on variable contained in insert data clause', testErroneousQuery(
-    'PREFIX : <http://www.example.org/> SELECT ?o WHERE { ?s ?p ?o } GROUP BY ?s',
-    'Projection of ungrouped variable (?o)',
-  ));
-
   it('should throw an error on a projection of ungrouped variable', testErroneousQuery(
     'PREFIX : <http://www.example.org/> SELECT ?o WHERE { ?s ?p ?o } GROUP BY ?s',
     'Projection of ungrouped variable (?o)',

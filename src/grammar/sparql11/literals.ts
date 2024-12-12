@@ -182,14 +182,26 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
  */
 export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
   name: 'blankNode',
-  impl: ({ ACTION, CONSUME, OR, context }) => () => OR([
-    { ALT: () => {
-      const label = CONSUME(l.terminals.blankNodeLabel);
-      return ACTION(() => context.dataFactory.blankNode(label.image.replace('_:', 'e_')));
-    } },
-    { ALT: () => {
-      CONSUME(l.terminals.anon);
-      return ACTION(() => context.dataFactory.blankNode());
-    } },
-  ]),
+  impl: ({ ACTION, CONSUME, OR, context }) => () => {
+    const result = OR([
+      {
+        ALT: () => {
+          const label = CONSUME(l.terminals.blankNodeLabel);
+          return ACTION(() => context.dataFactory.blankNode(label.image.replace('_:', 'e_')));
+        },
+      },
+      {
+        ALT: () => {
+          CONSUME(l.terminals.anon);
+          return ACTION(() => context.dataFactory.blankNode());
+        },
+      },
+    ]);
+    ACTION(() => {
+      if (!context.canParseBlankNodes) {
+        throw new Error('Blank nodes are not allowed in this context');
+      }
+    });
+    return result;
+  },
 };
