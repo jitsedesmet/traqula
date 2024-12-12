@@ -135,6 +135,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     const lexer: Lexer = new Lexer(tokenVocabulary, {
       positionTracking: 'onlyStart',
       recoveryEnabled: false,
+      // SafeMode: true,
       // SkipValidations: true,
       ensureOptimizations: true,
       ...lexerConfig,
@@ -146,6 +147,8 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
       // @ts-expect-error TS7053
       selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {
         const lexResult = lexer.tokenize(input);
+        // Console.log(lexResult.tokens);
+
         parser.reset();
         parser.input = lexResult.tokens;
         const result = parser[rule.name](...args);
@@ -171,7 +174,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
       public constructor() {
         super(tokenVocabulary, {
           // RecoveryEnabled: true,
-          maxLookahead: 1,
+          maxLookahead: 2,
           // SkipValidations: true,
           ...config,
         });

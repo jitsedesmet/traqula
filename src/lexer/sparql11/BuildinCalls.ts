@@ -192,7 +192,6 @@ export const groupConcat = createToken({
 export const allBuiltInCalls: TokenType[] = [
   langmatches,
   lang,
-  datatype,
   bound,
   iri,
   uri,

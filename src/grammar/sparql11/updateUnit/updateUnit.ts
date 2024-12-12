@@ -201,7 +201,8 @@ export const copy = copyMoveAddOperation(l.copy);
 export const insertData: RuleDef<'insertData', InsertDeleteOperation> = <const> {
   name: 'insertData',
   impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.insertData);
+    CONSUME(l.insertClause);
+    CONSUME(l.dataClause);
     const insert = SUBRULE(quadData);
     return {
       updateType: 'insert',
@@ -216,7 +217,7 @@ export const insertData: RuleDef<'insertData', InsertDeleteOperation> = <const> 
 export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> {
   name: 'deleteData',
   impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.deleteData);
+    CONSUME(l.dataClause);
     const del = SUBRULE(quadData);
     return {
       updateType: 'delete',
@@ -231,7 +232,7 @@ export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> 
 export const deleteWhere: RuleDef<'deleteWhere', InsertDeleteOperation> = <const> {
   name: 'deleteWhere',
   impl: ({ SUBRULE, CONSUME }) => () => {
-    CONSUME(l.deleteWhere);
+    CONSUME(l.where);
     const del = SUBRULE(quadPattern);
     return {
       updateType: 'deletewhere',

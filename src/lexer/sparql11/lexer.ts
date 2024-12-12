@@ -1,10 +1,10 @@
 /* eslint-disable require-unicode-regexp */
 import type { TokenType } from 'chevrotain';
-import { allBuiltInCalls } from './BuildinCalls.js';
+import { allBuiltInCalls, datatype } from './BuildinCalls.js';
 import { allGraphTokens } from './graph.js';
 import { createToken } from './helpers.js';
 import { allSymbols } from './symbols.js';
-import { allTerminals, wsPattern } from './terminals.js';
+import { allTerminals } from './terminals.js';
 
 export const baseDecl = createToken({ name: 'BaseDecl', pattern: /base/i, label: 'BASE' });
 export const prefixDecl = createToken({ name: 'PrefixDecl', pattern: /prefix/i, label: 'PREFIX' });
@@ -35,15 +35,10 @@ export const add = createToken({ name: 'Add', pattern: /add/i, label: 'ADD' });
 export const to = createToken({ name: 'To', pattern: /to/i, label: 'TO' });
 export const move = createToken({ name: 'Move', pattern: /move/i, label: 'MOVE' });
 export const copy = createToken({ name: 'Copy', pattern: /copy/i, label: 'COPY' });
-const insertDataPattern = new RegExp(`insert(?:${wsPattern.source})*data`, 'i');
-const deleteDataPattern = new RegExp(`delete(?:${wsPattern.source})*data`, 'i');
-const deleteWherePattern = new RegExp(`delete(?:${wsPattern.source})*where`, 'i');
-export const insertData = createToken({ name: 'InsertData', pattern: insertDataPattern, label: 'INSERT DATA' });
-export const deleteData = createToken({ name: 'DeleteData', pattern: deleteDataPattern, label: 'DELETE DATA' });
-export const deleteWhere = createToken({ name: 'DeleteWhere', pattern: deleteWherePattern, label: 'DELETE WHERE' });
 export const modifyWith = createToken({ name: 'ModifyWith', pattern: /with/i, label: 'WITH' });
 export const deleteClause = createToken({ name: 'DeleteClause', pattern: /delete/i, label: 'DELETE' });
 export const insertClause = createToken({ name: 'InsertClause', pattern: /insert/i, label: 'INSERT' });
+export const dataClause = createToken({ name: 'DataClause', pattern: /data/i, label: 'DATA', longer_alt: datatype });
 export const usingClause = createToken({ name: 'UsingClause', pattern: /using/i, label: 'USING' });
 export const optional = createToken({ name: 'Optional', pattern: /optional/i, label: 'OPTIONAL' });
 export const service = createToken({ name: 'Service', pattern: /service/i, label: 'SERVICE' });
@@ -87,13 +82,12 @@ export const allBaseTokens: TokenType[] = [
   add,
   to,
   move,
+  datatype,
   copy,
-  insertData,
-  deleteData,
-  deleteWhere,
   modifyWith,
   deleteClause,
   insertClause,
+  dataClause,
   usingClause,
   optional,
   service,
