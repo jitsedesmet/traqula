@@ -91,13 +91,15 @@ export const groupCondition: RuleDef<'groupCondition', Grouping> = <const> {
  */
 export const havingClause: RuleDef<'havingClause', Expression[]> = <const> {
   name: 'havingClause',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, context }) => () => {
     const expressions: Expression[] = [];
 
     CONSUME(l.having);
+    ACTION(() => context.queryMode.push('havingClause'));
     AT_LEAST_ONE(() => {
       expressions.push(SUBRULE(havingCondition));
     });
+    ACTION(() => context.queryMode.pop());
 
     return expressions;
   },
@@ -116,13 +118,15 @@ export const havingCondition: RuleDef<'havingCondition', Expression> = <const> {
  */
 export const orderClause: RuleDef<'orderClause', Ordering[]> = <const> {
   name: 'orderClause',
-  impl: ({ AT_LEAST_ONE, SUBRULE, CONSUME }) => () => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, context }) => () => {
     const orderings: Ordering[] = [];
 
     CONSUME(l.order);
+    ACTION(() => context.queryMode.push('orderClause'));
     AT_LEAST_ONE(() => {
       orderings.push(SUBRULE(orderCondition));
     });
+    ACTION(() => context.queryMode.pop());
 
     return orderings;
   },

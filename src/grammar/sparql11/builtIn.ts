@@ -19,6 +19,8 @@ import {
   funcVar1,
 } from './expressionhelpers.js';
 import { string } from './literals.js';
+import { selectClause } from './queryUnit/queryUnit';
+import { havingClause, orderClause } from './solutionModifier';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
 export const builtInLang = funcExpr1(l.builtIn.lang);
@@ -207,14 +209,19 @@ export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpr
  */
 export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   name: 'aggregate',
-  impl: ({ SUBRULE, OR }) => () => OR<Expression>([
-    // TODO: Enable https://chevrotain.io/docs/guide/performance.html#caching-arrays-of-alternatives
-    { ALT: () => SUBRULE(aggregateCount) },
-    { ALT: () => SUBRULE(aggregateSum) },
-    { ALT: () => SUBRULE(aggregateMin) },
-    { ALT: () => SUBRULE(aggregateMax) },
-    { ALT: () => SUBRULE(aggregateAvg) },
-    { ALT: () => SUBRULE(aggregateSample) },
-    { ALT: () => SUBRULE(aggregateGroup_concat) },
-  ]),
+  impl: ({ ACTION, SUBRULE, OR, context }) => () => {
+    const result = OR<Expression>([
+      // TODO: Enable https://chevrotain.io/docs/guide/performance.html#caching-arrays-of-alternatives
+      { ALT: () => SUBRULE(aggregateCount) },
+      { ALT: () => SUBRULE(aggregateSum) },
+      { ALT: () => SUBRULE(aggregateMin) },
+      { ALT: () => SUBRULE(aggregateMax) },
+      { ALT: () => SUBRULE(aggregateAvg) },
+      { ALT: () => SUBRULE(aggregateSample) },
+      { ALT: () => SUBRULE(aggregateGroup_concat) },
+    ]);
+    ACTION(() => context.queryMode.some(mode =>
+      (<string[]>[ selectClause.name, havingClause.name, orderClause.name ]).includes(mode)));
+    return result;
+  },
 };

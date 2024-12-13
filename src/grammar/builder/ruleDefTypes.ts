@@ -34,6 +34,8 @@ export interface ImplArgs extends CstDef {
     canParseBlankNodes: boolean;
     flushedBlankNodeLabels: Set<string>;
     usedBlankNodeLabels: Set<string>;
+    skipValidation: boolean;
+    queryMode: string[];
   };
 }
 

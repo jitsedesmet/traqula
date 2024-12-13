@@ -131,8 +131,10 @@ export interface ISelectClause {
 }
 export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
   name: 'selectClause',
-  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3 }) => () => {
+  impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3, context }) => () => {
     CONSUME(l.select);
+    ACTION(() => context.queryMode.push('selectClause'));
+
     const distinctOrReduced = OPTION(() => OR1<Partial<{ distinct: true; reduced: true }>>([
       { ALT: () => {
         CONSUME(l.distinct);
@@ -168,6 +170,7 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
       } },
     ]);
 
+    ACTION(() => context.queryMode.pop());
     return ACTION(() => ({
       ...distinctOrReduced,
       variables,
