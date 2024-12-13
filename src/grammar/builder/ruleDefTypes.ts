@@ -32,8 +32,8 @@ export interface ImplArgs extends CstDef {
     baseIRI: string | undefined;
     canParseVars: boolean;
     canParseBlankNodes: boolean;
-    flushedBlankNodeLabels: string[];
-    usedBlankNodeLabels: string[];
+    flushedBlankNodeLabels: Set<string>;
+    usedBlankNodeLabels: Set<string>;
   };
 }
 

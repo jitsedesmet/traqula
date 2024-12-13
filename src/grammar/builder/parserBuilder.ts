@@ -185,8 +185,8 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
           baseIRI: undefined,
           canParseVars: true,
           canParseBlankNodes: true,
-          flushedBlankNodeLabels: [],
-          usedBlankNodeLabels: [],
+          flushedBlankNodeLabels: new Set(),
+          usedBlankNodeLabels: new Set(),
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},
         };

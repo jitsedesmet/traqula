@@ -60,8 +60,10 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
           const updateOperation = SUBRULE(update1);
 
           ACTION(() => {
-            context.flushedBlankNodeLabels.push(...context.usedBlankNodeLabels);
-            context.usedBlankNodeLabels = [];
+            for (const label of context.usedBlankNodeLabels) {
+              context.flushedBlankNodeLabels.add(label);
+            }
+            context.usedBlankNodeLabels.clear();
           });
 
           const recursiveRes = OPTION2(() => {
