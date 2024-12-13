@@ -186,8 +186,14 @@ export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
     const result = OR([
       {
         ALT: () => {
-          const label = CONSUME(l.terminals.blankNodeLabel);
-          return ACTION(() => context.dataFactory.blankNode(label.image.replace('_:', 'e_')));
+          const label = CONSUME(l.terminals.blankNodeLabel).image;
+          ACTION(() => {
+            if (context.flushedBlankNodeLabels.includes(label)) {
+              throw new Error('Detected reuse blank node across different request string.');
+            }
+            context.usedBlankNodeLabels.push(label);
+          });
+          return ACTION(() => context.dataFactory.blankNode(label.replace('_:', 'e_')));
         },
       },
       {

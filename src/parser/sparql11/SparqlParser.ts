@@ -36,7 +36,7 @@ import { updateParserBuilder } from './updateUnitParser.js';
 // ```
 const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'base' | 'prefixes'>> = {
   name: 'queryOrUpdate',
-  impl: ({ ACTION, SUBRULE, OR1, OR2, CONSUME, OPTION1, OPTION2 }) => () => {
+  impl: ({ ACTION, SUBRULE, OR1, OR2, CONSUME, OPTION1, OPTION2, context }) => () => {
     const prologueValues = SUBRULE(prologue);
     return OR1<Query | Update | Pick<Update, 'base' | 'prefixes'>>([
       { ALT: () => {
@@ -58,6 +58,12 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
         let result: Update | Pick<Update, 'base' | 'prefixes'> = prologueValues;
         OPTION1(() => {
           const updateOperation = SUBRULE(update1);
+
+          ACTION(() => {
+            context.flushedBlankNodeLabels.push(...context.usedBlankNodeLabels);
+            context.usedBlankNodeLabels = [];
+          });
+
           const recursiveRes = OPTION2(() => {
             CONSUME(l.symbols.semi);
             return SUBRULE(update);
