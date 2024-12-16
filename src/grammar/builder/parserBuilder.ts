@@ -146,6 +146,27 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     for (const rule of <RuleDef<Names>[]> Object.values(this.rules)) {
       // @ts-expect-error TS7053
       selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {
+        // Transform input in accordance to 19.2
+        input = input.replaceAll(
+          /\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{8})/gu,
+          (_, unicode4: string, unicode8: string) => {
+            if (unicode4) {
+              const charCode = Number.parseInt(unicode4, 16);
+              return String.fromCharCode(charCode);
+            }
+            const charCode = Number.parseInt(unicode8, 16);
+            if (charCode < 0xFFFF) {
+              return String.fromCharCode(charCode);
+            }
+            const substractedCharCode = charCode - 0x10000;
+            return String.fromCharCode(0xD800 + (substractedCharCode >> 10), 0xDC00 + (substractedCharCode & 0x3FF));
+          },
+        );
+        // Test for invalid unicode surrogate pairs
+        if (/[\uD800-\uDBFF]([^\uDC00-\uDFFF]|$)/.test(input)) {
+          throw new Error(`Invalid unicode codepoint of surrogate pair without corresponding codepoint`);
+        }
+
         const lexResult = lexer.tokenize(input);
         // Console.log(lexResult.tokens);
 

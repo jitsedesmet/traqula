@@ -133,6 +133,7 @@ export const string: RuleDef<'string', string> = <const> {
       { ALT: () => CONSUME(l.terminals.stringLiteralLong1).image.slice(3, -3) },
       { ALT: () => CONSUME(l.terminals.stringLiteralLong2).image.slice(3, -3) },
     ]);
+    // Handle string escapes (19.7). (19.2 is handled at input level.)
     return ACTION(() => rawString.replaceAll(/\\([tnrbf"'\\])/gu, (_, char: string) => {
       switch (char) {
         case 't': return '\t';
