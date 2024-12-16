@@ -19,8 +19,6 @@ import {
   funcVar1,
 } from './expressionhelpers.js';
 import { string } from './literals.js';
-import { selectClause } from './queryUnit/queryUnit';
-import { havingClause, orderClause } from './solutionModifier';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
 export const builtInLang = funcExpr1(l.builtIn.lang);
@@ -204,6 +202,8 @@ export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpr
   },
 };
 
+export const canParseAggregate = Symbol('canParseAggregate');
+export const inAggregate = Symbol('inAggregate');
 /**
  * [[127]](https://www.w3.org/TR/sparql11-query/#rBuiltInCall)
  */
@@ -212,7 +212,8 @@ export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   impl: ({ ACTION, SUBRULE, OR, context }) => () => {
     // https://www.w3.org/2013/sparql-errata#errata-query-5
     //  An aggregate function is not allowed within an aggregate function.
-    ACTION(() => context.queryMode.push('aggregate'));
+    const wasInAggregate = context.queryMode.has(inAggregate);
+    ACTION(() => context.queryMode.add(inAggregate));
     const result = OR<Expression>([
       { ALT: () => SUBRULE(aggregateCount) },
       { ALT: () => SUBRULE(aggregateSum) },
@@ -222,16 +223,13 @@ export const aggregate: RuleDef<'aggregate', Expression> = <const> {
       { ALT: () => SUBRULE(aggregateSample) },
       { ALT: () => SUBRULE(aggregateGroup_concat) },
     ]);
-    ACTION(() => context.queryMode.pop());
+    ACTION(() => !wasInAggregate && context.queryMode.delete(inAggregate));
 
     ACTION(() => {
-      const rightMode = context.queryMode.some(mode =>
-        (<string[]>[ selectClause.name, havingClause.name, orderClause.name ]).includes(mode));
-      const aggregateMode = context.queryMode.includes('aggregate');
-      if (!rightMode) {
+      if (!context.queryMode.has(canParseAggregate)) {
         throw new Error('Aggregates are only allowed in SELECT, HAVING, and ORDER BY clauses.');
       }
-      if (aggregateMode) {
+      if (context.queryMode.has(inAggregate)) {
         throw new Error('An aggregate function is not allowed within an aggregate function.');
       }
     });

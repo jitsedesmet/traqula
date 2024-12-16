@@ -1,7 +1,7 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJsTypes';
-import { blankNode, booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
+import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals.js';
 import { triplesSameSubject } from './tripleBlock.js';
 
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -108,7 +108,7 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
 export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
   name: 'varOrTerm',
   impl: ({ SUBRULE, OR, context }) => () => OR([
-    { GATE: () => context.canParseVars, ALT: () => SUBRULE(var_) },
+    { GATE: () => context.queryMode.has(canParseVars), ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(graphTerm) },
   ]),
 };
@@ -119,10 +119,12 @@ export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
 export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = <const> {
   name: 'varOrIri',
   impl: ({ SUBRULE, OR, context }) => () => OR<IriTerm | VariableTerm>([
-    { GATE: () => context.canParseVars, ALT: () => SUBRULE(var_) },
+    { GATE: () => context.queryMode.has(canParseVars), ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(iri) },
   ]),
 };
+
+export const canParseVars = Symbol('canParseVars');
 
 /**
  * [[108]](https://www.w3.org/TR/sparql11-query/#rVar)
@@ -135,7 +137,7 @@ export const var_: RuleDef<'var', VariableTerm> = <const> {
       { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
     ]);
     ACTION(() => {
-      if (!context.canParseVars) {
+      if (!context.queryMode.has(canParseVars)) {
         throw new Error('Variables are not allowed here');
       }
     });
@@ -153,7 +155,7 @@ export const graphTerm: RuleDef<'graphTerm', Term> = <const> {
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
     { ALT: () => SUBRULE(booleanLiteral) },
-    { GATE: () => context.canParseBlankNodes, ALT: () => SUBRULE(blankNode) },
+    { GATE: () => context.queryMode.has(canCreateBlankNodes), ALT: () => SUBRULE(blankNode) },
     {
       ALT: () => {
         CONSUME(l.terminals.nil);

@@ -3,6 +3,7 @@ import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJsTypes';
 import { var_, varOrTerm, verb } from './general.js';
+import { canCreateBlankNodes } from './literals';
 import { path } from './propertyPaths.js';
 
 const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
@@ -335,7 +336,10 @@ function graphNodeImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<
           };
         },
       },
-      { GATE: () => context.canParseBlankNodes, ALT: () => SUBRULE(allowPaths ? triplesNodePath : triplesNode) },
+      {
+        GATE: () => context.queryMode.has(canCreateBlankNodes),
+        ALT: () => SUBRULE(allowPaths ? triplesNodePath : triplesNode),
+      },
     ]),
   };
 }

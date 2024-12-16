@@ -3,6 +3,8 @@ import type { ILexerConfig, IParserConfig } from '@chevrotain/types';
 import type { TokenType, TokenVocabulary } from 'chevrotain';
 import { EmbeddedActionsParser, Lexer } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
+import { canParseVars } from '../sparql11/general';
+import { canCreateBlankNodes } from '../sparql11/literals';
 import type {
   CheckOverlap,
   RuleDefMap,
@@ -152,18 +154,18 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
           (_, unicode4: string, unicode8: string) => {
             if (unicode4) {
               const charCode = Number.parseInt(unicode4, 16);
-              return String.fromCharCode(charCode);
+              return String.fromCodePoint(charCode);
             }
             const charCode = Number.parseInt(unicode8, 16);
             if (charCode < 0xFFFF) {
-              return String.fromCharCode(charCode);
+              return String.fromCodePoint(charCode);
             }
             const substractedCharCode = charCode - 0x10000;
-            return String.fromCharCode(0xD800 + (substractedCharCode >> 10), 0xDC00 + (substractedCharCode & 0x3FF));
+            return String.fromCodePoint(0xD800 + (substractedCharCode >> 10), 0xDC00 + (substractedCharCode & 0x3FF));
           },
         );
         // Test for invalid unicode surrogate pairs
-        if (/[\uD800-\uDBFF]([^\uDC00-\uDFFF]|$)/.test(input)) {
+        if (/[\uD800-\uDBFF]([^\uDC00-\uDFFF]|$)/u.test(input)) {
           throw new Error(`Invalid unicode codepoint of surrogate pair without corresponding codepoint`);
         }
 
@@ -204,18 +206,18 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         this.initialParseContext = {
           dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
           baseIRI: undefined,
-          canParseVars: true,
-          canParseBlankNodes: true,
           flushedBlankNodeLabels: new Set(),
           usedBlankNodeLabels: new Set(),
-          queryMode: [],
+          queryMode: new Set([ canParseVars, canCreateBlankNodes ]),
           skipValidation: false,
-          illegalVariables: new Set(),
-          scopedVariables: new Set(),
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},
         };
-        this.runningContext = { ...this.initialParseContext };
+        this.runningContext = {
+          ...this.initialParseContext,
+          prefixes: { ...this.initialParseContext.prefixes },
+          queryMode: new Set(this.initialParseContext.queryMode),
+        };
 
         const implArgs: ImplArgs = {
           ...selfRef,
@@ -232,8 +234,12 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
 
       public override reset(): void {
         super.reset();
-        Object.assign(this.runningContext, this.initialParseContext);
-        this.runningContext.prefixes = { ...this.initialParseContext.prefixes };
+        // We need to keep the original object reference.
+        Object.assign(this.runningContext, {
+          ...this.initialParseContext,
+          prefixes: { ...this.initialParseContext.prefixes },
+          queryMode: new Set(this.initialParseContext.queryMode),
+        });
       }
 
       private getSelfRef(): CstDef {

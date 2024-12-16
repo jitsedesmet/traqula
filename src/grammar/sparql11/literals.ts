@@ -178,6 +178,8 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
   },
 };
 
+export const canCreateBlankNodes = Symbol('canCreateBlankNodes');
+
 /**
  * [[138]](https://www.w3.org/TR/sparql11-query/#rBlankNode)
  */
@@ -205,7 +207,7 @@ export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
       },
     ]);
     ACTION(() => {
-      if (!context.canParseBlankNodes) {
+      if (!context.queryMode.has(canCreateBlankNodes)) {
         throw new Error('Blank nodes are not allowed in this context');
       }
     });

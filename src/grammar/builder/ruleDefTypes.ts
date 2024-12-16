@@ -37,14 +37,6 @@ export interface ImplArgs extends CstDef {
      */
     baseIRI: string | undefined;
     /**
-     * State on whether variables can be parsed at this time. Used for note 8.
-     */
-    canParseVars: boolean;
-    /**
-     * State on whether blank nodes can be parsed at this time. Used for note 9.
-     */
-    canParseBlankNodes: boolean;
-    /**
      * Set of blank node labels that have been flushed. Used for note 10.
      */
     flushedBlankNodeLabels: Set<string>;
@@ -57,17 +49,9 @@ export interface ImplArgs extends CstDef {
      */
     skipValidation: boolean;
     /**
-     * List of states worth tracking. Primarily used for note 14.
+     * Set of queryModes. Primarily used for note 8, 14.
      */
-    queryMode: string[];
-    /**
-     * Set of variables that cannot be used at the current position, primarily used for note 12.
-     */
-    illegalVariables: Set<string>;
-    /**
-     * Set of in scope variables. Used for note 12 and 13.
-     */
-    scopedVariables: Set<string>;
+    queryMode: Set<symbol>;
   };
 }
 

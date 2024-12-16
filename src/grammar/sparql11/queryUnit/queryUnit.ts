@@ -19,6 +19,7 @@ import type {
   VariableTerm,
 } from '../../sparqlJsTypes';
 
+import { canParseAggregate } from '../builtIn';
 import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
 import { expression } from '../expression.js';
 import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
@@ -243,7 +244,8 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
   name: 'selectClause',
   impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3, context }) => () => {
     CONSUME(l.select);
-    ACTION(() => context.queryMode.push('selectClause'));
+    const couldParseAgg = ACTION(() =>
+      context.queryMode.has(canParseAggregate) || !context.queryMode.add(canParseAggregate));
 
     const distinctOrReduced = OPTION(() => OR1<Partial<{ distinct: true; reduced: true }>>([
       { ALT: () => {
@@ -279,8 +281,7 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
         return result;
       } },
     ]);
-
-    ACTION(() => context.queryMode.pop());
+    ACTION(() => !couldParseAgg && context.queryMode.delete(canParseAggregate));
     return ACTION(() => ({
       ...distinctOrReduced,
       variables,
