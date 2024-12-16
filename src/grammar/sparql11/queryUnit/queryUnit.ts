@@ -146,13 +146,14 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
-    // TODO: these check apply to more then just the select query
     ACTION(() => {
+      if (selectVal.variables.length === 1 && selectVal.variables[0] instanceof Wildcard) {
+        return;
+      }
+      const variables = <Variable[]> selectVal.variables;
       // Check for projection of ungrouped variable
       // Check can be skipped in case of wildcard select.
-      if (!context.skipValidation &&
-        !(selectVal.variables.length === 1 && selectVal.variables[0] instanceof Wildcard)) {
-        const variables = <Variable[]>selectVal.variables;
+      if (!context.skipValidation) {
         const hasCountAggregate = variables.flatMap(
           varVal => 'termType' in varVal ? [] : getAggregatesOfExpression(varVal.expression),
         ).some(agg => agg.aggregation === 'count' && !(agg.expression instanceof Wildcard));
@@ -182,7 +183,7 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
       const subqueries = where.filter(pattern => pattern.type === 'query');
       if (subqueries.length > 0) {
         const selectedVarIds: string[] = [];
-        for (const selectedVar of selectVal.variables) {
+        for (const selectedVar of variables) {
           if ('variable' in selectedVar) {
             selectedVarIds.push(selectedVar.variable.value);
           }
