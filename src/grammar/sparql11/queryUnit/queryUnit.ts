@@ -146,6 +146,7 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
+    // TODO: these check apply to more then just the select query
     ACTION(() => {
       // Check for projection of ungrouped variable
       // Check can be skipped in case of wildcard select.
@@ -174,6 +175,24 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
                 }
               }
             }
+          }
+        }
+      }
+      // Check if id of each AS-selected column is not yet bound by subquery
+      const subqueries = where.filter(pattern => pattern.type === 'query');
+      if (subqueries.length > 0) {
+        const selectedVarIds: string[] = [];
+        for (const selectedVar of selectVal.variables) {
+          if ('variable' in selectedVar) {
+            selectedVarIds.push(selectedVar.variable.value);
+          }
+        }
+        const vars = subqueries.flatMap(sub => <(Variable | Wildcard)[]>sub.variables)
+          .map(v => 'value' in v ? v.value : v.variable.value);
+        const subqueryIds = new Set(vars);
+        for (const selectedVarId of selectedVarIds) {
+          if (subqueryIds.has(selectedVarId)) {
+            throw new Error(`Target id of 'AS' (?${selectedVarId}) already used in subquery`);
           }
         }
       }
