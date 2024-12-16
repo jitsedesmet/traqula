@@ -2,9 +2,12 @@ import * as l from '../../../lexer/sparql11/index.js';
 import { Wildcard } from '../../../misc/Wildcard.js';
 import type { RuleDef, ImplArgs } from '../../builder/ruleDefTypes.js';
 import type {
+  AggregateExpression,
   AskQuery,
   ConstructQuery,
   DescribeQuery,
+  Expression,
+  Grouping,
   IriTerm,
   Pattern,
   Query,
@@ -15,6 +18,7 @@ import type {
   VariableExpression,
   VariableTerm,
 } from '../../sparqlJsTypes';
+
 import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
 import { expression } from '../expression.js';
 import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
@@ -79,19 +83,101 @@ function extractFromOfDataSetClauses(ACTION: ImplArgs['ACTION'], MANY: ImplArgs[
 }
 
 /**
+ * Get all 'aggregate' rules from an expression
+ */
+function getAggregatesOfExpression(expression: Expression | Pattern): AggregateExpression[] {
+  if ('type' in expression) {
+    if (expression.type === 'aggregate') {
+      return [ expression ];
+    }
+    if (expression.type === 'operation') {
+      const aggregates: AggregateExpression[] = [];
+      for (const arg of expression.args) {
+        aggregates.push(...getAggregatesOfExpression(arg));
+      }
+      return aggregates;
+    }
+  }
+  return [];
+}
+
+/**
+ * Return the id of an expression
+ */
+function getExpressionId(expression: Grouping | VariableTerm | VariableExpression): string | undefined {
+  // Check if grouping
+  if ('variable' in expression && expression.variable) {
+    return expression.variable.value;
+  }
+  if ('value' in expression) {
+    return expression.value;
+  }
+  return 'value' in expression.expression ? expression.expression.value : undefined;
+}
+/**
+ * Get all variables used in an expression
+ */
+function getVariablesFromExpression(expression: Expression): Set<VariableTerm> {
+  const variables = new Set<VariableTerm>();
+  const visitExpression = (expr: Expression | Pattern | undefined): void => {
+    if (!expr) {
+      return;
+    }
+    if ('termType' in expr && expr.termType === 'Variable') {
+      variables.add(expr);
+    } else if ('type' in expr && expr.type === 'operation') {
+      for (const rec of expr.args) {
+        visitExpression(rec);
+      }
+    }
+  };
+  visitExpression(expression);
+  return variables;
+}
+
+/**
  * [[7]](https://www.w3.org/TR/sparql11-query/#rSelectQuery)
  */
 export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase>> = <const> {
   name: 'selectQuery',
-  impl: ({ ACTION, SUBRULE, MANY }) => () => {
+  impl: ({ ACTION, SUBRULE, MANY, context }) => () => {
     const selectVal = SUBRULE(selectClause);
     const from = extractFromOfDataSetClauses(ACTION, MANY, SUBRULE);
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
-    // The selectClause rule can create new variables.
-    // According to note 12, these variables cannot be used later. We implement a   references variables that are only parsed later.
-    // Note 12 says that variables
+    ACTION(() => {
+      // Check for projection of ungrouped variable
+      // Check can be skipped in case of wildcard select.
+      if (!context.skipValidation &&
+        !(selectVal.variables.length === 1 && selectVal.variables[0] instanceof Wildcard)) {
+        const variables = <Variable[]>selectVal.variables;
+        const hasCountAggregate = variables.flatMap(
+          varVal => 'termType' in varVal ? [] : getAggregatesOfExpression(varVal.expression),
+        ).some(agg => agg.aggregation === 'count' && !(agg.expression instanceof Wildcard));
+        if (hasCountAggregate || modifier.group) {
+          // We have to check whether
+          //  1. Variables used in projection are usable given the group by clause
+          //  2. A selectCount will create an implicit group by clause.
+          for (const selectVar of variables) {
+            if ('termType' in selectVar) {
+              if (!modifier.group || !modifier.group.map(groupvar => getExpressionId(groupvar))
+                .includes((getExpressionId(selectVar)))) {
+                throw new Error('Variable not allowed in projection');
+              }
+            } else if (getAggregatesOfExpression(selectVar.expression).length === 0) {
+              const usedvars = getVariablesFromExpression(selectVar.expression);
+              for (const usedvar of usedvars) {
+                if (!modifier.group || !modifier.group.map || !modifier.group.map(groupVar => getExpressionId(groupVar))
+                  .includes(getExpressionId(usedvar))) {
+                  throw new Error(`Use of ungrouped variable in projection of operation (?${getExpressionId(usedvar)})`);
+                }
+              }
+            }
+          }
+        }
+      }
+    });
 
     return {
       ...selectVal,

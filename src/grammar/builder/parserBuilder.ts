@@ -211,6 +211,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
           queryMode: [],
           skipValidation: false,
           illegalVariables: new Set(),
+          scopedVariables: new Set(),
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},
         };
