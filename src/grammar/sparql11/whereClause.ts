@@ -20,7 +20,7 @@ import type {
   ValuesPattern,
   VariableTerm,
 } from '../sparqlJsTypes';
-import { deGroupSingle } from '../utils.js';
+import { deGroupSingle, isVariable } from '../utils.js';
 import { builtInCall } from './builtIn.js';
 import { argList, brackettedExpression, expression } from './expression.js';
 import { var_, varOrIri } from './general.js';
@@ -61,6 +61,28 @@ export const groupGraphPattern: RuleDef<'groupGraphPattern', GroupPattern> = <co
   },
 };
 
+function findBoundVarsFromGroupGraphPattern(pattern: Pattern, boundedVars: Set<string>): void {
+  if (pattern.type === 'group' || pattern.type === 'bgp') {
+    if ('triples' in pattern) {
+      for (const triple of pattern.triples) {
+        if (isVariable(triple.subject)) {
+          boundedVars.add(triple.subject.value);
+        }
+        if (isVariable(triple.predicate)) {
+          boundedVars.add(triple.predicate.value);
+        }
+        if (isVariable(triple.object)) {
+          boundedVars.add(triple.object.value);
+        }
+      }
+    } else if ('patterns' in pattern) {
+      for (const pat of pattern.patterns) {
+        findBoundVarsFromGroupGraphPattern(pat, boundedVars);
+      }
+    }
+  }
+}
+
 /**
  * [[54]](https://www.w3.org/TR/sparql11-query/#rGroupGraphPatternSub)
  */
@@ -85,6 +107,22 @@ export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = 
           patterns.push(moreTriples);
         }
       });
+    });
+
+    // Check note 13 of the spec.
+    // TODO: currently optimized for case bind is present.
+    ACTION(() => {
+      const boundedVars = new Set<string>();
+      for (const pattern of patterns) {
+        // Element can be bind, in that case, check note 13. If it is not, buildup set of bounded variables.
+        if (pattern.type === 'bind') {
+          if (boundedVars.has(pattern.variable.value)) {
+            throw new Error(`Variable used to bind is already bound (?${pattern.variable.value})`);
+          }
+        } else {
+          findBoundVarsFromGroupGraphPattern(pattern, boundedVars);
+        }
+      }
     });
 
     return patterns;

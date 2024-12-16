@@ -75,6 +75,11 @@ describe('a SPARQL parser', () => {
     'Target id of \'AS\' (?X) already used in subquery',
   ));
 
+  it('should throw an error on bind to variable in scope', testErroneousQuery(
+    'SELECT * { ?s ?p ?o BIND(?o AS ?o) }',
+    'Target id of \'AS\' (?X) already used in subquery',
+  ));
+
   it('should preserve BGP and filter pattern order', ({ expect }) => {
     const query = 'SELECT * { ?s ?p "1" . FILTER(true) . ?s ?p "2"  }';
     expect(parser.parse(query)).toMatchObject({

@@ -64,6 +64,10 @@ export interface ImplArgs extends CstDef {
      * Set of variables that cannot be used at the current position, primarily used for note 12.
      */
     illegalVariables: Set<string>;
+    /**
+     * Set of in scope variables. Used for note 12 and 13.
+     */
+    scopedVariables: Set<string>;
   };
 }
 
