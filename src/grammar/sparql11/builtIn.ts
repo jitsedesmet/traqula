@@ -210,8 +210,10 @@ export const aggregateGroup_concat: RuleDef<'builtInGroup_concat', AggregateExpr
 export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   name: 'aggregate',
   impl: ({ ACTION, SUBRULE, OR, context }) => () => {
+    // https://www.w3.org/2013/sparql-errata#errata-query-5
+    //  An aggregate function is not allowed within an aggregate function.
+    ACTION(() => context.queryMode.push('aggregate'));
     const result = OR<Expression>([
-      // TODO: Enable https://chevrotain.io/docs/guide/performance.html#caching-arrays-of-alternatives
       { ALT: () => SUBRULE(aggregateCount) },
       { ALT: () => SUBRULE(aggregateSum) },
       { ALT: () => SUBRULE(aggregateMin) },
@@ -220,8 +222,20 @@ export const aggregate: RuleDef<'aggregate', Expression> = <const> {
       { ALT: () => SUBRULE(aggregateSample) },
       { ALT: () => SUBRULE(aggregateGroup_concat) },
     ]);
-    ACTION(() => context.queryMode.some(mode =>
-      (<string[]>[ selectClause.name, havingClause.name, orderClause.name ]).includes(mode)));
+    ACTION(() => context.queryMode.pop());
+
+    ACTION(() => {
+      const rightMode = context.queryMode.some(mode =>
+        (<string[]>[ selectClause.name, havingClause.name, orderClause.name ]).includes(mode));
+      const aggregateMode = context.queryMode.includes('aggregate');
+      if (!rightMode) {
+        throw new Error('Aggregates are only allowed in SELECT, HAVING, and ORDER BY clauses.');
+      }
+      if (aggregateMode) {
+        throw new Error('An aggregate function is not allowed within an aggregate function.');
+      }
+    });
+
     return result;
   },
 };

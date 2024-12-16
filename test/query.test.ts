@@ -86,6 +86,11 @@ describe('a SPARQL parser', () => {
     });
   });
 
+  it('should throw an error on an aggregate function within an aggregate function', testErroneousQuery(
+    'SELECT (SUM(COUNT(?lprice)) AS ?totalPrice) { }',
+    'An aggregate function is not allowed within an aggregate function',
+  ));
+
   describe('with pre-defined prefixes', () => {
     const prefixes = { a: 'ex:abc#', b: 'ex:def#' };
     const parser = new SparqlParser({ prefixes });
