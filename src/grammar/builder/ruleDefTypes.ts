@@ -28,14 +28,42 @@ export interface ImplArgs extends CstDef {
   cache: WeakMap<RuleDef, unknown>;
   context: {
     dataFactory: DataFactory;
+    /**
+     * Current scoped prefixes. Used for resolving prefixed names.
+     */
     prefixes: Record<string, string>;
+    /**
+     * The base IRI for the query. Used for resolving relative IRIs.
+     */
     baseIRI: string | undefined;
+    /**
+     * State on whether variables can be parsed at this time. Used for note 8.
+     */
     canParseVars: boolean;
+    /**
+     * State on whether blank nodes can be parsed at this time. Used for note 9.
+     */
     canParseBlankNodes: boolean;
+    /**
+     * Set of blank node labels that have been flushed. Used for note 10.
+     */
     flushedBlankNodeLabels: Set<string>;
+    /**
+     * Set of blank node labels that have been used. Used for note 10.
+     */
     usedBlankNodeLabels: Set<string>;
+    /**
+     * Can be used to disable the validation that used variables in a select clause are in scope.
+     */
     skipValidation: boolean;
+    /**
+     * List of states worth tracking. Primarily used for note 14.
+     */
     queryMode: string[];
+    /**
+     * Set of variables that cannot be used at the current position, primarily used for note 12.
+     */
+    illegalVariables: Set<string>;
   };
 }
 

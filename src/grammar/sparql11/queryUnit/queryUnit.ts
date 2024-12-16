@@ -89,6 +89,10 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
     const where = SUBRULE(whereClause);
     const modifier = SUBRULE(solutionModifier);
 
+    // The selectClause rule can create new variables.
+    // According to note 12, these variables cannot be used later. We implement a   references variables that are only parsed later.
+    // Note 12 says that variables
+
     return {
       ...selectVal,
       queryType: 'SELECT',
