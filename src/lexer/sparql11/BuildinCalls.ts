@@ -1,7 +1,7 @@
 /* eslint-disable require-unicode-regexp */
 
-import type { TokenType } from 'chevrotain';
-import { createToken } from './helpers.js';
+import { LexerBuilder } from '../builder/LexerBuilder';
+import { createToken } from '../utils';
 
 export enum BuildInCalls {
   Str = 'builtInStr',
@@ -189,8 +189,9 @@ export const groupConcat = createToken({
   label: 'GROUP_CONCAT',
 });
 
-export const allBuiltInCalls: TokenType[] = [
+export const allBuiltInCalls = new LexerBuilder().add(
   langmatches,
+  datatype,
   lang,
   bound,
   iri,
@@ -250,4 +251,4 @@ export const allBuiltInCalls: TokenType[] = [
   sample,
   groupConcat,
   str,
-];
+);

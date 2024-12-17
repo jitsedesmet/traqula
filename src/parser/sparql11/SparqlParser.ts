@@ -113,7 +113,7 @@ export class SparqlParser implements ISparqlParser {
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
     this.parser = sparqlParserBuilder.consumeToParser({
-      tokenVocabulary: allTokens,
+      tokenVocabulary: allTokens.build(),
     }, {
       ...context,
       dataFactory: this.dataFactory,

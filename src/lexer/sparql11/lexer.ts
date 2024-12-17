@@ -1,8 +1,8 @@
 /* eslint-disable require-unicode-regexp */
-import type { TokenType } from 'chevrotain';
+import { LexerBuilder } from '../builder/LexerBuilder';
+import { createToken } from '../utils';
 import { allBuiltInCalls, datatype } from './BuildinCalls.js';
 import { allGraphTokens } from './graph.js';
-import { createToken } from './helpers.js';
 import { allSymbols } from './symbols.js';
 import { allTerminals } from './terminals.js';
 
@@ -54,7 +54,7 @@ export const in_ = createToken({ name: 'In', pattern: /in/i, label: 'IN' });
 export const notIn = createToken({ name: 'NotIn', pattern: /not in/i, label: 'NOT IN' });
 export const separator = createToken({ name: 'Separator', pattern: /separator/i, label: 'SEPARATOR' });
 
-export const allBaseTokens: TokenType[] = [
+export const allBaseTokens = new LexerBuilder().add(
   baseDecl,
   prefixDecl,
   select,
@@ -82,7 +82,6 @@ export const allBaseTokens: TokenType[] = [
   add,
   to,
   move,
-  datatype,
   copy,
   modifyWith,
   deleteClause,
@@ -103,15 +102,15 @@ export const allBaseTokens: TokenType[] = [
   in_,
   notIn,
   separator,
-];
+);
 
 /**
  * [!!!ORDER MATTERS!!!](https://chevrotain.io/docs/tutorial/step1_lexing.html#creating-the-lexer)
  */
-export const allTokens: TokenType[] = [
-  ...allTerminals,
-  ...allBaseTokens,
-  ...allBuiltInCalls,
-  ...allGraphTokens,
-  ...allSymbols,
-];
+export const allTokens = new LexerBuilder(
+  allTerminals,
+  allBaseTokens,
+  allBuiltInCalls,
+  allGraphTokens,
+  allSymbols,
+).moveBefore(datatype, dataClause);

@@ -1,4 +1,5 @@
-import { createToken } from './helpers.js';
+import { LexerBuilder } from '../builder/LexerBuilder';
+import { createToken } from '../utils';
 
 export const LCurly = createToken({ name: 'LCurly', pattern: '{', label: '{' });
 export const RCurly = createToken({ name: 'RCurly', pattern: '}', label: '}' });
@@ -27,7 +28,7 @@ export const lessThanEqual = createToken({ name: 'LessThanEqual', pattern: '<=',
 export const greaterThanEqual = createToken({ name: 'GreaterThanEqual', pattern: '>=', label: '>=' });
 export const hathat = createToken({ name: 'Hathat', pattern: '^^', label: '^^' });
 
-export const allSymbols = [
+export const allSymbols = new LexerBuilder().add(
   logicAnd,
   logicOr,
   notEqual,
@@ -54,4 +55,4 @@ export const allSymbols = [
   equal,
   lessThan,
   greaterThan,
-];
+);

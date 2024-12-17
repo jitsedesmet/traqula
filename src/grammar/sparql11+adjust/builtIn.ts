@@ -1,4 +1,4 @@
-import { createToken } from '../../lexer/sparql11/helpers.js';
+import { createToken } from '../../lexer/utils';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import { builtInCall } from '../sparql11/builtIn.js';
 import { funcExpr2 } from '../sparql11/expressionhelpers';
