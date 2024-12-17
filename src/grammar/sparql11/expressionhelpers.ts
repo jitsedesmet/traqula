@@ -59,6 +59,28 @@ RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression]> {
   };
 }
 
+export function funcExpr3<T extends string>(func: TokenType & { name: T }):
+RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression, Expression]> {
+  return {
+    name: unCapitalize(func.name),
+    impl: ({ SUBRULE1, SUBRULE2, SUBRULE3, CONSUME }) => () => {
+      const operator = CONSUME(func);
+      CONSUME(l.symbols.LParen);
+      const arg1 = SUBRULE1(expression);
+      CONSUME(l.symbols.comma);
+      const arg2 = SUBRULE2(expression);
+      CONSUME(l.symbols.comma);
+      const arg3 = SUBRULE3(expression);
+      CONSUME(l.symbols.RParen);
+      return {
+        type: 'operation',
+        operator: formatOperator(operator.image),
+        args: [ arg1, arg2, arg3 ],
+      };
+    },
+  };
+}
+
 export function funcVar1<T extends string>(func: TokenType & { name: T }):
 RuleDefExpressionFunctionX<Uncapitalize<T>, [VariableTerm]> {
   return {

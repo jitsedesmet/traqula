@@ -31,7 +31,7 @@ export const triplesBlock: RuleDef<'triplesBlock', BgpPattern> = <const> {
  * [[81]](https://www.w3.org/TR/sparql11-query/#rTriplesSameSubjectPath)
  */
 function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, Triple[]> {
-  return {
+  return <const> {
     name,
     impl: ({ ACTION, SUBRULE, OR }) => () => OR<Triple[]>([
       {
