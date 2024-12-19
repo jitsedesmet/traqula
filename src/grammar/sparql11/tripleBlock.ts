@@ -2,11 +2,10 @@ import type { BlankNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJsTypes';
+import { CommonIRIs } from '../utils';
 import { var_, varOrTerm, verb } from './general.js';
 import { canCreateBlankNodes } from './literals';
 import { path } from './propertyPaths.js';
-
-const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)
@@ -274,8 +273,8 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
 
         const listHead = dataFactory.blankNode();
         let iterHead = listHead;
-        const predFirst = dataFactory.namedNode(`${RDF}first`);
-        const predRest = dataFactory.namedNode(`${RDF}rest`);
+        const predFirst = dataFactory.namedNode(CommonIRIs.FIRST);
+        const predRest = dataFactory.namedNode(CommonIRIs.REST);
         for (const [ index, term ] of terms.entries()) {
           const headTriple: Triple = {
             subject: iterHead,
@@ -290,7 +289,7 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
             const nilTriple: Triple = {
               subject: iterHead,
               predicate: predRest,
-              object: dataFactory.namedNode(`${RDF}nil`),
+              object: dataFactory.namedNode(CommonIRIs.NIL),
             };
             triples.push(nilTriple);
           } else {

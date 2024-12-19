@@ -1,12 +1,12 @@
 import type { TokenType } from 'chevrotain';
-import * as l from '../../lexer/sparql11/index.js';
-import { Wildcard } from '../../misc/Wildcard.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
-import type { Expression, Pattern, VariableTerm } from '../sparqlJsTypes';
-import { deGroupSingle, unCapitalize } from '../utils.js';
-import { expression, expressionList } from './expression.js';
-import { var_ } from './general.js';
-import { groupGraphPattern } from './whereClause.js';
+import * as l from '../lexer/sparql11/index';
+import { Wildcard } from '../misc/Wildcard';
+import type { RuleDef } from './builder/ruleDefTypes';
+import { expression, expressionList } from './sparql11/expression';
+import { var_ } from './sparql11/general';
+import { groupGraphPattern } from './sparql11/whereClause';
+import type { Expression, Pattern, VariableTerm } from './sparqlJsTypes';
+import { deGroupSingle, unCapitalize } from './utils';
 
 export interface IExpressionFunctionX<U extends (Expression | Pattern)[]> {
   type: 'operation';

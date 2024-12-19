@@ -2,12 +2,7 @@ import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJsTypes';
-import { resolveIRI } from '../utils.js';
-
-const uriBooleanType = 'http://www.w3.org/2001/XMLSchema#boolean';
-const uriIntegerType = 'http://www.w3.org/2001/XMLSchema#integer';
-const uriDecimalType = 'http://www.w3.org/2001/XMLSchema#decimal';
-const uriDoubleType = 'http://www.w3.org/2001/XMLSchema#double';
+import { CommonIRIs, resolveIRI } from '../utils.js';
 
 /**
  * [[129]](https://www.w3.org/TR/sparql11-query/#rRDFLiteral)
@@ -49,15 +44,15 @@ export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTe
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.integer).image,
-      context.dataFactory.namedNode(uriIntegerType),
+      context.dataFactory.namedNode(CommonIRIs.INTEGER),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.decimal).image,
-      context.dataFactory.namedNode(uriDecimalType),
+      context.dataFactory.namedNode(CommonIRIs.DECIMAL),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.double).image,
-      context.dataFactory.namedNode(uriDoubleType),
+      context.dataFactory.namedNode(CommonIRIs.DOUBLE),
     ) },
   ]),
 };
@@ -70,15 +65,15 @@ export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTe
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.interferePositive).image,
-      context.dataFactory.namedNode(uriIntegerType),
+      context.dataFactory.namedNode(CommonIRIs.INTEGER),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.decimalPositive).image,
-      context.dataFactory.namedNode(uriDecimalType),
+      context.dataFactory.namedNode(CommonIRIs.DECIMAL),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.doublePositive).image,
-      context.dataFactory.namedNode(uriDoubleType),
+      context.dataFactory.namedNode(CommonIRIs.DOUBLE),
     ) },
   ]),
 };
@@ -91,15 +86,15 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.integerNegative).image,
-      context.dataFactory.namedNode(uriIntegerType),
+      context.dataFactory.namedNode(CommonIRIs.INTEGER),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.decimalNegative).image,
-      context.dataFactory.namedNode(uriDecimalType),
+      context.dataFactory.namedNode(CommonIRIs.DECIMAL),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.terminals.doubleNegative).image,
-      context.dataFactory.namedNode(uriDoubleType),
+      context.dataFactory.namedNode(CommonIRIs.DOUBLE),
     ) },
   ]),
 };
@@ -112,11 +107,11 @@ export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = <const> {
   impl: ({ CONSUME, OR, context }) => () => OR([
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.true_).image.toLowerCase(),
-      context.dataFactory.namedNode(uriBooleanType),
+      context.dataFactory.namedNode(CommonIRIs.BOOLEAN),
     ) },
     { ALT: () => context.dataFactory.literal(
       CONSUME(l.false_).image.toLowerCase(),
-      context.dataFactory.namedNode(uriBooleanType),
+      context.dataFactory.namedNode(CommonIRIs.BOOLEAN),
     ) },
   ]),
 };

@@ -1,4 +1,5 @@
 import type * as RdfJs from '@rdfjs/types';
+import type { BaseQuadTerm } from './sparql12/sparql12Types';
 
 export interface ParserOptions {
   prefixes?: Record<string, string> | undefined;
@@ -32,13 +33,13 @@ export interface Wildcard {
   equals: (other: RdfJs.Term | null | undefined) => boolean;
 }
 
-export type Term = VariableTerm | IriTerm | LiteralTerm | BlankTerm | QuadTerm;
+export type Term = VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm;
 
 export type VariableTerm = RdfJs.Variable;
 export type IriTerm = RdfJs.NamedNode;
 export type LiteralTerm = RdfJs.Literal;
 export type BlankTerm = RdfJs.BlankNode;
-export type QuadTerm = RdfJs.Quad;
+export type QuadTerm = BaseQuadTerm;
 
 export type SparqlQuery = Query | Update | Pick<Update, 'base' | 'prefixes'>;
 

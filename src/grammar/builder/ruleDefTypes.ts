@@ -7,6 +7,7 @@ import type {
   ManySepMethodOpts,
   OrMethodOpts,
 } from '@chevrotain/types';
+import type * as RDF from '@rdfjs/types';
 import type { ConsumeMethodOpts, IToken, TokenType } from 'chevrotain';
 import type { DataFactory } from 'rdf-data-factory';
 
@@ -27,7 +28,7 @@ type ArrayElementsUndefinable<ArrayType extends any[]> =
 export interface ImplArgs extends CstDef {
   cache: WeakMap<RuleDef, unknown>;
   context: {
-    dataFactory: DataFactory;
+    dataFactory: DataFactory<RDF.BaseQuad>;
     /**
      * Current scoped prefixes. Used for resolving prefixed names.
      */

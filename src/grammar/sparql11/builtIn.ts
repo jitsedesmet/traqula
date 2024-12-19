@@ -1,11 +1,6 @@
 import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../../lexer/sparql11/index.js';
 import type { ImplArgs, RuleDef } from '../builder/ruleDefTypes.js';
-import type { AggregateExpression, Expression } from '../sparqlJsTypes.js';
-import {
-  unCapitalize,
-} from '../utils.js';
-import { expression } from './expression.js';
 import {
   baseAggregateFunc,
   funcExpr1,
@@ -17,7 +12,12 @@ import {
   funcGroupGraphPattern,
   funcNil1,
   funcVar1,
-} from './expressionhelpers.js';
+} from '../expressionHelpers';
+import type { AggregateExpression, Expression } from '../sparqlJsTypes.js';
+import {
+  unCapitalize,
+} from '../utils.js';
+import { expression } from './expression.js';
 import { string } from './literals.js';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
@@ -210,7 +210,7 @@ export const inAggregate = Symbol('inAggregate');
 export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   name: 'aggregate',
   impl: ({ ACTION, SUBRULE, OR, context }) => () => {
-    // https://www.w3.org/2013/sparql-errata#errata-query-5
+    // https://www.w3.org/2013/sparql-errata#errata-query-5 - Or note 15 in SPARQL1.2 spec
     //  An aggregate function is not allowed within an aggregate function.
     const wasInAggregate = context.queryMode.has(inAggregate);
     ACTION(() => context.queryMode.add(inAggregate));

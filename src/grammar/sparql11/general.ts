@@ -1,10 +1,9 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
 import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJsTypes';
+import { CommonIRIs } from '../utils';
 import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals.js';
 import { triplesSameSubject } from './tripleBlock.js';
-
-const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)
@@ -96,7 +95,7 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
     {
       ALT: () => {
         CONSUME(l.a);
-        return context.dataFactory.namedNode(`${RDF}type`);
+        return context.dataFactory.namedNode(CommonIRIs.TYPE);
       },
     },
   ]),
@@ -159,7 +158,7 @@ export const graphTerm: RuleDef<'graphTerm', Term> = <const> {
     {
       ALT: () => {
         CONSUME(l.terminals.nil);
-        return context.dataFactory.namedNode(`${RDF}nil`);
+        return context.dataFactory.namedNode(CommonIRIs.NIL);
       },
     },
   ]),

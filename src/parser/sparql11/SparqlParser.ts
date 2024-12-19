@@ -11,6 +11,7 @@ import {
   valuesClause,
 } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
+import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
 import type {
   IriTerm,
   PropertyPath,
@@ -95,7 +96,7 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
   },
 };
 
-export const sparqlParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
+export const sparql11ParserBuilder = Builder.createBuilder(queryUnitParserBuilder)
   .merge(updateParserBuilder, <const> [])
   .deleteRule('queryUnit')
   .deleteRule('query')
@@ -108,11 +109,11 @@ export class SparqlParser implements ISparqlParser {
     path: (input: string) => PropertyPath | IriTerm;
   };
 
-  private readonly dataFactory: DataFactory;
+  private readonly dataFactory: DataFactory<BaseQuadTerm>;
 
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
-    this.parser = sparqlParserBuilder.consumeToParser({
+    this.parser = sparql11ParserBuilder.consumeToParser({
       tokenVocabulary: allTokens.build(),
     }, {
       ...context,

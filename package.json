@@ -11,7 +11,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc && node esbuild.mjs",
+    "build": "tsc && node esbuild.mjs --minify",
     "clean": "git clean -dfx",
     "lint": "eslint . --cache",
     "lint-fix": "eslint . --fix",
