@@ -5,7 +5,7 @@ export type RuleNamesFromList<T extends readonly RuleDef[]> = T[number]['name'];
 
 export type RuleDefMap<RuleNames extends string> = {[Key in RuleNames]: RuleDef<Key> };
 
-export type CheckOverlap<T, U, V> = T & U extends never ? V : never;
+export type CheckOverlap<T, U, V, W = never> = T & U extends never ? V : W;
 
 /**
  * Convert a list of RuleDefs to a Record with the name of the RuleDef as the key, matching the RuleDefMap type.

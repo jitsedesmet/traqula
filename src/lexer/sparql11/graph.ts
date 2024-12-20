@@ -7,7 +7,7 @@ export const default_ = createToken({ name: 'DefaultGraph', pattern: /default/i,
 export const graph = createToken({ name: 'Graph', pattern: /graph/i, label: 'GRAPH' });
 export const graphAll = createToken({ name: 'GraphAll', pattern: /all/i, label: 'ALL' });
 
-export const allGraphTokens = new LexerBuilder().add(
+export const allGraphTokens = LexerBuilder.create().add(
   named,
   default_,
   graph,

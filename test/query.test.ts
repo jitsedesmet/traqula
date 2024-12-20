@@ -5,11 +5,12 @@ import { DataFactory } from 'rdf-data-factory';
 import type { TestFunction } from 'vitest';
 import { beforeEach, describe, it } from 'vitest';
 import './matchers/toEqualParsedQuery.js';
-import { SparqlParser } from '../src/parser/sparql11/SparqlParser.js';
+import { Sparql11Parser } from '../src/parser/sparql11/Sparql11Parser';
+import { Sparql12Parser } from '../src/parser/sparql12/Sparql12parser';
 
 describe('a SPARQL parser', () => {
   const dataFactory = new DataFactory();
-  const parser = new SparqlParser();
+  const parser = new Sparql11Parser();
   beforeEach(() => {
     parser._resetBlanks();
   });
@@ -34,7 +35,7 @@ describe('a SPARQL parser', () => {
   describe('confirms to SPARQL-PATH tests', () => {
     const prefix = './test/statics/paths';
     const statics = fs.readdirSync(prefix);
-    const parser = new SparqlParser({ prefixes: { ex: 'http://example.org/' }});
+    const parser = new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }});
     for (const file of statics) {
       if (file.endsWith('.sparql')) {
         it(`should parse ${file}`, async({ expect }) => {
@@ -43,6 +44,24 @@ describe('a SPARQL parser', () => {
           const json: unknown = JSON.parse(result);
 
           const res = parser.parsePath(query);
+          expect(res).toEqualParsedQuery(json);
+        });
+      }
+    }
+  });
+
+  describe('confirms to SPARQL12 tests', () => {
+    const prefix = './test/statics/sparql-1-2';
+    const statics = fs.readdirSync(prefix);
+    const parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
+    for (const file of statics) {
+      if (file.endsWith('.sparql')) {
+        it(`should parse ${file}`, async({ expect }) => {
+          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
+          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
+          const json: unknown = JSON.parse(result);
+
+          const res = parser.parse(query);
           expect(res).toEqualParsedQuery(json);
         });
       }
@@ -98,7 +117,7 @@ describe('a SPARQL parser', () => {
 
   describe('with pre-defined prefixes', () => {
     const prefixes = { a: 'ex:abc#', b: 'ex:def#' };
-    const parser = new SparqlParser({ prefixes });
+    const parser = new Sparql11Parser({ prefixes });
 
     it('should use those prefixes', ({ expect }) => {
       const query = 'SELECT * { a:a b:b "" }';
@@ -164,7 +183,7 @@ describe('a SPARQL parser', () => {
   });
 
   describe('with pre-defined base IRI', () => {
-    const parser = new SparqlParser({ baseIRI: 'http://ex.org/' });
+    const parser = new Sparql11Parser({ baseIRI: 'http://ex.org/' });
 
     it('should use the base IRI', ({ expect }) => {
       const query = 'SELECT * { <> <#b> "" }';
@@ -185,7 +204,7 @@ describe('a SPARQL parser', () => {
 
       const goodQuery = 'SELECT * { <> <#b> "" }';
 
-      const parser = new SparqlParser({ baseIRI: 'http://ex2.org/' });
+      const parser = new Sparql11Parser({ baseIRI: 'http://ex2.org/' });
       const result = {
         subject: dataFactory.namedNode('http://ex2.org/'),
         predicate: dataFactory.namedNode('http://ex2.org/#b'),

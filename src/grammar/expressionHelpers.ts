@@ -63,13 +63,13 @@ export function funcExpr3<T extends string>(func: TokenType & { name: T }):
 RuleDefExpressionFunctionX<Uncapitalize<T>, [Expression, Expression, Expression]> {
   return {
     name: unCapitalize(func.name),
-    impl: ({ SUBRULE1, SUBRULE2, SUBRULE3, CONSUME }) => () => {
+    impl: ({ SUBRULE1, SUBRULE2, SUBRULE3, CONSUME, CONSUME1, CONSUME2 }) => () => {
       const operator = CONSUME(func);
       CONSUME(l.symbols.LParen);
       const arg1 = SUBRULE1(expression);
-      CONSUME(l.symbols.comma);
+      CONSUME1(l.symbols.comma);
       const arg2 = SUBRULE2(expression);
-      CONSUME(l.symbols.comma);
+      CONSUME2(l.symbols.comma);
       const arg3 = SUBRULE3(expression);
       CONSUME(l.symbols.RParen);
       return {

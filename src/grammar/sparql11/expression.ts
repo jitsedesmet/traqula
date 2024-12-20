@@ -269,7 +269,7 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = <co
       () => OR1([
         {
           ALT: () => {
-            CONSUME(l.symbols.plus);
+            CONSUME(l.symbols.opPlus);
             return {
               operator: '+',
               expr: SUBRULE2(multiplicativeExpression),
@@ -278,7 +278,7 @@ export const additiveExpression: RuleDef<'additiveExpression', Expression> = <co
         },
         {
           ALT: () => {
-            CONSUME(l.symbols.minus_);
+            CONSUME(l.symbols.opMinus);
             return {
               operator: '-',
               expr: SUBRULE3(multiplicativeExpression),
@@ -408,7 +408,7 @@ export const unaryExpression: RuleDef<'unaryExpression', Expression> = <const> {
     },
     {
       ALT: () => {
-        CONSUME(l.symbols.plus);
+        CONSUME(l.symbols.opPlus);
         const expr = SUBRULE2(primaryExpression);
         return {
           type: 'operation',
@@ -419,7 +419,7 @@ export const unaryExpression: RuleDef<'unaryExpression', Expression> = <const> {
     },
     {
       ALT: () => {
-        CONSUME(l.symbols.minus_);
+        CONSUME(l.symbols.opMinus);
         const expr = SUBRULE3(primaryExpression);
         return {
           type: 'operation',

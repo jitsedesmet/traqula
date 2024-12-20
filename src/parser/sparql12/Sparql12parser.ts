@@ -1,6 +1,11 @@
+import { DataFactory } from 'rdf-data-factory';
 import { Builder } from '../../grammar/builder/parserBuilder';
+import type { ImplArgs } from '../../grammar/builder/ruleDefTypes';
 import * as S12 from '../../grammar/sparql12/sparql12';
-import { sparql11ParserBuilder } from '../sparql11/SparqlParser';
+import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
+import type { SparqlParser as ISparqlParser, SparqlQuery } from '../../grammar/sparqlJsTypes';
+import { sparql12Tokens } from '../../lexer/sparql12/index';
+import { sparql11ParserBuilder } from '../sparql11/Sparql11Parser';
 
 export const sparql12ParserBuilder = Builder.createBuilder(sparql11ParserBuilder)
   .addMany(
@@ -43,3 +48,29 @@ export const sparql12ParserBuilder = Builder.createBuilder(sparql11ParserBuilder
   .patchRule(S12.primaryExpression)
   .patchRule(S12.builtInCall)
   .patchRule(S12.rdfLiteral);
+
+export class Sparql12Parser implements ISparqlParser {
+  private readonly parser: {
+    queryOrUpdate: (input: string) => SparqlQuery;
+  };
+
+  private readonly dataFactory: DataFactory<BaseQuadTerm>;
+
+  public constructor(context: Partial<ImplArgs['context']> = {}) {
+    this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
+    this.parser = sparql12ParserBuilder.consumeToParser({
+      tokenVocabulary: sparql12Tokens.build(),
+    }, {
+      ...context,
+      dataFactory: this.dataFactory,
+    });
+  }
+
+  public _resetBlanks(): void {
+    this.dataFactory.resetBlankNodeCounter();
+  }
+
+  public parse(query: string): SparqlQuery {
+    return this.parser.queryOrUpdate(query);
+  }
+}

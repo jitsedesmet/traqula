@@ -21,13 +21,13 @@ function reifiedTripleBlockImpl<T extends string>(name: T, allowPath: boolean):
 RuleDef<T, RuleDefReturn<typeof S11.triplesSameSubject>> {
   return <const> {
     name,
-    impl: ({ SUBRULE }) => () => {
+    impl: ({ ACTION, SUBRULE }) => () => {
       const triple = SUBRULE(reifiedTriple);
       const properties = SUBRULE(allowPath ? S11.propertyListPath : S11.propertyList);
 
-      return properties.map(partial => partial({
+      return ACTION(() => properties.map(partial => partial({
         subject: <Exclude<typeof triple.object, DefaultGraph>> triple.object,
-      }));
+      })));
     },
   };
 }
@@ -40,7 +40,7 @@ export const reifiedTripleBlockPath = reifiedTripleBlockImpl('reifiedTripleBlock
 export const dataBlockValue:
 RuleDef<'dataBlockValue', RuleDefReturn<typeof S11.dataBlockValue> | QuadTerm> = <const> {
   name: 'dataBlockValue',
-  impl: $ => () => $.OR<RuleDefReturn<typeof S11.dataBlockValue> | QuadTerm>([
+  impl: $ => () => $.OR2<RuleDefReturn<typeof S11.dataBlockValue> | QuadTerm>([
     { ALT: () => S11.dataBlockValue.impl($)() },
     { ALT: () => $.SUBRULE(tripleTermData) },
   ]),
@@ -79,7 +79,7 @@ function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean):
 > {
   return <const> {
     name,
-    impl: $ => () => $.OR([
+    impl: $ => () => $.OR2([
       { ALT: () => allowPaths ? S11.triplesSameSubjectPath.impl($)() : S11.triplesSameSubject.impl($)() },
       { ALT: () => $.SUBRULE(allowPaths ? reifiedTripleBlockPath : reifiedTripleBlock) },
     ]),
@@ -161,7 +161,7 @@ export const annotationBlock = annotationBlockImpl('annotationBlock', false);
  */
 export const graphNode: RuleDef<'graphNode', RuleDefReturn<typeof S11.graphNode> | BaseQuadTerm> = <const> {
   name: 'graphNode',
-  impl: $ => () => $.OR<RuleDefReturn<typeof S11.graphNode> | BaseQuadTerm>([
+  impl: $ => () => $.OR2<RuleDefReturn<typeof S11.graphNode> | BaseQuadTerm>([
     { ALT: () => S11.graphNode.impl($)() },
     { ALT: () => $.SUBRULE(reifiedTriple) },
   ]),
@@ -172,7 +172,7 @@ export const graphNode: RuleDef<'graphNode', RuleDefReturn<typeof S11.graphNode>
  */
 export const graphNodePath: RuleDef<'graphNodePath', RuleDefReturn<typeof S11.graphNodePath> | BaseQuadTerm> = <const> {
   name: 'graphNodePath',
-  impl: $ => () => $.OR<RuleDefReturn<typeof S11.graphNodePath> | BaseQuadTerm>([
+  impl: $ => () => $.OR2<RuleDefReturn<typeof S11.graphNodePath> | BaseQuadTerm>([
     { ALT: () => S11.graphNodePath.impl($)() },
     { ALT: () => $.SUBRULE(reifiedTriple) },
   ]),
@@ -242,7 +242,7 @@ RuleDef<'reifiedTripleSubject', VariableTerm | IriTerm | LiteralTerm | BlankTerm
 export const reifiedTripleObject:
 RuleDef<'reifiedTripleObject', VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm> = <const> {
   name: 'reifiedTripleObject',
-  impl: $ => () => $.OR([
+  impl: $ => () => $.OR2([
     { ALT: () => reifiedTripleSubject.impl($)() },
     { ALT: () => $.SUBRULE(tripleTerm) },
   ]),
@@ -285,7 +285,7 @@ RuleDef<'tripleTermSubject', VariableTerm | IriTerm | LiteralTerm | BlankTerm> =
 export const tripleTermObject:
 RuleDef<'tripleTermObject', VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm> = <const> {
   name: 'tripleTermObject',
-  impl: $ => () => $.OR<VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm>([
+  impl: $ => () => $.OR2<VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm>([
     { ALT: () => tripleTermSubject.impl($)() },
     { ALT: () => $.SUBRULE(tripleTerm) },
   ]),
@@ -331,7 +331,7 @@ export const tripleTermDataSubject: RuleDef<'tripleTermDataSubject', IriTerm | L
  */
 export const tripleTermDataObject: RuleDef<'tripleTermDataObject', IriTerm | LiteralTerm | BaseQuadTerm> = <const> {
   name: 'tripleTermDataObject',
-  impl: $ => () => $.OR<IriTerm | LiteralTerm | BaseQuadTerm>([
+  impl: $ => () => $.OR2<IriTerm | LiteralTerm | BaseQuadTerm>([
     { ALT: () => tripleTermDataSubject.impl($)() },
     { ALT: () => $.SUBRULE(tripleTermData) },
   ]),
@@ -342,7 +342,7 @@ export const tripleTermDataObject: RuleDef<'tripleTermDataObject', IriTerm | Lit
  */
 export const primaryExpression: RuleDef<'primaryExpression', Expression> = <const> {
   name: 'primaryExpression',
-  impl: $ => () => $.OR<Expression>([
+  impl: $ => () => $.OR2<Expression>([
     { ALT: () => S11.primaryExpression.impl($)() },
     { ALT: () => $.SUBRULE(exprTripleTerm) },
   ]),
@@ -384,7 +384,7 @@ export const exprTripleTermSubject: RuleDef<'exprTripleTermSubject', IriTerm | V
 export const exprTripleTermObject:
 RuleDef<'exprTripleTermObject', IriTerm | VariableTerm | LiteralTerm | BaseQuadTerm> = <const> {
   name: 'exprTripleTermObject',
-  impl: $ => () => $.OR<IriTerm | VariableTerm | LiteralTerm | BaseQuadTerm>([
+  impl: $ => () => $.OR2<IriTerm | VariableTerm | LiteralTerm | BaseQuadTerm>([
     { ALT: () => exprTripleTermSubject.impl($)() },
     { ALT: () => $.SUBRULE(exprTripleTerm) },
   ]),
@@ -392,6 +392,8 @@ RuleDef<'exprTripleTermObject', IriTerm | VariableTerm | LiteralTerm | BaseQuadT
 
 export const builtinLangDir = funcExpr1(l12.builtinLangDir);
 export const builtinLangStrDir = funcExpr3(l12.builtinStrLangDir);
+export const builtinHasLang = funcExpr1(l12.builtinHasLang);
+export const builtinHasLangDir = funcExpr1(l12.builtinHasLangDir);
 export const builtinIsTriple = funcExpr1(l12.builtinIsTRIPLE);
 export const builtinTriple = funcExpr3(l12.builtinTRIPLE);
 export const builtinSubject = funcExpr1(l12.builtinSUBJECT);
@@ -403,7 +405,7 @@ export const builtinObject = funcExpr1(l12.builtinOBJECT);
  */
 export const builtInCall: RuleDef<'builtInCall', Expression> = <const> {
   name: 'builtInCall',
-  impl: $ => () => $.OR<Expression>([
+  impl: $ => () => $.OR2<Expression>([
     { ALT: () => S11.builtInCall.impl($)() },
     { ALT: () => $.SUBRULE(builtinLangDir) },
     { ALT: () => $.SUBRULE(builtinLangStrDir) },

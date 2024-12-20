@@ -15,8 +15,8 @@ export const slash = createToken({ name: 'Slash', pattern: '/', label: '/' });
 export const hat = createToken({ name: 'Hat', pattern: '^', label: '^' });
 export const question = createToken({ name: 'Question', pattern: '?', label: '?' });
 export const star = createToken({ name: 'Star', pattern: '*', label: '*' });
-export const plus = createToken({ name: 'Plus', pattern: '+', label: '+' });
-export const minus_ = createToken({ name: 'Minus', pattern: '-', label: '-' });
+export const opPlus = createToken({ name: 'OpPlus', pattern: '+', label: '+' });
+export const opMinus = createToken({ name: 'OpMinus', pattern: '-', label: '-' });
 export const exclamation = createToken({ name: 'Exclamation', pattern: '!', label: '!' });
 export const logicAnd = createToken({ name: 'LogicAnd', pattern: '&&', label: '&&' });
 export const logicOr = createToken({ name: 'LogicOr', pattern: '||', label: '||' });
@@ -28,7 +28,7 @@ export const lessThanEqual = createToken({ name: 'LessThanEqual', pattern: '<=',
 export const greaterThanEqual = createToken({ name: 'GreaterThanEqual', pattern: '>=', label: '>=' });
 export const hathat = createToken({ name: 'Hathat', pattern: '^^', label: '^^' });
 
-export const allSymbols = new LexerBuilder().add(
+export const allSymbols = LexerBuilder.create().add(
   logicAnd,
   logicOr,
   notEqual,
@@ -49,8 +49,8 @@ export const allSymbols = new LexerBuilder().add(
   hat,
   question,
   star,
-  plus,
-  minus_,
+  opPlus,
+  opMinus,
   exclamation,
   equal,
   lessThan,

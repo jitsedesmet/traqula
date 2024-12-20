@@ -75,7 +75,7 @@ export const comment = createToken({ name: 'Comment', pattern: /#[^\n]*/, group:
 export const nil = createToken({ name: 'Nil', pattern: nilPattern });
 export const anon = createToken({ name: 'Anon', pattern: anonPattern });
 
-export const allTerminals = new LexerBuilder().add(
+export const allTerminals = LexerBuilder.create().add(
   iriRef,
   pNameNs,
   pNameLn,

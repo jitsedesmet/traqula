@@ -189,7 +189,7 @@ export const groupConcat = createToken({
   label: 'GROUP_CONCAT',
 });
 
-export const allBuiltInCalls = new LexerBuilder().add(
+export const allBuiltInCalls = LexerBuilder.create().add(
   langmatches,
   datatype,
   lang,

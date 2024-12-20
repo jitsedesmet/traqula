@@ -115,7 +115,7 @@ export const pathMod: RuleDef<'pathMod', '*' | '+' | '?'> = <const> {
     },
     {
       ALT: () => {
-        CONSUME(l.symbols.plus);
+        CONSUME(l.symbols.opPlus);
         return '+';
       },
     },

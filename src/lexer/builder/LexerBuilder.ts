@@ -1,27 +1,56 @@
 import type { TokenType } from 'chevrotain';
+import type { CheckOverlap } from '../../grammar/builder/builderTypes';
 
-export class LexerBuilder {
+type NamedToken<Name extends string> = TokenType & { name: Name };
+
+export class LexerBuilder<NAMES extends string = string> {
   private readonly tokens: TokenType[];
-  public constructor(...startTokens: LexerBuilder[]) {
-    this.tokens = startTokens.flatMap(builder => builder.tokens);
+
+  public static create<U extends LexerBuilder<T>, T extends string = ''>(starter?: U): U {
+    return <U> new LexerBuilder(starter);
   }
 
-  public add(...token: TokenType[]): LexerBuilder {
+  public constructor(starter?: LexerBuilder<NAMES>) {
+    this.tokens = starter?.tokens ? [ ...starter.tokens ] : [];
+  }
+
+  public get(index: number): TokenType {
+    return this.tokens[index];
+  }
+
+  public merge<OtherNames extends string, OW extends string>(
+    merge: LexerBuilder<OtherNames>,
+    overwrite: NamedToken<OW>[] = [],
+  ):
+    LexerBuilder<NAMES | OtherNames> {
+    const extraTokens = merge.tokens.filter((token) => {
+      const overwriteToken = overwrite.find(t => t.name === token.name);
+      if (overwriteToken) {
+        return false;
+      }
+      const match = this.tokens.find(t => t.name === token.name);
+      if (match) {
+        if (match !== token) {
+          throw new Error(`Token with name ${token.name} already exists. Implementation is different and no overwrite was provided.`);
+        }
+        return false;
+      }
+      return true;
+    });
+    this.tokens.push(...extraTokens);
+    return this;
+  }
+
+  public add<Name extends string>(...token: CheckOverlap<Name, NAMES, NamedToken<Name>[]>):
+  LexerBuilder<Name | NAMES> {
     this.tokens.push(...token);
     return this;
   }
 
-  public mergeAfter(builder: LexerBuilder): LexerBuilder {
-    this.tokens.push(...builder.tokens);
-    return this;
-  }
-
-  public mergeBefore(builder: LexerBuilder): LexerBuilder {
-    this.tokens.unshift(...builder.tokens);
-    return this;
-  }
-
-  public addBefore(before: TokenType, ...token: TokenType[]): LexerBuilder {
+  public addBefore<Name extends string>(
+    before: NamedToken<NAMES>,
+    ...token: CheckOverlap<Name, NAMES, NamedToken<Name>[]>
+  ): LexerBuilder<NAMES | Name> {
     const index = this.tokens.indexOf(before);
     if (index === -1) {
       throw new Error('Token not found');
@@ -30,7 +59,10 @@ export class LexerBuilder {
     return this;
   }
 
-  public moveBefore(before: TokenType, ...tokens: TokenType[]): LexerBuilder {
+  public moveBefore<Name extends string>(
+    before: NamedToken<NAMES>,
+    ...tokens: CheckOverlap<Name, NAMES, never, NamedToken<Name>[]>
+  ): LexerBuilder<NAMES> {
     const beforeIndex = this.tokens.indexOf(before);
     if (beforeIndex === -1) {
       throw new Error('BeforeToken not found');
@@ -46,12 +78,26 @@ export class LexerBuilder {
     return this;
   }
 
-  public addAfter(after: TokenType, ...token: TokenType[]): LexerBuilder {
+  public addAfter<Name extends string>(
+    after: NamedToken<NAMES>,
+    ...token: CheckOverlap<Name, NAMES, never, NamedToken<Name>[]>
+  ): LexerBuilder<NAMES | Name> {
     const index = this.tokens.indexOf(after);
     if (index === -1) {
       throw new Error('Token not found');
     }
     this.tokens.splice(index + 1, 0, ...token);
+    return this;
+  }
+
+  public delete<Name extends NAMES>(...token: NamedToken<Name>[]): LexerBuilder<Exclude<NAMES, Name>> {
+    for (const t of token) {
+      const index = this.tokens.indexOf(t);
+      if (index === -1) {
+        throw new Error('Token not found');
+      }
+      this.tokens.splice(index, 1);
+    }
     return this;
   }
 

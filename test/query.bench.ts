@@ -1,10 +1,10 @@
 /* eslint-disable test/consistent-test-it */
 import { Parser } from 'sparqljs';
 import { describe, bench } from 'vitest';
-import { SparqlParser } from '../src/parser/sparql11/SparqlParser.js';
+import { Sparql11Parser } from '../src/parser/sparql11/Sparql11Parser';
 
 describe('query, exclude construction', () => {
-  const newParser = new SparqlParser();
+  const newParser = new Sparql11Parser();
   const oldParser = new Parser();
   const query = `
 SELECT ?president ?party ?page WHERE {

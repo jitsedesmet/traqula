@@ -2,8 +2,8 @@
 import { LexerBuilder } from '../builder/LexerBuilder';
 import { createToken } from '../utils';
 import { allBuiltInCalls, datatype } from './BuildinCalls.js';
-import { allGraphTokens } from './graph.js';
-import { allSymbols } from './symbols.js';
+import { allGraphTokens } from './graph';
+import { allSymbols } from './symbols';
 import { allTerminals } from './terminals.js';
 
 export const baseDecl = createToken({ name: 'BaseDecl', pattern: /base/i, label: 'BASE' });
@@ -54,7 +54,7 @@ export const in_ = createToken({ name: 'In', pattern: /in/i, label: 'IN' });
 export const notIn = createToken({ name: 'NotIn', pattern: /not in/i, label: 'NOT IN' });
 export const separator = createToken({ name: 'Separator', pattern: /separator/i, label: 'SEPARATOR' });
 
-export const allBaseTokens = new LexerBuilder().add(
+export const allBaseTokens = LexerBuilder.create().add(
   baseDecl,
   prefixDecl,
   select,
@@ -107,10 +107,10 @@ export const allBaseTokens = new LexerBuilder().add(
 /**
  * [!!!ORDER MATTERS!!!](https://chevrotain.io/docs/tutorial/step1_lexing.html#creating-the-lexer)
  */
-export const allTokens = new LexerBuilder(
-  allTerminals,
-  allBaseTokens,
-  allBuiltInCalls,
-  allGraphTokens,
-  allSymbols,
-).moveBefore(datatype, dataClause);
+export const sparql11Tokens = LexerBuilder
+  .create(allTerminals)
+  .merge(allBaseTokens)
+  .merge(allBuiltInCalls)
+  .merge(allGraphTokens)
+  .merge(allSymbols)
+  .moveBefore(datatype, dataClause);

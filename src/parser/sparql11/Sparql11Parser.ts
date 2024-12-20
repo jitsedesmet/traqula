@@ -21,7 +21,7 @@ import type {
   Update,
 } from '../../grammar/sparqlJsTypes';
 import * as l from '../../lexer/sparql11/index.js';
-import { allTokens } from '../../lexer/sparql11/index.js';
+import { sparql11Tokens } from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';
 import { updateParserBuilder } from './updateUnitParser.js';
 
@@ -103,7 +103,7 @@ export const sparql11ParserBuilder = Builder.createBuilder(queryUnitParserBuilde
   .deleteRule('updateUnit')
   .addRule(queryOrUpdate);
 
-export class SparqlParser implements ISparqlParser {
+export class Sparql11Parser implements ISparqlParser {
   private readonly parser: {
     queryOrUpdate: (input: string) => SparqlQuery;
     path: (input: string) => PropertyPath | IriTerm;
@@ -114,7 +114,7 @@ export class SparqlParser implements ISparqlParser {
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
     this.parser = sparql11ParserBuilder.consumeToParser({
-      tokenVocabulary: allTokens.build(),
+      tokenVocabulary: sparql11Tokens.build(),
     }, {
       ...context,
       dataFactory: this.dataFactory,
