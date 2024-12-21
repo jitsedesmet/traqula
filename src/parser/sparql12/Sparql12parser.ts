@@ -3,7 +3,7 @@ import { Builder } from '../../grammar/builder/parserBuilder';
 import type { ImplArgs } from '../../grammar/builder/ruleDefTypes';
 import * as S12 from '../../grammar/sparql12/sparql12';
 import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
-import type { SparqlParser as ISparqlParser, SparqlQuery } from '../../grammar/sparqlJsTypes';
+import type { IriTerm, PropertyPath, SparqlParser as ISparqlParser, SparqlQuery } from '../../grammar/sparqlJsTypes';
 import { sparql12Tokens } from '../../lexer/sparql12/index';
 import { sparql11ParserBuilder } from '../sparql11/Sparql11Parser';
 
@@ -52,6 +52,7 @@ export const sparql12ParserBuilder = Builder.createBuilder(sparql11ParserBuilder
 export class Sparql12Parser implements ISparqlParser {
   private readonly parser: {
     queryOrUpdate: (input: string) => SparqlQuery;
+    path: (input: string) => PropertyPath | IriTerm;
   };
 
   private readonly dataFactory: DataFactory<BaseQuadTerm>;
@@ -72,5 +73,16 @@ export class Sparql12Parser implements ISparqlParser {
 
   public parse(query: string): SparqlQuery {
     return this.parser.queryOrUpdate(query);
+  }
+
+  public parsePath(query: string): (PropertyPath & { prefixes: object }) | IriTerm {
+    const result = this.parser.path(query);
+    if ('type' in result) {
+      return {
+        ...result,
+        prefixes: {},
+      };
+    }
+    return result;
   }
 }

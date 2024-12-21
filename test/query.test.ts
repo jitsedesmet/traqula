@@ -15,57 +15,52 @@ describe('a SPARQL parser', () => {
     parser._resetBlanks();
   });
 
-  describe('confirms to SPARQL tests', () => {
-    const prefix = './test/statics/sparql';
-    const statics = fs.readdirSync(prefix);
+  function testQueriesInDir(
+    dir: string,
+    parsers: [string, { parse: (input: string) => unknown; _resetBlanks: () => void }][],
+  ): void {
+    const statics = fs.readdirSync(dir);
     for (const file of statics) {
       if (file.endsWith('.sparql')) {
-        it(`should parse ${file}`, async({ expect }) => {
-          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
-          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
+        describe(`test file ${file}`, async() => {
+          const query = await fsp.readFile(`${dir}/${file}`, 'utf-8');
+          const result = await fsp.readFile(`${dir}/${file.replace('.sparql', '.json')}`, 'utf-8');
           const json: unknown = JSON.parse(result);
-
-          const res = parser.parse(query);
-          expect(res).toEqualParsedQuery(json);
+          for (const [ name, parser ] of parsers) {
+            it(`can be parsed by ${name}`, async({ expect }) => {
+              parser._resetBlanks();
+              const res: any = parser.parse(query);
+              expect(res).toEqualParsedQuery(json);
+            });
+          }
         });
       }
     }
+  }
+
+  describe('confirms to SPARQL tests', () => {
+    testQueriesInDir('./test/statics/sparql', [
+      [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
+      // [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
+    ]);
   });
 
   describe('confirms to SPARQL-PATH tests', () => {
-    const prefix = './test/statics/paths';
-    const statics = fs.readdirSync(prefix);
-    const parser = new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }});
-    for (const file of statics) {
-      if (file.endsWith('.sparql')) {
-        it(`should parse ${file}`, async({ expect }) => {
-          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
-          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
-          const json: unknown = JSON.parse(result);
-
-          const res = parser.parsePath(query);
-          expect(res).toEqualParsedQuery(json);
-        });
-      }
-    }
+    const sparql11Parser = new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }});
+    const sparql12Parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
+    testQueriesInDir('./test/statics/paths', [
+      [ 'SPARQL 1.1 parser', {
+        parse: (input: string) => sparql11Parser.parsePath(input),
+        _resetBlanks: () => sparql11Parser._resetBlanks(),
+      }],
+      // [ 'SPARQL 1.2 parser', { parse: (input: string) => sparql12Parser.parsePath(input) }],
+    ]);
   });
 
   describe('confirms to SPARQL12 tests', () => {
-    const prefix = './test/statics/sparql-1-2';
-    const statics = fs.readdirSync(prefix);
-    const parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
-    for (const file of statics) {
-      if (file.endsWith('.sparql')) {
-        it(`should parse ${file}`, async({ expect }) => {
-          const query = await fsp.readFile(`${prefix}/${file}`, 'utf-8');
-          const result = await fsp.readFile(`${prefix}/${file.replace('.sparql', '.json')}`, 'utf-8');
-          const json: unknown = JSON.parse(result);
-
-          const res = parser.parse(query);
-          expect(res).toEqualParsedQuery(json);
-        });
-      }
-    }
+    testQueriesInDir('./test/statics/sparql-1-2', [
+      [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
+    ]);
   });
 
   function testErroneousQuery(query: string, errorMsg: string): TestFunction<object> {
