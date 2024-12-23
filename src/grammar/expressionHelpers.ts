@@ -4,8 +4,8 @@ import { Wildcard } from '../misc/Wildcard';
 import type { RuleDef } from './builder/ruleDefTypes';
 import { expression, expressionList } from './sparql11/expression';
 import { var_ } from './sparql11/general';
+import type { Expression, Pattern, VariableTerm } from './sparql11/Sparql11types';
 import { groupGraphPattern } from './sparql11/whereClause';
-import type { Expression, Pattern, VariableTerm } from './sparqlJsTypes';
 import { deGroupSingle, unCapitalize } from './utils';
 
 export interface IExpressionFunctionX<U extends (Expression | Pattern)[]> {

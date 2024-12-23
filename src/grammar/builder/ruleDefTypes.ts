@@ -52,7 +52,7 @@ export interface ImplArgs extends CstDef {
     /**
      * Set of queryModes. Primarily used for note 8, 14.
      */
-    queryMode: Set<symbol>;
+    parseMode: Set<symbol>;
   };
 }
 

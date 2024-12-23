@@ -1,10 +1,11 @@
 import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
-import type { BlankTerm, IriTerm, LiteralTerm } from '../sparqlJsTypes';
 import { CommonIRIs, resolveIRI } from '../utils.js';
+import type { BlankTerm, IriTerm, LiteralTerm } from './Sparql11types.js';
 
 /**
+ * Parses an RDF literal, in the form of {value}@{lang} or {value}^^{datatype}.
  * [[129]](https://www.w3.org/TR/sparql11-query/#rRDFLiteral)
  */
 export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = <const> {
@@ -25,6 +26,7 @@ export const rdfLiteral: RuleDef<'rdfLiteral', LiteralTerm> = <const> {
 };
 
 /**
+ * Parses a numeric literal.
  * [[130]](https://www.w3.org/TR/sparql11-query/#rNumericLiteral)
  */
 export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = <const> {
@@ -37,6 +39,7 @@ export const numericLiteral: RuleDef<'numericLiteral', LiteralTerm> = <const> {
 };
 
 /**
+ * Parses an unsigned numeric literal.
  * [[131]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralUnsigned)
  */
 export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTerm> = <const> {
@@ -58,6 +61,7 @@ export const numericLiteralUnsigned: RuleDef<'numericLiteralUnsigned', LiteralTe
 };
 
 /**
+ * Parses a positive numeric literal.
  * [[132]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralPositive)
  */
 export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTerm> = <const> {
@@ -79,6 +83,7 @@ export const numericLiteralPositive: RuleDef<'numericLiteralPositive', LiteralTe
 };
 
 /**
+ * Parses a negative numeric literal.
  * [[133]](https://www.w3.org/TR/sparql11-query/#rNumericLiteralNegative)
  */
 export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTerm> = <const> {
@@ -100,6 +105,7 @@ export const numericLiteralNegative: RuleDef<'numericLiteralNegative', LiteralTe
 };
 
 /**
+ * Parses a boolean literal.
  * [[134]](https://www.w3.org/TR/sparql11-query/#rBooleanLiteral)
  */
 export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = <const> {
@@ -117,6 +123,7 @@ export const booleanLiteral: RuleDef<'booleanLiteral', LiteralTerm> = <const> {
 };
 
 /**
+ * Parses a string literal.
  * [[135]](https://www.w3.org/TR/sparql11-query/#rString)
  */
 export const string: RuleDef<'string', string> = <const> {
@@ -143,6 +150,7 @@ export const string: RuleDef<'string', string> = <const> {
 };
 
 /**
+ * Parses a named node, either as an IRI or as a prefixed name.
  * [[136]](https://www.w3.org/TR/sparql11-query/#riri)
  */
 export const iri: RuleDef<'iri', IriTerm> = <const> {
@@ -157,6 +165,7 @@ export const iri: RuleDef<'iri', IriTerm> = <const> {
 };
 
 /**
+ * Parses a named node with a prefix. Looks up the prefix in the context and returns the full IRI.
  * [[137]](https://www.w3.org/TR/sparql11-query/#rPrefixedName)
  */
 export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
@@ -176,6 +185,7 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
 export const canCreateBlankNodes = Symbol('canCreateBlankNodes');
 
 /**
+ * Parses blank note and throws an error if 'canCreateBlankNodes' is not in the current parserMode.
  * [[138]](https://www.w3.org/TR/sparql11-query/#rBlankNode)
  */
 export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
@@ -202,7 +212,7 @@ export const blankNode: RuleDef<'blankNode', BlankTerm> = <const> {
       },
     ]);
     ACTION(() => {
-      if (!context.queryMode.has(canCreateBlankNodes)) {
+      if (!context.parseMode.has(canCreateBlankNodes)) {
         throw new Error('Blank nodes are not allowed in this context');
       }
     });

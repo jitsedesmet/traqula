@@ -1,9 +1,9 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
-import type { Expression, Grouping, Ordering, SelectQuery } from '../sparqlJsTypes';
 import { builtInCall, canParseAggregate } from './builtIn.js';
 import { brackettedExpression, expression } from './expression.js';
 import { var_ } from './general.js';
+import type { Expression, Grouping, Ordering, SelectQuery } from './Sparql11types';
 import { constraint, functionCall } from './whereClause.js';
 
 /**
@@ -96,11 +96,11 @@ export const havingClause: RuleDef<'havingClause', Expression[]> = <const> {
 
     CONSUME(l.having);
     const couldParseAgg = ACTION(() =>
-      context.queryMode.has(canParseAggregate) || !context.queryMode.add(canParseAggregate));
+      context.parseMode.has(canParseAggregate) || !context.parseMode.add(canParseAggregate));
     AT_LEAST_ONE(() => {
       expressions.push(SUBRULE(havingCondition));
     });
-    ACTION(() => !couldParseAgg && context.queryMode.delete(canParseAggregate));
+    ACTION(() => !couldParseAgg && context.parseMode.delete(canParseAggregate));
 
     return expressions;
   },
@@ -124,11 +124,11 @@ export const orderClause: RuleDef<'orderClause', Ordering[]> = <const> {
 
     CONSUME(l.order);
     const couldParseAgg = ACTION(() =>
-      context.queryMode.has(canParseAggregate) || !context.queryMode.add(canParseAggregate));
+      context.parseMode.has(canParseAggregate) || !context.parseMode.add(canParseAggregate));
     AT_LEAST_ONE(() => {
       orderings.push(SUBRULE(orderCondition));
     });
-    ACTION(() => !couldParseAgg && context.queryMode.delete(canParseAggregate));
+    ACTION(() => !couldParseAgg && context.parseMode.delete(canParseAggregate));
 
     return orderings;
   },
@@ -176,6 +176,7 @@ export const orderCondition: RuleDef<'orderCondition', Ordering> = <const> {
 };
 
 /**
+ * Parses limit and or offset in any order.
  * [[25]](https://www.w3.org/TR/sparql11-query/#rLimitOffsetClauses)
  */
 export const limitOffsetClauses: RuleDef<'limitOffsetClauses', Pick<SelectQuery, 'limit' | 'offset'>> = <const> {

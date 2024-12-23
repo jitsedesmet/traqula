@@ -1,8 +1,8 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
-import type { BaseQuery, IriTerm, Term, Triple, VariableTerm } from '../sparqlJsTypes';
 import { CommonIRIs } from '../utils';
 import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals.js';
+import type { GraphTerm, Term, Triple, VerbA, IriTerm, VariableTerm, BaseQuery } from './Sparql11types';
 import { triplesSameSubject } from './tripleBlock.js';
 
 /**
@@ -37,6 +37,7 @@ export const prologue: RuleDef<'prologue', Pick<BaseQuery, 'base' | 'prefixes'>>
 };
 
 /**
+ * Registers base IRI in the context and returns it.
  * [[5]](https://www.w3.org/TR/sparql11-query/#rBaseDecl)
  */
 export const baseDecl: RuleDef<'baseDecl', string> = <const> {
@@ -52,6 +53,7 @@ export const baseDecl: RuleDef<'baseDecl', string> = <const> {
 };
 
 /**
+ * Registers prefix in the context and returns registered key-value-pair.
  * [[6]](https://www.w3.org/TR/sparql11-query/#rPrefixDecl)
  */
 export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = <const> {
@@ -90,15 +92,20 @@ export const triplesTemplate: RuleDef<'triplesTemplate', Triple[]> = <const> {
  */
 export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
   name: 'verb',
-  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR([
+  impl: ({ SUBRULE, OR }) => () => OR([
     { ALT: () => SUBRULE(varOrIri) },
     {
-      ALT: () => {
-        CONSUME(l.a);
-        return context.dataFactory.namedNode(CommonIRIs.TYPE);
-      },
+      ALT: () => SUBRULE(verbA),
     },
   ]),
+};
+
+export const verbA: RuleDef<'VerbA', VerbA> = <const> {
+  name: 'VerbA',
+  impl: ({ CONSUME, context }) => () => {
+    CONSUME(l.a);
+    return context.dataFactory.namedNode(CommonIRIs.TYPE);
+  },
 };
 
 /**
@@ -106,8 +113,8 @@ export const verb: RuleDef<'verb', VariableTerm | IriTerm> = <const> {
  */
 export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
   name: 'varOrTerm',
-  impl: ({ SUBRULE, OR, context }) => () => OR([
-    { GATE: () => context.queryMode.has(canParseVars), ALT: () => SUBRULE(var_) },
+  impl: ({ SUBRULE, OR, context }) => () => OR<Term>([
+    { GATE: () => context.parseMode.has(canParseVars), ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(graphTerm) },
   ]),
 };
@@ -118,7 +125,7 @@ export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
 export const varOrIri: RuleDef<'varOrIri', IriTerm | VariableTerm> = <const> {
   name: 'varOrIri',
   impl: ({ SUBRULE, OR, context }) => () => OR<IriTerm | VariableTerm>([
-    { GATE: () => context.queryMode.has(canParseVars), ALT: () => SUBRULE(var_) },
+    { GATE: () => context.parseMode.has(canParseVars), ALT: () => SUBRULE(var_) },
     { ALT: () => SUBRULE(iri) },
   ]),
 };
@@ -136,7 +143,7 @@ export const var_: RuleDef<'var', VariableTerm> = <const> {
       { ALT: () => context.dataFactory.variable(CONSUME(l.terminals.var2).image.slice(1)) },
     ]);
     ACTION(() => {
-      if (!context.queryMode.has(canParseVars)) {
+      if (!context.parseMode.has(canParseVars)) {
         throw new Error('Variables are not allowed here');
       }
     });
@@ -147,14 +154,14 @@ export const var_: RuleDef<'var', VariableTerm> = <const> {
 /**
  * [[109]](https://www.w3.org/TR/sparql11-query/#rGraphTerm)
  */
-export const graphTerm: RuleDef<'graphTerm', Term> = <const> {
+export const graphTerm: RuleDef<'graphTerm', GraphTerm> = <const> {
   name: 'graphTerm',
-  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<Term>([
+  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<GraphTerm>([
     { ALT: () => SUBRULE(iri) },
     { ALT: () => SUBRULE(rdfLiteral) },
     { ALT: () => SUBRULE(numericLiteral) },
     { ALT: () => SUBRULE(booleanLiteral) },
-    { GATE: () => context.queryMode.has(canCreateBlankNodes), ALT: () => SUBRULE(blankNode) },
+    { GATE: () => context.parseMode.has(canCreateBlankNodes), ALT: () => SUBRULE(blankNode) },
     {
       ALT: () => {
         CONSUME(l.terminals.nil);

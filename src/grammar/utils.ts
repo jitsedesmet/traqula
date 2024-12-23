@@ -1,4 +1,4 @@
-import type { GroupPattern, Pattern, PropertyPath, Term, VariableTerm } from './sparqlJsTypes';
+import type { GroupPattern, Pattern, PropertyPath, Term, VariableTerm } from './sparql11/Sparql11types';
 
 export enum CommonIRIs {
   // XSD

@@ -1,6 +1,9 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../../lexer/sparql11/index.js';
 import type { RuleDef, RuleDefReturn } from '../../builder/ruleDefTypes.js';
+import { unCapitalize } from '../../utils.js';
+import { canParseVars, prologue, triplesTemplate, varOrIri } from '../general.js';
+import { canCreateBlankNodes, iri } from '../literals.js';
 import type {
   ClearDropOperation,
   GraphOrDefault,
@@ -12,10 +15,7 @@ import type {
   Quads,
   Update,
   UpdateOperation,
-} from '../../sparqlJsTypes';
-import { unCapitalize } from '../../utils.js';
-import { canParseVars, prologue, triplesTemplate, varOrIri } from '../general.js';
-import { canCreateBlankNodes, iri } from '../literals.js';
+} from '../Sparql11types';
 import { groupGraphPattern } from '../whereClause.js';
 
 /**
@@ -228,9 +228,9 @@ export const deleteData: RuleDef<'deleteData', InsertDeleteOperation> = <const> 
     CONSUME(l.deleteClause);
     CONSUME(l.dataClause);
 
-    const couldCreateBlankNodes = ACTION(() => context.queryMode.delete(canCreateBlankNodes));
+    const couldCreateBlankNodes = ACTION(() => context.parseMode.delete(canCreateBlankNodes));
     const del = SUBRULE(quadData);
-    ACTION(() => couldCreateBlankNodes && context.queryMode.add(canCreateBlankNodes));
+    ACTION(() => couldCreateBlankNodes && context.parseMode.add(canCreateBlankNodes));
 
     return {
       updateType: 'delete',
@@ -248,9 +248,9 @@ export const deleteWhere: RuleDef<'deleteWhere', InsertDeleteOperation> = <const
     CONSUME(l.deleteClause);
     CONSUME(l.where);
 
-    const couldCreateBlankNodes = ACTION(() => context.queryMode.delete(canCreateBlankNodes));
+    const couldCreateBlankNodes = ACTION(() => context.parseMode.delete(canCreateBlankNodes));
     const del = SUBRULE(quadPattern);
-    ACTION(() => couldCreateBlankNodes && context.queryMode.add(canCreateBlankNodes));
+    ACTION(() => couldCreateBlankNodes && context.parseMode.add(canCreateBlankNodes));
 
     return {
       updateType: 'deletewhere',
@@ -319,9 +319,9 @@ export const deleteClause: RuleDef<'deleteClause', Quads[]> = <const> {
   impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.deleteClause);
 
-    const couldCreateBlankNodes = ACTION(() => context.queryMode.delete(canCreateBlankNodes));
+    const couldCreateBlankNodes = ACTION(() => context.parseMode.delete(canCreateBlankNodes));
     const del = SUBRULE(quadPattern);
-    ACTION(() => couldCreateBlankNodes && context.queryMode.add(canCreateBlankNodes));
+    ACTION(() => couldCreateBlankNodes && context.parseMode.add(canCreateBlankNodes));
 
     return del;
   },
@@ -441,9 +441,9 @@ export const quadData: RuleDef<'quadData', Quads[]> = <const> {
   impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
     CONSUME(l.symbols.LCurly);
 
-    const couldParseVars = ACTION(() => context.queryMode.delete(canParseVars));
+    const couldParseVars = ACTION(() => context.parseMode.delete(canParseVars));
     const val = SUBRULE(quads);
-    ACTION(() => couldParseVars && context.queryMode.add(canParseVars));
+    ACTION(() => couldParseVars && context.parseMode.add(canParseVars));
 
     CONSUME(l.symbols.RCurly);
     return val;

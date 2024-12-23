@@ -10,8 +10,6 @@ import {
   selectQuery,
   valuesClause,
 } from '../../grammar/sparql11/queryUnit/queryUnit.js';
-import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
-import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
 import type {
   IriTerm,
   PropertyPath,
@@ -19,7 +17,9 @@ import type {
   SparqlParser as ISparqlParser,
   SparqlQuery,
   Update,
-} from '../../grammar/sparqlJsTypes';
+} from '../../grammar/sparql11/Sparql11types.js';
+import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
+import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
 import * as l from '../../lexer/sparql11/index.js';
 import { sparql11Tokens } from '../../lexer/sparql11/index.js';
 import { queryUnitParserBuilder } from './queryUnitParser.js';

@@ -1,6 +1,5 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef, ImplArgs } from '../builder/ruleDefTypes.js';
-import type { Expression, IriTerm } from '../sparqlJsTypes';
 import { builtInCall } from './builtIn.js';
 import {
   var_,
@@ -13,15 +12,7 @@ import {
   numericLiteralPositive,
   rdfLiteral,
 } from './literals.js';
-
-/**
- * [[71]](https://www.w3.org/TR/sparql11-query/#rArgList)
- */
-export interface IArgList {
-  type: 'functionCall';
-  args: Expression[];
-  distinct: boolean;
-}
+import type { Expression, IriTerm } from './Sparql11types';
 
 export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;
 export type RelationalOperator = '=' | '!=' | '<' | '>' | '<=' | '>=' | 'in' | 'notin';
@@ -35,6 +26,14 @@ export type buildInOperator = 'STR' | 'LANG' | 'LANGMATCHES' | 'DATATYPE' | 'BOU
   'REGEX' | 'SUBSTR' | 'REPLACE' | 'EXISTS' | 'NOT EXISTS';
 export type aggregatorOperator = 'COUNT' | 'SUM' | 'MIN' | 'MAX' | 'AVG' | 'SAMPLE' | 'GROUP_CONCAT';
 
+/**
+ * [[71]](https://www.w3.org/TR/sparql11-query/#rArgList)
+ */
+export interface IArgList {
+  type: 'functionCall';
+  args: Expression[];
+  distinct: boolean;
+}
 export const argList: RuleDef<'argList', IArgList> = <const> {
   name: 'argList',
   impl: ({ CONSUME, SUBRULE1, OPTION, OR, MANY_SEP }) => () => OR<IArgList>([

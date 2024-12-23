@@ -41,7 +41,7 @@ describe('a SPARQL parser', () => {
   describe('confirms to SPARQL tests', () => {
     testQueriesInDir('./test/statics/sparql', [
       [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
-      // [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
+      [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
     ]);
   });
 
@@ -53,7 +53,10 @@ describe('a SPARQL parser', () => {
         parse: (input: string) => sparql11Parser.parsePath(input),
         _resetBlanks: () => sparql11Parser._resetBlanks(),
       }],
-      // [ 'SPARQL 1.2 parser', { parse: (input: string) => sparql12Parser.parsePath(input) }],
+      [ 'SPARQL 1.2 parser', {
+        parse: (input: string) => sparql12Parser.parsePath(input),
+        _resetBlanks: () => sparql11Parser._resetBlanks(),
+      }],
     ]);
   });
 
@@ -83,6 +86,21 @@ describe('a SPARQL parser', () => {
     'PREFIX : <http://www.example.org/> SELECT ?o WHERE { ?s ?p ?o } GROUP BY ?s',
     'Projection of ungrouped variable (?o)',
   ));
+
+  it('should throw an error on a values class with LESS variables than value', testErroneousQuery(
+    'SELECT * WHERE { } VALUES ( ?S ) { ( true  false ) }',
+    'Number of dataBlockValues does not match number of variables. Too much values.',
+  ));
+
+  it('should throw an error on a values class with MORE variables than value', testErroneousQuery(
+    'SELECT * WHERE { } VALUES ( ?S ?O ) { ( true ) }',
+    'Number of dataBlockValues does not match number of variables. Too few values.',
+  ));
+
+  it('should NOT throw on a values class with correct amount of values', ({ expect }) => {
+    const query = 'SELECT * WHERE { } VALUES ( ?S ) { ( true ) }';
+    expect(parser.parse(query)).toMatchObject({});
+  });
 
   it('should throw an error on an invalid selectscope', testErroneousQuery(
     'SELECT (1 AS ?X ) { SELECT (2 AS ?X ) {} }',

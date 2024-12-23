@@ -1,11 +1,9 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
-
-import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from '../sparqlJsTypes';
+import { verbA } from './general';
 import { iri } from './literals.js';
-
-const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from './Sparql11types';
 
 /**
  * [[88]](https://www.w3.org/TR/sparql11-query/#rPath)
@@ -127,13 +125,10 @@ export const pathMod: RuleDef<'pathMod', '*' | '+' | '?'> = <const> {
  */
 export const pathPrimary: RuleDef<'pathPrimary', PropertyPath | IriTerm> = <const> {
   name: 'pathPrimary',
-  impl: ({ SUBRULE, CONSUME, OR, context }) => () => OR<PropertyPath | IriTerm>([
+  impl: ({ SUBRULE, CONSUME, OR }) => () => OR<PropertyPath | IriTerm>([
     { ALT: () => SUBRULE(iri) },
     {
-      ALT: () => {
-        CONSUME(l.a);
-        return context.dataFactory.namedNode(`${RDF}type`);
-      },
+      ALT: () => SUBRULE(verbA),
     },
     {
       ALT: () => {
@@ -194,22 +189,16 @@ export const pathNegatedPropertySet: RuleDef<'pathNegatedPropertySet', NegatedPr
  */
 export const pathOneInPropertySet: RuleDef<'pathOneInPropertySet', IriTermOrElt> = <const> {
   name: 'pathOneInPropertySet',
-  impl: ({ CONSUME1, CONSUME2, CONSUME, SUBRULE1, SUBRULE2, OR1, OR2, context }) => () =>
+  impl: ({ CONSUME, SUBRULE1, SUBRULE2, OR1, OR2 }) => () =>
     OR1<IriTermOrElt>([
       { ALT: () => SUBRULE1(iri) },
-      { ALT: () => {
-        CONSUME1(l.a);
-        return context.dataFactory.namedNode(`${RDF}type`);
-      } },
+      { ALT: () => SUBRULE1(verbA) },
       {
         ALT: () => {
           CONSUME(l.symbols.hat);
           const item = OR2([
             { ALT: () => SUBRULE2(iri) },
-            { ALT: () => {
-              CONSUME2(l.a);
-              return context.dataFactory.namedNode(`${RDF}type`);
-            } },
+            { ALT: () => SUBRULE2(verbA) },
           ]);
           return {
             type: 'path',

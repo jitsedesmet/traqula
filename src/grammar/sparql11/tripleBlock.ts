@@ -1,11 +1,20 @@
-import type { BlankNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
-import type { BgpPattern, IriTerm, PropertyPath, Term, Triple, VariableTerm } from '../sparqlJsTypes';
 import { CommonIRIs } from '../utils';
 import { var_, varOrTerm, verb } from './general.js';
 import { canCreateBlankNodes } from './literals';
 import { path } from './propertyPaths.js';
+import type {
+  BgpPattern,
+  IGraphNode,
+  IriTerm,
+  ITriplesNode,
+  PropertyPath,
+  Triple,
+  TripleCreatorS,
+  TripleCreatorSP,
+  VariableTerm,
+} from './Sparql11types';
 
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)
@@ -57,9 +66,6 @@ function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean):
 }
 export const triplesSameSubject = triplesSameSubjectImpl('triplesSameSubject', false);
 export const triplesSameSubjectPath = triplesSameSubjectImpl('triplesSameSubjectPath', true);
-
-type TripleCreatorS = (part: Pick<Triple, 'subject'>) => Triple;
-type TripleCreatorSP = (part: Pick<Triple, 'subject' | 'predicate'>) => Triple;
 
 /**
  * [[76]](https://www.w3.org/TR/sparql11-query/#rPropertyList)
@@ -200,11 +206,6 @@ export const objectPath: RuleDef<'objectPath', IGraphNode> = <const> {
   impl: ({ SUBRULE }) => () => SUBRULE(graphNodePath),
 };
 
-export interface ITriplesNode {
-  node: IriTerm | BlankNode;
-  triples: Triple[];
-}
-
 /**
  * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
  * [[100]](https://www.w3.org/TR/sparql11-query/#rTriplesNodePath)
@@ -314,10 +315,6 @@ function collectionImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
 export const collection = collectionImpl('collection', false);
 export const collectionPath = collectionImpl('collectionPath', true);
 
-export interface IGraphNode {
-  node: ITriplesNode['node'] | Term;
-  triples: Triple[];
-}
 /**
  * [[103]](https://www.w3.org/TR/sparql11-query/#rGraphNode)
  * [[105]](https://www.w3.org/TR/sparql11-query/#rGraphNodePath)
@@ -336,7 +333,7 @@ function graphNodeImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<
         },
       },
       {
-        GATE: () => context.queryMode.has(canCreateBlankNodes),
+        GATE: () => context.parseMode.has(canCreateBlankNodes),
         ALT: () => SUBRULE(allowPaths ? triplesNodePath : triplesNode),
       },
     ]),

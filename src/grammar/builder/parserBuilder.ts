@@ -208,7 +208,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
           baseIRI: undefined,
           flushedBlankNodeLabels: new Set(),
           usedBlankNodeLabels: new Set(),
-          queryMode: new Set([ canParseVars, canCreateBlankNodes ]),
+          parseMode: new Set([ canParseVars, canCreateBlankNodes ]),
           skipValidation: false,
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},
@@ -216,7 +216,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         this.runningContext = {
           ...this.initialParseContext,
           prefixes: { ...this.initialParseContext.prefixes },
-          queryMode: new Set(this.initialParseContext.queryMode),
+          parseMode: new Set(this.initialParseContext.parseMode),
         };
 
         const implArgs: ImplArgs = {
@@ -238,7 +238,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         Object.assign(this.runningContext, {
           ...this.initialParseContext,
           prefixes: { ...this.initialParseContext.prefixes },
-          queryMode: new Set(this.initialParseContext.queryMode),
+          parseMode: new Set(this.initialParseContext.parseMode),
         });
       }
 

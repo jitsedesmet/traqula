@@ -13,12 +13,12 @@ import {
   funcNil1,
   funcVar1,
 } from '../expressionHelpers';
-import type { AggregateExpression, Expression } from '../sparqlJsTypes.js';
 import {
   unCapitalize,
 } from '../utils.js';
 import { expression } from './expression.js';
 import { string } from './literals.js';
+import type { AggregateExpression, Expression } from './Sparql11types';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
 export const builtInLang = funcExpr1(l.builtIn.lang);
@@ -212,8 +212,8 @@ export const aggregate: RuleDef<'aggregate', Expression> = <const> {
   impl: ({ ACTION, SUBRULE, OR, context }) => () => {
     // https://www.w3.org/2013/sparql-errata#errata-query-5 - Or note 15 in SPARQL1.2 spec
     //  An aggregate function is not allowed within an aggregate function.
-    const wasInAggregate = context.queryMode.has(inAggregate);
-    ACTION(() => context.queryMode.add(inAggregate));
+    const wasInAggregate = context.parseMode.has(inAggregate);
+    ACTION(() => context.parseMode.add(inAggregate));
     const result = OR<Expression>([
       { ALT: () => SUBRULE(aggregateCount) },
       { ALT: () => SUBRULE(aggregateSum) },
@@ -223,13 +223,13 @@ export const aggregate: RuleDef<'aggregate', Expression> = <const> {
       { ALT: () => SUBRULE(aggregateSample) },
       { ALT: () => SUBRULE(aggregateGroup_concat) },
     ]);
-    ACTION(() => !wasInAggregate && context.queryMode.delete(inAggregate));
+    ACTION(() => !wasInAggregate && context.parseMode.delete(inAggregate));
 
     ACTION(() => {
-      if (!context.queryMode.has(canParseAggregate)) {
+      if (!context.parseMode.has(canParseAggregate)) {
         throw new Error('Aggregates are only allowed in SELECT, HAVING, and ORDER BY clauses.');
       }
-      if (context.queryMode.has(inAggregate)) {
+      if (context.parseMode.has(inAggregate)) {
         throw new Error('An aggregate function is not allowed within an aggregate function.');
       }
     });

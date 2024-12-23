@@ -1,5 +1,11 @@
 import * as l from '../../lexer/sparql11/index.js';
 import type { RuleDef } from '../builder/ruleDefTypes.js';
+import { deGroupSingle, isVariable } from '../utils.js';
+import { builtInCall } from './builtIn.js';
+import { argList, brackettedExpression, expression } from './expression.js';
+import { var_, varOrIri } from './general.js';
+import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
+import { subSelect } from './queryUnit/queryUnit.js';
 import type {
   BindPattern,
   BlankTerm,
@@ -19,13 +25,7 @@ import type {
   ValuePatternRow,
   ValuesPattern,
   VariableTerm,
-} from '../sparqlJsTypes';
-import { deGroupSingle, isVariable } from '../utils.js';
-import { builtInCall } from './builtIn.js';
-import { argList, brackettedExpression, expression } from './expression.js';
-import { var_, varOrIri } from './general.js';
-import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
-import { subSelect } from './queryUnit/queryUnit.js';
+} from './Sparql11types';
 import { triplesBlock } from './tripleBlock.js';
 
 /**
@@ -307,17 +307,20 @@ export const inlineDataFull: RuleDef<'inlineDataFull', ValuePatternRow[]> = <con
           const varBinds: ValuePatternRow[string][] = [];
           CONSUME2(l.symbols.LParen);
           MANY4({
-            GATE: () => vars.length > varBinds.length,
             DEF: () => {
+              ACTION(() => {
+                if (vars.length <= varBinds.length) {
+                  throw new Error('Number of dataBlockValues does not match number of variables. Too much values.');
+                }
+              });
               varBinds.push(SUBRULE(dataBlockValue));
             },
           });
           CONSUME2(l.symbols.RParen);
 
           ACTION(() => {
-            // TODO: what happens when I throw this error?
             if (varBinds.length !== vars.length) {
-              throw new Error('Number of dataBlockValues does not match number of variables.');
+              throw new Error('Number of dataBlockValues does not match number of variables. Too few values.');
             }
             const row: ValuePatternRow = {};
             for (const [ index, varVal ] of vars.entries()) {

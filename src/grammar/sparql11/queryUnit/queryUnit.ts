@@ -1,6 +1,11 @@
 import * as l from '../../../lexer/sparql11/index.js';
 import { Wildcard } from '../../../misc/Wildcard.js';
 import type { RuleDef, ImplArgs } from '../../builder/ruleDefTypes.js';
+import { canParseAggregate } from '../builtIn';
+import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
+import { expression } from '../expression.js';
+import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
+import { solutionModifier } from '../solutionModifier.js';
 import type {
   AggregateExpression,
   AskQuery,
@@ -17,13 +22,7 @@ import type {
   Variable,
   VariableExpression,
   VariableTerm,
-} from '../../sparqlJsTypes';
-
-import { canParseAggregate } from '../builtIn';
-import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
-import { expression } from '../expression.js';
-import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
-import { solutionModifier } from '../solutionModifier.js';
+} from '../Sparql11types';
 import { triplesSameSubject } from '../tripleBlock.js';
 import { dataBlock, whereClause } from '../whereClause.js';
 
@@ -245,7 +244,7 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
   impl: ({ ACTION, AT_LEAST_ONE, SUBRULE, CONSUME, SUBRULE1, SUBRULE2, OPTION, OR1, OR2, OR3, context }) => () => {
     CONSUME(l.select);
     const couldParseAgg = ACTION(() =>
-      context.queryMode.has(canParseAggregate) || !context.queryMode.add(canParseAggregate));
+      context.parseMode.has(canParseAggregate) || !context.parseMode.add(canParseAggregate));
 
     const distinctOrReduced = OPTION(() => OR1<Partial<{ distinct: true; reduced: true }>>([
       { ALT: () => {
@@ -281,7 +280,7 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
         return result;
       } },
     ]);
-    ACTION(() => !couldParseAgg && context.queryMode.delete(canParseAggregate));
+    ACTION(() => !couldParseAgg && context.parseMode.delete(canParseAggregate));
     return ACTION(() => ({
       ...distinctOrReduced,
       variables,

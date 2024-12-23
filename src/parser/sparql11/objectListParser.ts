@@ -1,5 +1,14 @@
 import { Builder } from '../../grammar/builder/parserBuilder';
-import { graphTerm, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general.js';
+import { graphTerm, var_, varOrIri, varOrTerm, verb, verbA } from '../../grammar/sparql11/general.js';
+import {
+  blankNodePropertyList,
+  collection,
+  graphNode,
+  object,
+  objectList,
+  propertyListNotEmpty,
+  triplesNode,
+} from '../../grammar/sparql11/index.js';
 import {
   blankNode,
   booleanLiteral,
@@ -12,15 +21,6 @@ import {
   rdfLiteral,
   string,
 } from '../../grammar/sparql11/literals.js';
-import {
-  blankNodePropertyList,
-  collection,
-  graphNode,
-  object,
-  objectList,
-  propertyListNotEmpty,
-  triplesNode,
-} from '../../grammar/sparql11/tripleBlock.js';
 
 const rules = <const> [
   objectList,
@@ -33,6 +33,7 @@ const rules = <const> [
   propertyListNotEmpty,
   // PropertyListNotEmpty
   verb,
+  verbA,
   varOrIri,
   var_,
   iri,

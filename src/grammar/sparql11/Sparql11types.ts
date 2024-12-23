@@ -1,31 +1,10 @@
 import type * as RdfJs from '@rdfjs/types';
-import type { BaseQuadTerm } from './sparql12/sparql12Types';
+import type { BlankNode } from 'rdf-data-factory';
+import type { CommonIRIs } from '../utils';
 
-export interface ParserOptions {
-  prefixes?: Record<string, string> | undefined;
-  baseIRI?: string | undefined;
-  factory?: RdfJs.DataFactory | undefined;
-  sparqlStar?: boolean | undefined;
-  skipUngroupedVariableCheck?: boolean;
-}
-
-export interface GeneratorOptions {
-  allPrefixes?: boolean | undefined;
-  prefixes?: Record<string, string> | undefined;
-  indent?: string | undefined;
-  newline?: string | undefined;
-  sparqlStar?: boolean | undefined;
-}
-
-export interface SparqlParser {
-  parse: (query: string) => SparqlQuery;
-  _resetBlanks: () => void;
-}
-
-export interface SparqlGenerator {
-  stringify: (query: SparqlQuery) => string;
-  createGenerator: () => any;
-}
+export type GraphTerm = IriTerm | BlankTerm | LiteralTerm;
+export type Term = GraphTerm | VariableTerm;
+export type VerbA = IriTerm<CommonIRIs.TYPE>;
 
 export interface Wildcard {
   readonly termType: 'Wildcard';
@@ -33,31 +12,83 @@ export interface Wildcard {
   equals: (other: RdfJs.Term | null | undefined) => boolean;
 }
 
-export type Term = VariableTerm | IriTerm | LiteralTerm | BlankTerm | BaseQuadTerm;
+export type Triple = {
+  subject: Term;
+  predicate: IriTerm | VariableTerm | PropertyPath;
+  object: Term;
+};
+
+export type TripleCreatorS = (part: Pick<Triple, 'subject'>) => Triple;
+export type TripleCreatorSP = (part: Pick<Triple, 'subject' | 'predicate'>) => Triple;
+
+export interface IGraphNode {
+  node: ITriplesNode['node'] | Term;
+  triples: Triple[];
+}
+
+export interface ITriplesNode {
+  node: IriTerm | BlankNode;
+  triples: Triple[];
+}
+
+export type Pattern =
+  | BgpPattern
+  | BlockPattern
+  | FilterPattern
+  | BindPattern
+  | ValuesPattern
+  | Omit<SelectQuery, 'prefixes'>;
+
+export type Expression =
+  | OperationExpression
+  | FunctionCallExpression
+  | AggregateExpression
+  // Used in `IN` operator
+  | Expression[]
+  | IriTerm
+  | VariableTerm
+  | LiteralTerm;
+
+export interface FunctionCallExpression extends BaseExpression {
+  type: 'functionCall';
+  function: IriTerm;
+  args: Expression[];
+}
+
+/**
+ * Basic Graph Pattern
+ */
+export interface BgpPattern {
+  type: 'bgp';
+  triples: Triple[];
+}
+
+export interface GraphQuads {
+  type: 'graph';
+  name: IriTerm | VariableTerm;
+  triples: Triple[];
+}
+
+// Copied types
+export interface SparqlParser {
+  parse: (query: string) => SparqlQuery;
+  _resetBlanks: () => void;
+}
 
 export type VariableTerm = RdfJs.Variable;
-export type IriTerm = RdfJs.NamedNode;
+export type IriTerm<IRI extends string = string> = RdfJs.NamedNode<IRI>;
 export type LiteralTerm = RdfJs.Literal;
 export type BlankTerm = RdfJs.BlankNode;
-export type QuadTerm = BaseQuadTerm;
+
+export type PropertyPath = NegatedPropertySet | {
+  type: 'path';
+  pathType: '|' | '/' | '^' | '+' | '*' | '?';
+  items: (IriTerm | PropertyPath)[];
+};
 
 export type SparqlQuery = Query | Update | Pick<Update, 'base' | 'prefixes'>;
 
 export type Query = SelectQuery | ConstructQuery | AskQuery | DescribeQuery;
-
-export interface BaseQuery {
-  type: 'query';
-  base?: string | undefined;
-  prefixes: Record<string, string>;
-  from?:
-    | {
-      default: IriTerm[];
-      named: IriTerm[];
-    }
-    | undefined;
-  where?: Pattern[] | undefined;
-  values?: ValuePatternRow[] | undefined;
-}
 
 export interface SelectQuery extends BaseQuery {
   queryType: 'SELECT';
@@ -188,44 +219,34 @@ export interface VariableExpression {
   variable: VariableTerm;
 }
 
-export type Pattern =
-  | BgpPattern
-  | BlockPattern
-  | FilterPattern
-  | BindPattern
-  | ValuesPattern
-  | Omit<SelectQuery, 'prefixes'>;
-
-/**
- * Basic Graph Pattern
- */
-export interface BgpPattern {
-  type: 'bgp';
-  triples: Triple[];
+export interface BaseQuery {
+  type: 'query';
+  base?: string | undefined;
+  prefixes: Record<string, string>;
+  from?:
+    | {
+      default: IriTerm[];
+      named: IriTerm[];
+    }
+    | undefined;
+  where?: Pattern[] | undefined;
+  values?: ValuePatternRow[] | undefined;
 }
 
-export interface GraphQuads {
-  type: 'graph';
-  name: IriTerm | VariableTerm;
-  triples: Triple[];
-}
+export type IriTermOrElt = IriTerm | {
+  type: 'path';
+  pathType: '^';
+  items: [IriTerm];
+};
 
-export type BlockPattern =
-  | OptionalPattern
-  | UnionPattern
-  | GroupPattern
-  | GraphPattern
-  | MinusPattern
-  | ServicePattern;
-
-export interface OptionalPattern {
-  type: 'optional';
-  patterns: Pattern[];
-}
-
-export interface UnionPattern {
-  type: 'union';
-  patterns: Pattern[];
+export interface NegatedPropertySet {
+  type: 'path';
+  pathType: '!';
+  items: IriTermOrElt[] | [{
+    type: 'path';
+    pathType: '|';
+    items: (IriTermOrElt)[];
+  }];
 }
 
 export interface GroupPattern {
@@ -251,6 +272,26 @@ export interface ServicePattern {
   patterns: Pattern[];
 }
 
+export type BlockPattern =
+  | OptionalPattern
+  | UnionPattern
+  | GroupPattern
+  | GraphPattern
+  | MinusPattern
+  | ServicePattern;
+
+export interface OptionalPattern {
+  type: 'optional';
+  patterns: Pattern[];
+}
+
+export interface UnionPattern {
+  type: 'union';
+  patterns: Pattern[];
+}
+
+export type ValuePatternRow = Record<string, IriTerm | BlankTerm | LiteralTerm | undefined>;
+
 export interface FilterPattern {
   type: 'filter';
   expression: Expression;
@@ -267,51 +308,6 @@ export interface ValuesPattern {
   values: ValuePatternRow[];
 }
 
-export type ValuePatternRow = Record<string, IriTerm | BlankTerm | LiteralTerm | undefined>;
-
-export interface Triple {
-  // TODO: I changed this type. It was incorrect (tested it, literals are also allowed). deal with this...
-  subject: Term;
-  predicate: IriTerm | VariableTerm | PropertyPath;
-  object: Term;
-}
-
-export type PropertyPath = NegatedPropertySet | {
-  type: 'path';
-  pathType: '|' | '/' | '^' | '+' | '*' | '?';
-  items: (IriTerm | PropertyPath)[];
-};
-
-export type IriTermOrElt = IriTerm | {
-  type: 'path';
-  pathType: '^';
-  items: [IriTerm];
-};
-
-export interface NegatedPropertySet {
-  type: 'path';
-  pathType: '!';
-  items: IriTermOrElt[] | [{
-    type: 'path';
-    pathType: '|';
-    items: (IriTermOrElt)[];
-  }];
-}
-
-export type Expression =
-  | OperationExpression
-  | FunctionCallExpression
-  | AggregateExpression
-  // Used in IN operator
-  | Tuple
-  | IriTerm
-  | VariableTerm
-  | LiteralTerm
-  | QuadTerm;
-
-// Allow Expression circularly reference itself
-export interface Tuple extends Array<Expression> {}
-
 export interface BaseExpression {
   type: string;
   distinct?: boolean | undefined;
@@ -321,12 +317,6 @@ export interface OperationExpression extends BaseExpression {
   type: 'operation';
   operator: string;
   args: (Expression | Pattern)[];
-}
-
-export interface FunctionCallExpression extends BaseExpression {
-  type: 'functionCall';
-  function: string | IriTerm;
-  args: Expression[];
 }
 
 export interface AggregateExpression extends BaseExpression {

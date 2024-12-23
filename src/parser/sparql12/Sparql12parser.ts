@@ -1,9 +1,14 @@
 import { DataFactory } from 'rdf-data-factory';
 import { Builder } from '../../grammar/builder/parserBuilder';
 import type { ImplArgs } from '../../grammar/builder/ruleDefTypes';
+import type {
+  IriTerm,
+  PropertyPath,
+  SparqlParser as ISparqlParser,
+  SparqlQuery,
+} from '../../grammar/sparql11/Sparql11types.js';
 import * as S12 from '../../grammar/sparql12/sparql12';
 import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
-import type { IriTerm, PropertyPath, SparqlParser as ISparqlParser, SparqlQuery } from '../../grammar/sparqlJsTypes';
 import { sparql12Tokens } from '../../lexer/sparql12/index';
 import { sparql11ParserBuilder } from '../sparql11/Sparql11Parser';
 
@@ -31,6 +36,8 @@ export const sparql12ParserBuilder = Builder.createBuilder(sparql11ParserBuilder
     S12.exprTripleTermObject,
     S12.builtinLangDir,
     S12.builtinLangStrDir,
+    S12.builtinHasLang,
+    S12.builtinHasLangDir,
     S12.builtinIsTriple,
     S12.builtinTriple,
     S12.builtinSubject,

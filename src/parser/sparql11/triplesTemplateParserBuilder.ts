@@ -1,5 +1,5 @@
 import { Builder } from '../../grammar/builder/parserBuilder';
-import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb } from '../../grammar/sparql11/general.js';
+import { graphTerm, triplesTemplate, var_, varOrIri, varOrTerm, verb, verbA } from '../../grammar/sparql11/general.js';
 import {
   blankNode,
   booleanLiteral,
@@ -44,6 +44,7 @@ const rules = <const> [
   booleanLiteral,
   blankNode,
   verb,
+  verbA,
   varOrIri,
   objectList,
   object,
