@@ -175,14 +175,8 @@ function objectListImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
       const objects: TripleCreatorSP[] = [];
       AT_LEAST_ONE_SEP({
         DEF: () => {
-          const node = SUBRULE(allowPaths ? objectPath : object);
-          ACTION(() => {
-            const nodeHandler: TripleCreatorSP = part => ({ ...part, object: node.node });
-            objects.push(
-              nodeHandler,
-              ...node.triples.map(val => () => val),
-            );
-          });
+          const objectTriples = SUBRULE(allowPaths ? objectPath : object);
+          ACTION(() => objects.push(...objectTriples));
         },
         SEP: l.symbols.comma,
       });
@@ -193,19 +187,26 @@ function objectListImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
 export const objectList = objectListImpl('objectList', false);
 export const objectListPath = objectListImpl('objectListPath', true);
 
+function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, TripleCreatorSP[]> {
+  return {
+    name,
+    impl: ({ ACTION, SUBRULE }) => () => {
+      const node = SUBRULE(allowPaths ? graphNodePath : graphNode);
+      return ACTION(() => [
+        part => ({ ...part, object: node.node }),
+        ...node.triples.map(val => () => val),
+      ] satisfies TripleCreatorSP[]);
+    },
+  };
+}
 /**
  * [[80]](https://www.w3.org/TR/sparql11-query/#rObject)
+ */
+export const object = objectImpl('object', false);
+/**
  * [[87]](https://www.w3.org/TR/sparql11-query/#rObjectPath)
  */
-export const object: RuleDef<'object', IGraphNode> = <const> {
-  name: 'object',
-  impl: ({ SUBRULE }) => () => SUBRULE(graphNode),
-};
-export const objectPath: RuleDef<'objectPath', IGraphNode> = <const> {
-  name: 'objectPath',
-  impl: ({ SUBRULE }) => () => SUBRULE(graphNodePath),
-};
-
+export const objectPath = objectImpl('objectPath', true);
 /**
  * [[98]](https://www.w3.org/TR/sparql11-query/#rTriplesNode)
  * [[100]](https://www.w3.org/TR/sparql11-query/#rTriplesNodePath)

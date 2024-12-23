@@ -1,17 +1,19 @@
 /**
  * This module will define patch rules that should be used in combination with the sparql11 grammar to create
  * a sparql12 grammar.
+ * Rules in this module redefine the return type of core grammar rules.
+ * It is therefore essential that the parser retypes the rules from the core grammar.
  */
 
 import type { DefaultGraph } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import * as l12 from '../../lexer/sparql12/index.js';
-import type { RuleDef, RuleDefReturn } from '../builder/ruleDefTypes';
+import type { RuleDefReturn, RuleDef } from '../builder/ruleDefTypes';
 import { funcExpr1, funcExpr3 } from '../expressionHelpers';
 import * as S11 from '../sparql11/index';
 import type * as T11 from '../sparql11/Sparql11types';
 import { CommonIRIs } from '../utils';
-import type { BaseQuadTerm, Expression, Term } from './sparql12Types';
+import type { BaseQuadTerm, Expression, IGraphNode, Term, Triple, TripleCreatorSP } from './sparql12Types';
 
 function reifiedTripleBlockImpl<T extends string>(name: T, allowPath: boolean):
 RuleDef<T, RuleDefReturn<typeof S11.triplesSameSubject>> {
@@ -37,6 +39,7 @@ export const reifiedTripleBlock = reifiedTripleBlockImpl('reifiedTripleBlock', f
 export const reifiedTripleBlockPath = reifiedTripleBlockImpl('reifiedTripleBlockPath', true);
 
 /**
+ * OVERRIDING RULE: {@link S11.dataBlockValue}.
  * [[67]](https://www.w3.org/TR/sparql12-query/#rDataBlockValue)
  */
 export const dataBlockValue:
@@ -84,43 +87,66 @@ function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean):
   };
 }
 /**
+ * OVERRIDING RULE {@link S11.triplesSameSubject}
  * [[79]](https://www.w3.org/TR/sparql12-query/#rTriplesSameSubject)
  */
 export const triplesSameSubject = triplesSameSubjectImpl('triplesSameSubject', false);
 /**
+ * OVERRIDING RULE {@link S11.triplesSameSubjectPath}
  * [[85]](https://www.w3.org/TR/sparql12-query/#rTriplesSameSubjectPath)
  */
 export const triplesSameSubjectPath = triplesSameSubjectImpl('triplesSameSubjectPath', true);
 
-function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<
-  T,
-  RuleDefReturn<typeof graphNode> | { object: RuleDefReturn<typeof graphNode>; reifierAnnotations: Annotation[] }
-> {
+function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, TripleCreatorSP[]> {
   return <const>{
     name,
-    impl: ({ ACTION, SUBRULE }) => () => {
+    impl: ({ ACTION, SUBRULE, context }) => () => {
       const objectVal = SUBRULE(allowPaths ? graphNodePath : graphNode);
       const annotationVal = SUBRULE(allowPaths ? annotationPath : annotation);
       return ACTION(() => {
+        const result: TripleCreatorSP[] = [
+          ({ subject, predicate }) => ({ subject, predicate, object: objectVal.node }),
+          ...objectVal.triples.map(triple => () => triple),
+        ];
         if (annotationVal.length > 0) {
-          return { object: objectVal, reifierAnnotations: annotationVal };
+          const blankNode = context.dataFactory.blankNode();
+          for (const annotation of annotationVal) {
+            if ('annotation' in annotation) {
+              result.push(...annotation.annotation.flatMap(partial => () => partial({ subject: blankNode })));
+              // TODO: Adding this as a quad instead of a triple is a hack to make the tests pass
+              result.push(({ subject, predicate }) => <Triple> context.dataFactory.quad(
+                blankNode,
+                context.dataFactory.namedNode(CommonIRIs.REIFIES),
+                context.dataFactory.quad(
+                  subject,
+                  <Exclude<typeof predicate, T11.PropertyPath>>predicate,
+                  objectVal.node,
+                ),
+              ));
+            }
+          }
         }
-        return objectVal;
+        return result;
       });
     },
   };
 }
 /**
+ * OVERRIDING RULE: {@link S11.object}.
  * [[84]](https://www.w3.org/TR/sparql12-query/#rObject) Used by ObjectList
  */
 export const object = objectImpl('object', false);
 /**
+ * OVERRIDING RULE: {@link S11.objectPath}.
  * [[91]](https://www.w3.org/TR/sparql12-query/#rTriplesSameSubjectPath) Used by ObjectListPath
  */
 export const objectPath = objectImpl('objectPath', true);
 
-export type Annotation =
-  { reifier: RuleDefReturn<typeof reifier> } | { annotation: RuleDefReturn<typeof annotationBlock> };
+export type Annotation = {
+  reifier: RuleDefReturn<typeof reifier>;
+} | {
+  annotation: RuleDefReturn<typeof annotationBlock>;
+};
 function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, Annotation[]> {
   return <const> {
     name,
@@ -136,7 +162,6 @@ function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
     },
   };
 }
-
 /**
  * [[107]](https://www.w3.org/TR/sparql12-query/#rAnnotationPath)
  */
@@ -168,28 +193,30 @@ export const annotationBlockPath = annotationBlockImpl('annotationBlockPath', tr
 export const annotationBlock = annotationBlockImpl('annotationBlock', false);
 
 /**
+ * OVERRIDING RULE: {@link S11.graphNode}.
  * [[111]](https://www.w3.org/TR/sparql12-query/#rGraphNode)
  */
-export const graphNode: RuleDef<'graphNode', RuleDefReturn<typeof S11.graphNode> | BaseQuadTerm> = <const> {
+export const graphNode: RuleDef<'graphNode', IGraphNode> = <const> {
   name: 'graphNode',
-  impl: $ => () => $.OR2<RuleDefReturn<typeof S11.graphNode> | BaseQuadTerm>([
+  impl: $ => () => $.OR2 <IGraphNode>([
     { ALT: () => S11.graphNode.impl($)() },
-    { ALT: () => $.SUBRULE(reifiedTriple) },
+    { ALT: () => ({ node: $.SUBRULE(reifiedTriple), triples: []}) },
   ]),
 };
-
 /**
+ * OVERRIDING RULE: {@link S11.graphNodePath}.
  * [[112]](https://www.w3.org/TR/sparql12-query/#rGraphNodePath)
  */
-export const graphNodePath: RuleDef<'graphNodePath', RuleDefReturn<typeof S11.graphNodePath> | BaseQuadTerm> = <const> {
+export const graphNodePath: RuleDef<'graphNodePath', IGraphNode> = <const> {
   name: 'graphNodePath',
-  impl: $ => () => $.OR2<RuleDefReturn<typeof S11.graphNodePath> | BaseQuadTerm>([
+  impl: $ => () => $.OR2<IGraphNode>([
     { ALT: () => S11.graphNodePath.impl($)() },
-    { ALT: () => $.SUBRULE(reifiedTriple) },
+    { ALT: () => ({ node: $.SUBRULE(reifiedTriple), triples: []}) },
   ]),
 };
 
 /**
+ * OVERRIDING RULE: {@link S11.varOrTerm}.
  * [[113]](https://www.w3.org/TR/sparql12-query/#rVarOrTerm)
  */
 export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
@@ -253,7 +280,7 @@ RuleDef<'reifiedTripleSubject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm
  * [[116]](https://www.w3.org/TR/sparql12-query/#rReifiedTripleObject)
  */
 export const reifiedTripleObject:
-RuleDef<'reifiedTripleObject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm | BaseQuadTerm> =
+RuleDef<'reifiedTripleObject', RuleDefReturn<typeof reifiedTripleSubject>> =
   <const> {
     name: 'reifiedTripleObject',
     impl: $ => () => $.OR2([
@@ -263,7 +290,7 @@ RuleDef<'reifiedTripleObject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm 
   };
 
 /**
- * [[117](https://www.w3.org/TR/sparql12-query/#rTripleTerm)
+ * [[117]](https://www.w3.org/TR/sparql12-query/#rTripleTerm)
  */
 export const tripleTerm: RuleDef<'tripleTerm', BaseQuadTerm> = <const> {
   name: 'tripleTerm',
@@ -278,7 +305,7 @@ export const tripleTerm: RuleDef<'tripleTerm', BaseQuadTerm> = <const> {
 };
 
 /**
- * [[118](https://www.w3.org/TR/sparql12-query/#rTripleTermSubject)
+ * [[118]](https://www.w3.org/TR/sparql12-query/#rTripleTermSubject)
  */
 export const tripleTermSubject:
 RuleDef<'tripleTermSubject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm> = <const> {
@@ -294,10 +321,10 @@ RuleDef<'tripleTermSubject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | 
 };
 
 /**
- * [[119](https://www.w3.org/TR/sparql12-query/#rTripleTermObject)
+ * [[119]](https://www.w3.org/TR/sparql12-query/#rTripleTermObject)
  */
 export const tripleTermObject:
-RuleDef<'tripleTermObject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm | BaseQuadTerm> = <const> {
+RuleDef<'tripleTermObject', RuleDefReturn<typeof tripleTermSubject> | BaseQuadTerm> = <const> {
   name: 'tripleTermObject',
   impl: $ => () => $.OR2<T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm | BaseQuadTerm>([
     { ALT: () => tripleTermSubject.impl($)() },
@@ -306,7 +333,7 @@ RuleDef<'tripleTermObject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T
 };
 
 /**
- * [[120](https://www.w3.org/TR/sparql12-query/#rTripleTermData)
+ * [[120]](https://www.w3.org/TR/sparql12-query/#rTripleTermData)
  */
 export const tripleTermData: RuleDef<'tripleTermData', BaseQuadTerm> = <const> {
   name: 'tripleTermData',
@@ -328,7 +355,7 @@ export const tripleTermData: RuleDef<'tripleTermData', BaseQuadTerm> = <const> {
 };
 
 /**
- * [[121](https://www.w3.org/TR/sparql12-query/#rTripleTermDataSubject)
+ * [[121]](https://www.w3.org/TR/sparql12-query/#rTripleTermDataSubject)
  */
 export const tripleTermDataSubject: RuleDef<'tripleTermDataSubject', T11.IriTerm | T11.LiteralTerm> = <const> {
   name: 'tripleTermDataSubject',
@@ -341,10 +368,10 @@ export const tripleTermDataSubject: RuleDef<'tripleTermDataSubject', T11.IriTerm
 };
 
 /**
- * [[122](https://www.w3.org/TR/sparql12-query/#rTripleTermDataObject)
+ * [[122]](https://www.w3.org/TR/sparql12-query/#rTripleTermDataObject)
  */
 export const tripleTermDataObject:
-RuleDef<'tripleTermDataObject', T11.IriTerm | T11.LiteralTerm | BaseQuadTerm> = <const> {
+RuleDef<'tripleTermDataObject', RuleDefReturn<typeof tripleTermDataSubject> | BaseQuadTerm> = <const> {
   name: 'tripleTermDataObject',
   impl: $ => () => $.OR2<T11.IriTerm | T11.LiteralTerm | BaseQuadTerm>([
     { ALT: () => tripleTermDataSubject.impl($)() },
@@ -353,7 +380,8 @@ RuleDef<'tripleTermDataObject', T11.IriTerm | T11.LiteralTerm | BaseQuadTerm> = 
 };
 
 /**
- * [[134](https://www.w3.org/TR/sparql12-query/#rPrimaryExpression)
+ * OVERRIDING RULE: {@link S11.primaryExpression}.
+ * [[134]](https://www.w3.org/TR/sparql12-query/#rPrimaryExpression)
  */
 export const primaryExpression: RuleDef<'primaryExpression', Expression> = <const> {
   name: 'primaryExpression',
@@ -364,7 +392,7 @@ export const primaryExpression: RuleDef<'primaryExpression', Expression> = <cons
 };
 
 /**
- * [[135](https://www.w3.org/TR/sparql12-query/#rExprTripleTerm)
+ * [[135]](https://www.w3.org/TR/sparql12-query/#rExprTripleTerm)
  */
 export const exprTripleTerm: RuleDef<'exprTripleTerm', BaseQuadTerm> = <const> {
   name: 'exprTripleTerm',
@@ -380,7 +408,7 @@ export const exprTripleTerm: RuleDef<'exprTripleTerm', BaseQuadTerm> = <const> {
 };
 
 /**
- * [[136](https://www.w3.org/TR/sparql12-query/#rExprTripleTermSubject)
+ * [[136]](https://www.w3.org/TR/sparql12-query/#rExprTripleTermSubject)
  */
 export const exprTripleTermSubject:
 RuleDef<'exprTripleTermSubject', T11.IriTerm | T11.VariableTerm | T11.LiteralTerm> = <const> {
@@ -396,10 +424,10 @@ RuleDef<'exprTripleTermSubject', T11.IriTerm | T11.VariableTerm | T11.LiteralTer
 };
 
 /**
- * [[137](https://www.w3.org/TR/sparql12-query/#rExprTripleTermObject)
+ * [[137]](https://www.w3.org/TR/sparql12-query/#rExprTripleTermObject)
  */
 export const exprTripleTermObject:
-RuleDef<'exprTripleTermObject', T11.IriTerm | T11.VariableTerm | T11.LiteralTerm | BaseQuadTerm> = <const> {
+RuleDef<'exprTripleTermObject', RuleDefReturn<typeof exprTripleTermSubject> | BaseQuadTerm> = <const> {
   name: 'exprTripleTermObject',
   impl: $ => () =>
     $.OR2<T11.IriTerm | T11.VariableTerm | T11.LiteralTerm | BaseQuadTerm>([
@@ -419,11 +447,12 @@ export const builtinPredicate = funcExpr1(l12.builtinPREDICATE);
 export const builtinObject = funcExpr1(l12.builtinOBJECT);
 
 /**
- * [[139](https://www.w3.org/TR/sparql12-query/#rBuiltInCall)
+ * OVERRIDING RULE: {@link S11.builtInCall}.
+ * [[139]](https://www.w3.org/TR/sparql12-query/#rBuiltInCall)
  */
-export const builtInCall: RuleDef<'builtInCall', Expression> = <const> {
+export const builtInCall: typeof S11.builtInCall = <const> {
   name: 'builtInCall',
-  impl: $ => () => $.OR2<Expression>([
+  impl: $ => () => $.OR2<T11.Expression>([
     { ALT: () => S11.builtInCall.impl($)() },
     { ALT: () => $.SUBRULE(builtinLangDir) },
     { ALT: () => $.SUBRULE(builtinLangStrDir) },
@@ -438,9 +467,11 @@ export const builtInCall: RuleDef<'builtInCall', Expression> = <const> {
 };
 
 /**
- * [[147](https://www.w3.org/TR/sparql12-query/#rRDFLiteral)
+ * OVERRIDING RULE: {@link S11.rdfLiteral}.
+ * No retyping is needed since the return type is the same
+ * [[147]](https://www.w3.org/TR/sparql12-query/#rRDFLiteral)
  */
-export const rdfLiteral: RuleDef<'rdfLiteral', T11.LiteralTerm> = <const> {
+export const rdfLiteral: typeof S11.rdfLiteral = <const> {
   name: 'rdfLiteral',
   impl: ({ SUBRULE, OPTION, CONSUME, OR, context }) => () => {
     const value = SUBRULE(S11.string);
