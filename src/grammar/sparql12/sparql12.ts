@@ -12,7 +12,14 @@ import { funcExpr1, funcExpr3 } from '../expressionHelpers';
 import * as S11 from '../sparql11/index';
 import type * as T11 from '../sparql11/Sparql11types';
 import { CommonIRIs } from '../utils';
-import type { BaseQuadTerm, Expression, IGraphNode, Term, Triple, TripleCreatorSP } from './sparql12Types';
+import type {
+  BaseQuadTerm,
+  Expression,
+  IGraphNode,
+  Term,
+  Triple,
+  TripleCreatorSP,
+} from './sparql12Types';
 
 export const canParseReifier = Symbol('canParseReifier');
 
@@ -55,17 +62,17 @@ RuleDef<'dataBlockValue', RuleDefReturn<typeof S11.dataBlockValue> | BaseQuadTer
 /**
  * [[68]](https://www.w3.org/TR/sparql12-query/#rReifier)
  */
-export const reifier: RuleDef<'reifier', T11.VariableTerm | T11.IriTerm | T11.BlankTerm | undefined> = <const> {
+export const reifier: RuleDef<'reifier', T11.VariableTerm | T11.IriTerm | T11.BlankTerm> = <const> {
   name: 'reifier',
   impl: ({ ACTION, CONSUME, SUBRULE, OPTION, context }) => () => {
     CONSUME(l12.tilde);
-    const result = OPTION(() => SUBRULE(varOrReifierId));
-    ACTION(() => {
+    const reifier = OPTION(() => SUBRULE(varOrReifierId));
+    return ACTION(() => {
       if (!context.parseMode.has(canParseReifier)) {
         throw new Error('Reifiers are not allowed in this context');
       }
+      return reifier ?? context.dataFactory.blankNode();
     });
-    return result;
   },
 };
 
@@ -81,10 +88,7 @@ export const varOrReifierId: RuleDef<'varOrReifierId', T11.VariableTerm | T11.Ir
   ]),
 };
 
-function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<
-  T,
-  RuleDefReturn<typeof S11.triplesSameSubject>
-> {
+function triplesSameSubjectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, Triple[]> {
   return <const> {
     name,
     impl: $ => () => $.OR2([
@@ -115,23 +119,17 @@ function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, 
           ({ subject, predicate }) => ({ subject, predicate, object: objectVal.node }),
           ...objectVal.triples.map(triple => () => triple),
         ];
-        if (annotationVal.length > 0) {
-          for (const annotation of annotationVal) {
-            const blankNode = context.dataFactory.blankNode();
-            if ('annotation' in annotation) {
-              result.push(...annotation.annotation.flatMap(partial => () => partial({ subject: blankNode })));
-              // TODO: Adding this as a quad instead of a triple is a hack to make the tests pass
-              result.push(({ subject, predicate }) => <Triple> context.dataFactory.quad(
-                blankNode,
-                context.dataFactory.namedNode(CommonIRIs.REIFIES),
-                context.dataFactory.quad(
-                  subject,
-                  <Exclude<typeof predicate, T11.PropertyPath>>predicate,
-                  objectVal.node,
-                ),
-              ));
-            }
-          }
+        for (const annotation of annotationVal) {
+          result.push(...annotation.triples.map(triple => () => triple));
+          result.push(({ subject, predicate }) => <Triple> context.dataFactory.quad(
+            annotation.node,
+            context.dataFactory.namedNode(CommonIRIs.REIFIES),
+            context.dataFactory.quad(
+              subject,
+              <Exclude<typeof predicate, T11.PropertyPath>>predicate,
+              objectVal.node,
+            ),
+          ));
         }
         return result;
       });
@@ -149,20 +147,15 @@ export const object = objectImpl('object', false);
  */
 export const objectPath = objectImpl('objectPath', true);
 
-export type Annotation = {
-  reifier: RuleDefReturn<typeof reifier>;
-} | {
-  annotation: RuleDefReturn<typeof annotationBlock>;
-};
-function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, Annotation[]> {
+function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, IGraphNode[]> {
   return <const> {
     name,
     impl: ({ SUBRULE, OR, MANY }) => () => {
-      const annotations: Annotation[] = [];
+      const annotations: IGraphNode[] = [];
       MANY(() => {
         OR([
-          { ALT: () => annotations.push({ reifier: SUBRULE(reifier) }) },
-          { ALT: () => annotations.push({ annotation: SUBRULE(allowPaths ? annotationBlockPath : annotationBlock) }) },
+          { ALT: () => annotations.push({ node: SUBRULE(reifier), triples: []}) },
+          { ALT: () => annotations.push(SUBRULE(allowPaths ? annotationBlockPath : annotationBlock)) },
         ]);
       });
       return annotations;
@@ -178,20 +171,23 @@ export const annotationPath = annotationImpl('annotationPath', true);
  */
 export const annotation = annotationImpl('annotation', false);
 
-function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean):
-RuleDef<T, RuleDefReturn<typeof S11.propertyListPathNotEmpty>> {
+function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, IGraphNode> {
   return <const> {
     name,
     impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
       CONSUME(l12.annotationOpen);
       const res = SUBRULE(allowPaths ? S11.propertyListPathNotEmpty : S11.propertyListNotEmpty);
       CONSUME(l12.annotationClose);
-      ACTION(() => {
+      return ACTION(() => {
         if (!context.parseMode.has(canParseReifier)) {
           throw new Error('Reifiers are not allowed in this context');
         }
+        const blankNode = context.dataFactory.blankNode();
+        return {
+          node: blankNode,
+          triples: res.map(partial => partial({ subject: blankNode })),
+        };
       });
-      return res;
     },
   };
 }
