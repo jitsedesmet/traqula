@@ -5,7 +5,6 @@
  * It is therefore essential that the parser retypes the rules from the core grammar.
  */
 
-import type { DefaultGraph } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import * as l12 from '../../lexer/sparql12/index.js';
 import type { RuleDefReturn, RuleDef } from '../builder/ruleDefTypes';
@@ -15,17 +14,19 @@ import type * as T11 from '../sparql11/Sparql11types';
 import { CommonIRIs } from '../utils';
 import type { BaseQuadTerm, Expression, IGraphNode, Term, Triple, TripleCreatorSP } from './sparql12Types';
 
-function reifiedTripleBlockImpl<T extends string>(name: T, allowPath: boolean):
-RuleDef<T, RuleDefReturn<typeof S11.triplesSameSubject>> {
+export const canParseReifier = Symbol('canParseReifier');
+
+function reifiedTripleBlockImpl<T extends string>(name: T, allowPath: boolean): RuleDef<T, Triple[]> {
   return <const> {
     name,
     impl: ({ ACTION, SUBRULE }) => () => {
       const triple = SUBRULE(reifiedTriple);
       const properties = SUBRULE(allowPath ? S11.propertyListPath : S11.propertyList);
 
-      return ACTION(() => properties.map(partial => partial({
-        subject: <Exclude<typeof triple.object, DefaultGraph | BaseQuadTerm>> triple.object,
-      })));
+      return ACTION(() => [
+        ...triple.triples,
+        ...properties.map(partial => partial({ subject: triple.node })),
+      ]);
     },
   };
 }
@@ -56,9 +57,15 @@ RuleDef<'dataBlockValue', RuleDefReturn<typeof S11.dataBlockValue> | BaseQuadTer
  */
 export const reifier: RuleDef<'reifier', T11.VariableTerm | T11.IriTerm | T11.BlankTerm | undefined> = <const> {
   name: 'reifier',
-  impl: ({ CONSUME, SUBRULE, OPTION }) => () => {
+  impl: ({ ACTION, CONSUME, SUBRULE, OPTION, context }) => () => {
     CONSUME(l12.tilde);
-    return OPTION(() => SUBRULE(varOrReifierId));
+    const result = OPTION(() => SUBRULE(varOrReifierId));
+    ACTION(() => {
+      if (!context.parseMode.has(canParseReifier)) {
+        throw new Error('Reifiers are not allowed in this context');
+      }
+    });
+    return result;
   },
 };
 
@@ -109,8 +116,8 @@ function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, 
           ...objectVal.triples.map(triple => () => triple),
         ];
         if (annotationVal.length > 0) {
-          const blankNode = context.dataFactory.blankNode();
           for (const annotation of annotationVal) {
+            const blankNode = context.dataFactory.blankNode();
             if ('annotation' in annotation) {
               result.push(...annotation.annotation.flatMap(partial => () => partial({ subject: blankNode })));
               // TODO: Adding this as a quad instead of a triple is a hack to make the tests pass
@@ -175,10 +182,15 @@ function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean):
 RuleDef<T, RuleDefReturn<typeof S11.propertyListPathNotEmpty>> {
   return <const> {
     name,
-    impl: ({ SUBRULE, CONSUME }) => () => {
+    impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
       CONSUME(l12.annotationOpen);
       const res = SUBRULE(allowPaths ? S11.propertyListPathNotEmpty : S11.propertyListNotEmpty);
       CONSUME(l12.annotationClose);
+      ACTION(() => {
+        if (!context.parseMode.has(canParseReifier)) {
+          throw new Error('Reifiers are not allowed in this context');
+        }
+      });
       return res;
     },
   };
@@ -200,7 +212,7 @@ export const graphNode: RuleDef<'graphNode', IGraphNode> = <const> {
   name: 'graphNode',
   impl: $ => () => $.OR2 <IGraphNode>([
     { ALT: () => S11.graphNode.impl($)() },
-    { ALT: () => ({ node: $.SUBRULE(reifiedTriple), triples: []}) },
+    { ALT: () => $.SUBRULE(reifiedTriple) },
   ]),
 };
 /**
@@ -211,7 +223,7 @@ export const graphNodePath: RuleDef<'graphNodePath', IGraphNode> = <const> {
   name: 'graphNodePath',
   impl: $ => () => $.OR2<IGraphNode>([
     { ALT: () => S11.graphNodePath.impl($)() },
-    { ALT: () => ({ node: $.SUBRULE(reifiedTriple), triples: []}) },
+    { ALT: () => $.SUBRULE(reifiedTriple) },
   ]),
 };
 
@@ -239,7 +251,8 @@ export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
 /**
  * [[114]](https://www.w3.org/TR/sparql12-query/#rReifiedTriple)
  */
-export const reifiedTriple: RuleDef<'reifiedTriple', BaseQuadTerm> = <const> {
+export const reifiedTriple:
+RuleDef<'reifiedTriple', IGraphNode & { node: T11.BlankTerm | T11.VariableTerm | T11.IriTerm }> = <const> {
   name: 'reifiedTriple',
   impl: ({ ACTION, CONSUME, SUBRULE, OPTION, context }) => () => {
     CONSUME(l12.reificationOpen);
@@ -252,7 +265,12 @@ export const reifiedTriple: RuleDef<'reifiedTriple', BaseQuadTerm> = <const> {
     return ACTION(() => {
       const reifier = reifierVal ?? context.dataFactory.blankNode();
       const tripleTerm = context.dataFactory.quad(subject, predicate, object);
-      return context.dataFactory.quad(reifier, context.dataFactory.namedNode(CommonIRIs.REIFIES), tripleTerm);
+      return {
+        node: reifier,
+        triples: [
+          <Triple> context.dataFactory.quad(reifier, context.dataFactory.namedNode(CommonIRIs.REIFIES), tripleTerm),
+        ],
+      };
     });
   },
 };
@@ -272,7 +290,7 @@ RuleDef<'reifiedTripleSubject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm
         { ALT: () => SUBRULE(S11.numericLiteral) },
         { ALT: () => SUBRULE(S11.booleanLiteral) },
         { ALT: () => SUBRULE(S11.blankNode) },
-        { ALT: () => SUBRULE(reifiedTriple) },
+        { ALT: () => SUBRULE(reifiedTriple).node },
       ]),
   };
 

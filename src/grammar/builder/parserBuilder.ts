@@ -3,8 +3,6 @@ import type { ILexerConfig, IParserConfig } from '@chevrotain/types';
 import type { TokenType, TokenVocabulary } from 'chevrotain';
 import { EmbeddedActionsParser, Lexer } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
-import { canParseVars } from '../sparql11/general';
-import { canCreateBlankNodes } from '../sparql11/literals';
 import type {
   CheckOverlap,
   RuleDefMap,
@@ -208,7 +206,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
           baseIRI: undefined,
           flushedBlankNodeLabels: new Set(),
           usedBlankNodeLabels: new Set(),
-          parseMode: new Set([ canParseVars, canCreateBlankNodes ]),
+          parseMode: new Set(),
           skipValidation: false,
           ...context,
           prefixes: context.prefixes ? { ...context.prefixes } : {},

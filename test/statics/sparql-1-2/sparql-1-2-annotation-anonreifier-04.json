@@ -11,6 +11,20 @@
       "type": "bgp",
       "triples": [
         {
+          "subject": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#s"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#p"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          }
+        },
+        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -48,16 +62,16 @@
         },
         {
           "subject": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#s"
+            "termType": "BlankNode",
+            "value": "g_2"
           },
           "predicate": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#p"
+            "termType": "Variable",
+            "value": "q"
           },
           "object": {
             "termType": "BlankNode",
-            "value": "g_0"
+            "value": "g_1"
           }
         },
         {
@@ -94,20 +108,6 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_2"
-          },
-          "predicate": {
-            "termType": "Variable",
-            "value": "q"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "g_1"
           }
         },
         {

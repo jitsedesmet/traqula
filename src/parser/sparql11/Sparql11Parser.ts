@@ -1,7 +1,8 @@
 import { DataFactory } from 'rdf-data-factory';
 import { Builder } from '../../grammar/builder/parserBuilder.js';
 import type { ImplArgs, RuleDef } from '../../grammar/builder/ruleDefTypes.js';
-import { prologue } from '../../grammar/sparql11/general.js';
+import { canCreateBlankNodes } from '../../grammar/sparql11';
+import { canParseVars, prologue } from '../../grammar/sparql11/general.js';
 import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit.js';
 import {
   askQuery,
@@ -116,6 +117,7 @@ export class Sparql11Parser implements ISparqlParser {
     this.parser = sparql11ParserBuilder.consumeToParser({
       tokenVocabulary: sparql11Tokens.build(),
     }, {
+      parseMode: new Set([ canParseVars, canCreateBlankNodes ]),
       ...context,
       dataFactory: this.dataFactory,
     });

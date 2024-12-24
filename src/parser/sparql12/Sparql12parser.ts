@@ -1,6 +1,7 @@
 import { DataFactory } from 'rdf-data-factory';
 import { Builder } from '../../grammar/builder/parserBuilder';
 import type { ImplArgs } from '../../grammar/builder/ruleDefTypes';
+import { canCreateBlankNodes, canParseVars } from '../../grammar/sparql11';
 import type {
   IriTerm,
   PropertyPath,
@@ -8,6 +9,7 @@ import type {
   SparqlQuery,
 } from '../../grammar/sparql11/Sparql11types.js';
 import * as S12 from '../../grammar/sparql12/sparql12';
+import { canParseReifier } from '../../grammar/sparql12/sparql12';
 import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
 import { sparql12Tokens } from '../../lexer/sparql12/index';
 import { sparql11ParserBuilder } from '../sparql11/Sparql11Parser';
@@ -69,6 +71,7 @@ export class Sparql12Parser implements ISparqlParser {
     this.parser = sparql12ParserBuilder.consumeToParser({
       tokenVocabulary: sparql12Tokens.build(),
     }, {
+      parseMode: new Set([ canParseVars, canCreateBlankNodes, canParseReifier ]),
       ...context,
       dataFactory: this.dataFactory,
     });
