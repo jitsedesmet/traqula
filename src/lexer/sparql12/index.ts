@@ -42,10 +42,10 @@ export const sparql12Tokens = LexerBuilder
     tilde,
     annotationOpen,
     annotationClose,
-    reificationOpen,
-    reificationClose,
     tripleTermOpen,
     tripleTermClose,
+    reificationOpen,
+    reificationClose,
   )
   .addBefore(
     l11.builtIn.langmatches,
