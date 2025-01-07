@@ -11,6 +11,20 @@
       "type": "bgp",
       "triples": [
         {
+          "subject": {
+            "termType": "Variable",
+            "value": "S"
+          },
+          "predicate": {
+            "termType": "Variable",
+            "value": "P"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          }
+        },
+        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -44,20 +58,6 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "Variable",
-            "value": "S"
-          },
-          "predicate": {
-            "termType": "Variable",
-            "value": "P"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "g_0"
           }
         }
       ]

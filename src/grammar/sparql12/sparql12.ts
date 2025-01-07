@@ -18,6 +18,7 @@ import type {
   IGraphNode,
   Term,
   Triple,
+  TripleCreatorS,
   TripleCreatorSP,
 } from './sparql12Types';
 
@@ -114,13 +115,15 @@ function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, 
     impl: ({ ACTION, SUBRULE, context }) => () => {
       const objectVal = SUBRULE(allowPaths ? graphNodePath : graphNode);
       const annotationVal = SUBRULE(allowPaths ? annotationPath : annotation);
+
       return ACTION(() => {
         const result: TripleCreatorSP[] = [
+          // You parse the object
           ({ subject, predicate }) => ({ subject, predicate, object: objectVal.node }),
+          // You might get some additional triples from parsing the object (like when it's a collection)
           ...objectVal.triples.map(triple => () => triple),
         ];
         for (const annotation of annotationVal) {
-          result.push(...annotation.triples.map(triple => () => triple));
           result.push(({ subject, predicate }) => <Triple> context.dataFactory.quad(
             annotation.node,
             context.dataFactory.namedNode(CommonIRIs.REIFIES),
@@ -130,6 +133,7 @@ function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, 
               objectVal.node,
             ),
           ));
+          result.push(...annotation.triples.map(triple => () => triple));
         }
         return result;
       });
@@ -150,15 +154,42 @@ export const objectPath = objectImpl('objectPath', true);
 function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, IGraphNode[]> {
   return <const> {
     name,
-    impl: ({ SUBRULE, OR, MANY }) => () => {
+    impl: ({ ACTION, SUBRULE, OR, MANY, context }) => () => {
       const annotations: IGraphNode[] = [];
+      let currentReifier: T11.BlankTerm | T11.VariableTerm | T11.IriTerm | undefined;
+
+      function flush(): void {
+        if (currentReifier) {
+          annotations.push({ node: currentReifier, triples: []});
+          currentReifier = undefined;
+        }
+      }
+
       MANY(() => {
         OR([
-          { ALT: () => annotations.push({ node: SUBRULE(reifier), triples: []}) },
-          { ALT: () => annotations.push(SUBRULE(allowPaths ? annotationBlockPath : annotationBlock)) },
+          { ALT: () => {
+            const node = SUBRULE(reifier);
+            ACTION(() => flush());
+            currentReifier = node;
+          } },
+          { ALT: () => {
+            const block = SUBRULE(allowPaths ? annotationBlockPath : annotationBlock);
+
+            ACTION(() => {
+              const node = currentReifier ?? context.dataFactory.blankNode();
+              annotations.push({
+                node,
+                triples: block.map(partial => partial({ subject: node })),
+              });
+              currentReifier = undefined;
+            });
+          } },
         ]);
       });
-      return annotations;
+      return ACTION(() => {
+        flush();
+        return annotations;
+      });
     },
   };
 }
@@ -171,22 +202,19 @@ export const annotationPath = annotationImpl('annotationPath', true);
  */
 export const annotation = annotationImpl('annotation', false);
 
-function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, IGraphNode> {
+function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, TripleCreatorS[]> {
   return <const> {
     name,
     impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
       CONSUME(l12.annotationOpen);
-      const res = SUBRULE(allowPaths ? S11.propertyListPathNotEmpty : S11.propertyListNotEmpty);
+      const res = <TripleCreatorS[]> SUBRULE(allowPaths ? S11.propertyListPathNotEmpty : S11.propertyListNotEmpty);
       CONSUME(l12.annotationClose);
+
       return ACTION(() => {
         if (!context.parseMode.has(canParseReifier)) {
           throw new Error('Reifiers are not allowed in this context');
         }
-        const blankNode = context.dataFactory.blankNode();
-        return {
-          node: blankNode,
-          triples: res.map(partial => partial({ subject: blankNode })),
-        };
+        return res;
       });
     },
   };

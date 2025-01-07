@@ -25,6 +25,42 @@
           }
         },
         {
+          "termType": "Quad",
+          "value": "",
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
+          },
+          "object": {
+            "termType": "Quad",
+            "value": "",
+            "subject": {
+              "termType": "Variable",
+              "value": "s"
+            },
+            "predicate": {
+              "termType": "Variable",
+              "value": "p"
+            },
+            "object": {
+              "termType": "Variable",
+              "value": "o"
+            },
+            "graph": {
+              "termType": "DefaultGraph",
+              "value": ""
+            }
+          },
+          "graph": {
+            "termType": "DefaultGraph",
+            "value": ""
+          }
+        },
+        {
           "subject": {
             "termType": "BlankNode",
             "value": "g_0"
@@ -43,7 +79,7 @@
           "value": "",
           "subject": {
             "termType": "BlankNode",
-            "value": "g_0"
+            "value": "g_1"
           },
           "predicate": {
             "termType": "NamedNode",
@@ -93,7 +129,7 @@
           "value": "",
           "subject": {
             "termType": "BlankNode",
-            "value": "g_1"
+            "value": "g_2"
           },
           "predicate": {
             "termType": "NamedNode",
@@ -136,42 +172,6 @@
           "object": {
             "termType": "Variable",
             "value": "Z3"
-          }
-        },
-        {
-          "termType": "Quad",
-          "value": "",
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_2"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
-          },
-          "object": {
-            "termType": "Quad",
-            "value": "",
-            "subject": {
-              "termType": "Variable",
-              "value": "s"
-            },
-            "predicate": {
-              "termType": "Variable",
-              "value": "p"
-            },
-            "object": {
-              "termType": "Variable",
-              "value": "o"
-            },
-            "graph": {
-              "termType": "DefaultGraph",
-              "value": ""
-            }
-          },
-          "graph": {
-            "termType": "DefaultGraph",
-            "value": ""
           }
         }
       ]

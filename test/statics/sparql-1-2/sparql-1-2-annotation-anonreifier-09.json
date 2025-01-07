@@ -16,20 +16,6 @@
       }
     },
     {
-      "subject": {
-        "termType": "BlankNode",
-        "value": "g_0"
-      },
-      "predicate": {
-        "termType": "NamedNode",
-        "value": "http://example.com/ns#q1"
-      },
-      "object": {
-        "termType": "Variable",
-        "value": "z"
-      }
-    },
-    {
       "termType": "Quad",
       "value": "",
       "subject": {
@@ -64,6 +50,20 @@
         "termType": "DefaultGraph",
         "value": ""
       }
+    },
+    {
+      "subject": {
+        "termType": "BlankNode",
+        "value": "g_0"
+      },
+      "predicate": {
+        "termType": "NamedNode",
+        "value": "http://example.com/ns#q1"
+      },
+      "object": {
+        "termType": "Variable",
+        "value": "z"
+      }
     }
   ],
   "where": [
@@ -82,20 +82,6 @@
           "object": {
             "termType": "Variable",
             "value": "o"
-          }
-        },
-        {
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_0"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#q1"
-          },
-          "object": {
-            "termType": "Variable",
-            "value": "z"
           }
         },
         {
@@ -132,6 +118,20 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
+          }
+        },
+        {
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#q1"
+          },
+          "object": {
+            "termType": "Variable",
+            "value": "z"
           }
         }
       ]

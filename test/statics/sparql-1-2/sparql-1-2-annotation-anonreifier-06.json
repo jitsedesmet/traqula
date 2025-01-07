@@ -25,35 +25,6 @@
           }
         },
         {
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_0"
-          },
-          "predicate": {
-            "type": "path",
-            "pathType": "/",
-            "items": [
-              {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#r"
-              },
-              {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#q"
-              }
-            ]
-          },
-          "object": {
-            "termType": "Literal",
-            "value": "ABC",
-            "language": "",
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          }
-        },
-        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -87,6 +58,35 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
+          }
+        },
+        {
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          },
+          "predicate": {
+            "type": "path",
+            "pathType": "/",
+            "items": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#r"
+              },
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#q"
+              }
+            ]
+          },
+          "object": {
+            "termType": "Literal",
+            "value": "ABC",
+            "language": "",
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
           }
         }
       ]

@@ -24,7 +24,7 @@ export const pnLocalPattern = new RegExp(`((${pnCharsUPattern.source})|:|[0-9]|(
 // eslint-disable-next-line no-misleading-character-class
 export const pNameLnPattern = new RegExp(`(${pNameNsPattern.source})(${pnLocalPattern.source})`);
 // eslint-disable-next-line no-misleading-character-class
-export const blankNodeLabelPattern = new RegExp(`_:((${pnCharsUPattern.source})|[0-9])(((${pnCharsPattern.source})\\.)*(${pnCharsPattern.source}))?`);
+export const blankNodeLabelPattern = new RegExp(`_:(?:(?:${pnCharsUPattern.source})|[0-9])(?:(?:(?:${pnCharsPattern.source})|\\.)*(${pnCharsPattern.source}))?`);
 // eslint-disable-next-line no-misleading-character-class
 export const var1Pattern = new RegExp(`\\?(${varNamePattern.source})`);
 // eslint-disable-next-line no-misleading-character-class
