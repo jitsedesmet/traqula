@@ -15,7 +15,7 @@ describe('a SPARQL parser', () => {
     parser._resetBlanks();
   });
 
-  function testQueriesInDir(
+  function testPositiveQueriesInDir(
     dir: string,
     parsers: [string, { parse: (input: string) => unknown; _resetBlanks: () => void }][],
   ): void {
@@ -38,8 +38,28 @@ describe('a SPARQL parser', () => {
     }
   }
 
+  function testNegativeQueriesInDir(
+    dir: string,
+    parsers: [string, { parse: (input: string) => unknown; _resetBlanks: () => void }][],
+  ): void {
+    const statics = fs.readdirSync(dir);
+    for (const file of statics) {
+      if (file.endsWith('.sparql')) {
+        describe(`negative test file ${file}`, async() => {
+          const query = await fsp.readFile(`${dir}/${file}`, 'utf-8');
+          for (const [ name, parser ] of parsers) {
+            it(`cannot be parsed by ${name}`, async({ expect }) => {
+              parser._resetBlanks();
+              expect(() => parser.parse(query)).toThrow();
+            });
+          }
+        });
+      }
+    }
+  }
+
   describe('confirms to SPARQL tests', () => {
-    testQueriesInDir('./test/statics/sparql', [
+    testPositiveQueriesInDir('./test/statics/sparql', [
       [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
       [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
     ]);
@@ -48,7 +68,7 @@ describe('a SPARQL parser', () => {
   describe('confirms to SPARQL-PATH tests', () => {
     const sparql11Parser = new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }});
     const sparql12Parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
-    testQueriesInDir('./test/statics/paths', [
+    testPositiveQueriesInDir('./test/statics/paths', [
       [ 'SPARQL 1.1 parser', {
         parse: (input: string) => sparql11Parser.parsePath(input),
         _resetBlanks: () => sparql11Parser._resetBlanks(),
@@ -61,8 +81,11 @@ describe('a SPARQL parser', () => {
   });
 
   describe('confirms to SPARQL12 tests', () => {
-    testQueriesInDir('./test/statics/sparql-1-2', [
+    testPositiveQueriesInDir('./test/statics/sparql-1-2', [
       [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
+    ]);
+    testNegativeQueriesInDir('./test/statics/sparql-1-2-invalid', [
+      [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
     ]);
   });
 
