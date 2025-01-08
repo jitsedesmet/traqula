@@ -43,7 +43,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             },
             {
               "termType": "Literal",
@@ -52,7 +53,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             },
             {
               "termType": "Literal",
@@ -61,7 +63,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             }
           ]
         ]
@@ -85,7 +88,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             },
             {
               "termType": "Literal",
@@ -94,7 +98,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             },
             {
               "termType": "Literal",
@@ -103,7 +108,8 @@
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
+              },
+              "direction": ""
             }
           ]
         ]

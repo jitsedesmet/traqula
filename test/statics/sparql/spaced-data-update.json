@@ -12,6 +12,7 @@
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
+                "direction": "",
                 "language": "",
                 "termType": "Literal",
                 "value": "object"
@@ -41,6 +42,7 @@
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
+                "direction": "",
                 "language": "",
                 "termType": "Literal",
                 "value": "object"
