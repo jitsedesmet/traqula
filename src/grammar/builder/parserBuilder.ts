@@ -88,7 +88,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     return <Builder<Exclude<Names, U>, Omit<RuleDefs, U>>> <unknown> this;
   }
 
-  public merge<OtherNames extends string, OtherRules extends RuleDefMap<OtherNames>, OW extends RuleDef[]>(
+  public merge<OtherNames extends string, OtherRules extends RuleDefMap<OtherNames>, OW extends readonly RuleDef[]>(
     builder: Builder<OtherNames, OtherRules>,
     overridingRules: OW,
   ):

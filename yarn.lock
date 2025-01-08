@@ -758,6 +758,11 @@
     "@stylistic/eslint-plugin-ts" "1.8.1"
     "@types/eslint" "^8.56.10"
 
+"@tsconfig/node12@^12.0.0":
+  version "12.1.4"
+  resolved "https://registry.yarnpkg.com/@tsconfig/node12/-/node12-12.1.4.tgz#10d5a80d95e1843741192f45bb85c02d23b349f5"
+  integrity sha512-0KoYJG4IOL99qNFpQEyLJ8ZKQ+xBVBrgpN63Hepk2WHqt9wBggSRQltrzVxk4e1ZTnEFCs+8CGefr2hevDg9vg==
+
 "@types/eslint@^8.56.10":
   version "8.56.12"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-8.56.12.tgz#1657c814ffeba4d2f84c0d4ba0f44ca7ea1ca53a"

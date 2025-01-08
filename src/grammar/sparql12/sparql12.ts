@@ -5,6 +5,8 @@
  * It is therefore essential that the parser retypes the rules from the core grammar.
  */
 
+import type { DirectionalLanguage } from '@rdfjs/types';
+import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../../lexer/sparql11/index.js';
 import * as l12 from '../../lexer/sparql12/index.js';
 import type { RuleDefReturn, RuleDef } from '../builder/ruleDefTypes';
@@ -509,6 +511,10 @@ export const builtInCall: typeof S11.builtInCall = <const> {
   ]),
 };
 
+function isLangDir(dir: string): dir is 'ltr' | 'rtl' {
+  return dir === 'ltr' || dir === 'rtl';
+}
+
 /**
  * OVERRIDING RULE: {@link S11.rdfLiteral}.
  * No retyping is needed since the return type is the same
@@ -516,10 +522,27 @@ export const builtInCall: typeof S11.builtInCall = <const> {
  */
 export const rdfLiteral: typeof S11.rdfLiteral = <const> {
   name: 'rdfLiteral',
-  impl: ({ SUBRULE, OPTION, CONSUME, OR, context }) => () => {
+  impl: ({ ACTION, SUBRULE, OPTION, CONSUME, OR, context }) => () => {
     const value = SUBRULE(S11.string);
-    const langOrDataType = OPTION(() => OR<T11.IriTerm | string>([
-      { ALT: () => CONSUME(l12.LANG_DIR).image.slice(1) },
+    const langOrDataType = OPTION(() => OR<string | NamedNode | DirectionalLanguage>([
+      { ALT: () => {
+        const langTag = CONSUME(l12.LANG_DIR).image.slice(1);
+
+        return ACTION(() => {
+          const dirSplit = langTag.split('--');
+          if (dirSplit.length > 1) {
+            const [ language, direction ] = dirSplit;
+            if (!isLangDir(direction)) {
+              throw new Error(`language direction "${direction}" of literal "${value}@${langTag}" is not is required range 'ltr' | 'rtl'.`);
+            }
+            return {
+              language,
+              direction,
+            };
+          }
+          return langTag;
+        });
+      } },
       { ALT: () => {
         CONSUME(l.symbols.hathat);
         return SUBRULE(S11.iri);
