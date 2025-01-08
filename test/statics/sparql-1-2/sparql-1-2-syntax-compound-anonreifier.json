@@ -47,6 +47,20 @@
           }
         },
         {
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#p"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "g_1"
+          }
+        },
+        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -71,56 +85,6 @@
             "object": {
               "termType": "Variable",
               "value": "C"
-            },
-            "graph": {
-              "termType": "DefaultGraph",
-              "value": ""
-            }
-          },
-          "graph": {
-            "termType": "DefaultGraph",
-            "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_0"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#p"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "g_1"
-          }
-        },
-        {
-          "termType": "Quad",
-          "value": "",
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_5"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
-          },
-          "object": {
-            "termType": "Quad",
-            "value": "",
-            "subject": {
-              "termType": "BlankNode",
-              "value": "g_2"
-            },
-            "predicate": {
-              "termType": "NamedNode",
-              "value": "http://example.com/ns#p"
-            },
-            "object": {
-              "termType": "BlankNode",
-              "value": "g_4"
             },
             "graph": {
               "termType": "DefaultGraph",
@@ -173,6 +137,42 @@
           "value": "",
           "subject": {
             "termType": "BlankNode",
+            "value": "g_5"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
+          },
+          "object": {
+            "termType": "Quad",
+            "value": "",
+            "subject": {
+              "termType": "BlankNode",
+              "value": "g_2"
+            },
+            "predicate": {
+              "termType": "NamedNode",
+              "value": "http://example.com/ns#p"
+            },
+            "object": {
+              "termType": "BlankNode",
+              "value": "g_4"
+            },
+            "graph": {
+              "termType": "DefaultGraph",
+              "value": ""
+            }
+          },
+          "graph": {
+            "termType": "DefaultGraph",
+            "value": ""
+          }
+        },
+        {
+          "termType": "Quad",
+          "value": "",
+          "subject": {
+            "termType": "BlankNode",
             "value": "g_4"
           },
           "predicate": {
@@ -193,6 +193,56 @@
             "object": {
               "termType": "BlankNode",
               "value": "g_3"
+            },
+            "graph": {
+              "termType": "DefaultGraph",
+              "value": ""
+            }
+          },
+          "graph": {
+            "termType": "DefaultGraph",
+            "value": ""
+          }
+        },
+        {
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_5"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#q"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "g_10"
+          }
+        },
+        {
+          "termType": "Quad",
+          "value": "",
+          "subject": {
+            "termType": "BlankNode",
+            "value": "g_7"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
+          },
+          "object": {
+            "termType": "Quad",
+            "value": "",
+            "subject": {
+              "termType": "BlankNode",
+              "value": "g_6"
+            },
+            "predicate": {
+              "termType": "Variable",
+              "value": "R"
+            },
+            "object": {
+              "termType": "NamedNode",
+              "value": "http://example.com/ns#z"
             },
             "graph": {
               "termType": "DefaultGraph",
@@ -245,42 +295,6 @@
           "value": "",
           "subject": {
             "termType": "BlankNode",
-            "value": "g_7"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
-          },
-          "object": {
-            "termType": "Quad",
-            "value": "",
-            "subject": {
-              "termType": "BlankNode",
-              "value": "g_6"
-            },
-            "predicate": {
-              "termType": "Variable",
-              "value": "R"
-            },
-            "object": {
-              "termType": "NamedNode",
-              "value": "http://example.com/ns#z"
-            },
-            "graph": {
-              "termType": "DefaultGraph",
-              "value": ""
-            }
-          },
-          "graph": {
-            "termType": "DefaultGraph",
-            "value": ""
-          }
-        },
-        {
-          "termType": "Quad",
-          "value": "",
-          "subject": {
-            "termType": "BlankNode",
             "value": "g_9"
           },
           "predicate": {
@@ -310,20 +324,6 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "BlankNode",
-            "value": "g_5"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#q"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "g_10"
           }
         }
       ]

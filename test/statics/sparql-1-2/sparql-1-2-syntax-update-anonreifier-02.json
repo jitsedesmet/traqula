@@ -22,20 +22,6 @@
               }
             },
             {
-              "subject": {
-                "termType": "BlankNode",
-                "value": "g_0"
-              },
-              "predicate": {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#y"
-              },
-              "object": {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#z"
-              }
-            },
-            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -69,6 +55,20 @@
               "graph": {
                 "termType": "DefaultGraph",
                 "value": ""
+              }
+            },
+            {
+              "subject": {
+                "termType": "BlankNode",
+                "value": "g_0"
+              },
+              "predicate": {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#y"
+              },
+              "object": {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#z"
               }
             }
           ]

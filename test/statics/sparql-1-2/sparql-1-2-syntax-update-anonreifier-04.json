@@ -63,7 +63,7 @@
               "value": "",
               "subject": {
                 "termType": "BlankNode",
-                "value": "g_1"
+                "value": "g_2"
               },
               "predicate": {
                 "termType": "NamedNode",
@@ -73,16 +73,16 @@
                 "termType": "Quad",
                 "value": "",
                 "subject": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#s1"
+                  "termType": "BlankNode",
+                  "value": "g_0"
                 },
                 "predicate": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#p1"
+                  "termType": "Variable",
+                  "value": "P"
                 },
                 "object": {
-                  "termType": "Variable",
-                  "value": "Z"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#o2"
                 },
                 "graph": {
                   "termType": "DefaultGraph",
@@ -113,7 +113,7 @@
               "value": "",
               "subject": {
                 "termType": "BlankNode",
-                "value": "g_2"
+                "value": "g_1"
               },
               "predicate": {
                 "termType": "NamedNode",
@@ -123,16 +123,16 @@
                 "termType": "Quad",
                 "value": "",
                 "subject": {
-                  "termType": "BlankNode",
-                  "value": "g_0"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#s1"
                 },
                 "predicate": {
-                  "termType": "Variable",
-                  "value": "P"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#p1"
                 },
                 "object": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#o2"
+                  "termType": "Variable",
+                  "value": "Z"
                 },
                 "graph": {
                   "termType": "DefaultGraph",
@@ -206,7 +206,7 @@
               "value": "",
               "subject": {
                 "termType": "BlankNode",
-                "value": "g_4"
+                "value": "g_5"
               },
               "predicate": {
                 "termType": "NamedNode",
@@ -216,16 +216,16 @@
                 "termType": "Quad",
                 "value": "",
                 "subject": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#s1"
+                  "termType": "BlankNode",
+                  "value": "g_3"
                 },
                 "predicate": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#p1"
+                  "termType": "Variable",
+                  "value": "P"
                 },
                 "object": {
-                  "termType": "Variable",
-                  "value": "Z"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#o1"
                 },
                 "graph": {
                   "termType": "DefaultGraph",
@@ -256,7 +256,7 @@
               "value": "",
               "subject": {
                 "termType": "BlankNode",
-                "value": "g_5"
+                "value": "g_4"
               },
               "predicate": {
                 "termType": "NamedNode",
@@ -266,16 +266,16 @@
                 "termType": "Quad",
                 "value": "",
                 "subject": {
-                  "termType": "BlankNode",
-                  "value": "g_3"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#s1"
                 },
                 "predicate": {
-                  "termType": "Variable",
-                  "value": "P"
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ns#p1"
                 },
                 "object": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ns#o1"
+                  "termType": "Variable",
+                  "value": "Z"
                 },
                 "graph": {
                   "termType": "DefaultGraph",

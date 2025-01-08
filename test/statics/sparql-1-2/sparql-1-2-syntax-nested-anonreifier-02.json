@@ -11,6 +11,20 @@
       "type": "bgp",
       "triples": [
         {
+          "subject": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#a"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://example.com/ns#q"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "g_0"
+          }
+        },
+        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -44,20 +58,6 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#a"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://example.com/ns#q"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "g_0"
           }
         },
         {

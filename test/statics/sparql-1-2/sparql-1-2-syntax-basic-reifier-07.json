@@ -52,6 +52,20 @@
       }
     },
     {
+      "subject": {
+        "termType": "Variable",
+        "value": "a"
+      },
+      "predicate": {
+        "termType": "Variable",
+        "value": "b"
+      },
+      "object": {
+        "termType": "BlankNode",
+        "value": "e_bnode"
+      }
+    },
+    {
       "termType": "Quad",
       "value": "",
       "subject": {
@@ -85,20 +99,6 @@
       "graph": {
         "termType": "DefaultGraph",
         "value": ""
-      }
-    },
-    {
-      "subject": {
-        "termType": "Variable",
-        "value": "a"
-      },
-      "predicate": {
-        "termType": "Variable",
-        "value": "b"
-      },
-      "object": {
-        "termType": "BlankNode",
-        "value": "e_bnode"
       }
     }
   ],
@@ -157,6 +157,20 @@
           }
         },
         {
+          "subject": {
+            "termType": "Variable",
+            "value": "a"
+          },
+          "predicate": {
+            "termType": "Variable",
+            "value": "b"
+          },
+          "object": {
+            "termType": "BlankNode",
+            "value": "e_bnode"
+          }
+        },
+        {
           "termType": "Quad",
           "value": "",
           "subject": {
@@ -190,20 +204,6 @@
           "graph": {
             "termType": "DefaultGraph",
             "value": ""
-          }
-        },
-        {
-          "subject": {
-            "termType": "Variable",
-            "value": "a"
-          },
-          "predicate": {
-            "termType": "Variable",
-            "value": "b"
-          },
-          "object": {
-            "termType": "BlankNode",
-            "value": "e_bnode"
           }
         }
       ]

@@ -288,11 +288,13 @@ RuleDef<'reifiedTriple', IGraphNode & { node: T11.BlankTerm | T11.VariableTerm |
 
     return ACTION(() => {
       const reifier = reifierVal ?? context.dataFactory.blankNode();
-      const tripleTerm = context.dataFactory.quad(subject, predicate, object);
+      const tripleTerm = context.dataFactory.quad(subject.node, predicate, object.node);
       return {
         node: reifier,
         triples: [
+          ...subject.triples,
           <Triple> context.dataFactory.quad(reifier, context.dataFactory.namedNode(CommonIRIs.REIFIES), tripleTerm),
+          ...object.triples,
         ],
       };
     });
@@ -303,19 +305,18 @@ RuleDef<'reifiedTriple', IGraphNode & { node: T11.BlankTerm | T11.VariableTerm |
  * [[115]](https://www.w3.org/TR/sparql12-query/#rReifiedTripleSubject)
  */
 export const reifiedTripleSubject:
-RuleDef<'reifiedTripleSubject', T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm | BaseQuadTerm> =
+RuleDef<'reifiedTripleSubject', IGraphNode> =
   <const> {
     name: 'reifiedTripleSubject',
-    impl: ({ OR, SUBRULE }) => () =>
-      OR<T11.VariableTerm | T11.IriTerm | T11.LiteralTerm | T11.BlankTerm | BaseQuadTerm>([
-        { ALT: () => SUBRULE(S11.var_) },
-        { ALT: () => SUBRULE(S11.iri) },
-        { ALT: () => SUBRULE(rdfLiteral) },
-        { ALT: () => SUBRULE(S11.numericLiteral) },
-        { ALT: () => SUBRULE(S11.booleanLiteral) },
-        { ALT: () => SUBRULE(S11.blankNode) },
-        { ALT: () => SUBRULE(reifiedTriple).node },
-      ]),
+    impl: ({ OR, SUBRULE }) => () => OR<IGraphNode>([
+      { ALT: () => ({ node: SUBRULE(S11.var_), triples: []}) },
+      { ALT: () => ({ node: SUBRULE(S11.iri), triples: []}) },
+      { ALT: () => ({ node: SUBRULE(rdfLiteral), triples: []}) },
+      { ALT: () => ({ node: SUBRULE(S11.numericLiteral), triples: []}) },
+      { ALT: () => ({ node: SUBRULE(S11.booleanLiteral), triples: []}) },
+      { ALT: () => ({ node: SUBRULE(S11.blankNode), triples: []}) },
+      { ALT: () => SUBRULE(reifiedTriple) },
+    ]),
   };
 
 /**
@@ -327,7 +328,7 @@ RuleDef<'reifiedTripleObject', RuleDefReturn<typeof reifiedTripleSubject>> =
     name: 'reifiedTripleObject',
     impl: $ => () => $.OR2([
       { ALT: () => reifiedTripleSubject.impl($)() },
-      { ALT: () => $.SUBRULE(tripleTerm) },
+      { ALT: () => ({ node: $.SUBRULE(tripleTerm), triples: []}) },
     ]),
   };
 

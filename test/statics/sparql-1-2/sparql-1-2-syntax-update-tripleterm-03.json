@@ -39,20 +39,6 @@
               }
             },
             {
-              "subject": {
-                "termType": "BlankNode",
-                "value": "g_0"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "Y"
-              },
-              "object": {
-                "termType": "Variable",
-                "value": "Z"
-              }
-            },
-            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -103,6 +89,20 @@
                 "termType": "DefaultGraph",
                 "value": ""
               }
+            },
+            {
+              "subject": {
+                "termType": "BlankNode",
+                "value": "g_0"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "Y"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "Z"
+              }
             }
           ]
         }
@@ -139,20 +139,6 @@
                   "termType": "DefaultGraph",
                   "value": ""
                 }
-              }
-            },
-            {
-              "subject": {
-                "termType": "BlankNode",
-                "value": "g_1"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "Y"
-              },
-              "object": {
-                "termType": "Variable",
-                "value": "Z"
               }
             },
             {
@@ -205,6 +191,20 @@
               "graph": {
                 "termType": "DefaultGraph",
                 "value": ""
+              }
+            },
+            {
+              "subject": {
+                "termType": "BlankNode",
+                "value": "g_1"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "Y"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "Z"
               }
             }
           ]

@@ -9,6 +9,20 @@
           "type": "bgp",
           "triples": [
             {
+              "subject": {
+                "termType": "Variable",
+                "value": "S"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "P"
+              },
+              "object": {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#iri"
+              }
+            },
+            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -45,34 +59,6 @@
               }
             },
             {
-              "subject": {
-                "termType": "Variable",
-                "value": "S"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "P"
-              },
-              "object": {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#iri"
-              }
-            },
-            {
-              "subject": {
-                "termType": "BlankNode",
-                "value": "g_0"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "Y"
-              },
-              "object": {
-                "termType": "Variable",
-                "value": "Z"
-              }
-            },
-            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -106,6 +92,20 @@
               "graph": {
                 "termType": "DefaultGraph",
                 "value": ""
+              }
+            },
+            {
+              "subject": {
+                "termType": "BlankNode",
+                "value": "g_0"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "Y"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "Z"
               }
             }
           ]
@@ -116,6 +116,20 @@
           "type": "bgp",
           "triples": [
             {
+              "subject": {
+                "termType": "Variable",
+                "value": "S"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "P"
+              },
+              "object": {
+                "termType": "NamedNode",
+                "value": "http://example.com/ns#iri"
+              }
+            },
+            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -152,34 +166,6 @@
               }
             },
             {
-              "subject": {
-                "termType": "Variable",
-                "value": "S"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "P"
-              },
-              "object": {
-                "termType": "NamedNode",
-                "value": "http://example.com/ns#iri"
-              }
-            },
-            {
-              "subject": {
-                "termType": "BlankNode",
-                "value": "g_1"
-              },
-              "predicate": {
-                "termType": "Variable",
-                "value": "Y"
-              },
-              "object": {
-                "termType": "Variable",
-                "value": "Z"
-              }
-            },
-            {
               "termType": "Quad",
               "value": "",
               "subject": {
@@ -213,6 +199,20 @@
               "graph": {
                 "termType": "DefaultGraph",
                 "value": ""
+              }
+            },
+            {
+              "subject": {
+                "termType": "BlankNode",
+                "value": "g_1"
+              },
+              "predicate": {
+                "termType": "Variable",
+                "value": "Y"
+              },
+              "object": {
+                "termType": "Variable",
+                "value": "Z"
               }
             }
           ]

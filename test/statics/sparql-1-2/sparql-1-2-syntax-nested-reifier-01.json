@@ -64,42 +64,6 @@
           "termType": "Quad",
           "value": "",
           "subject": {
-            "termType": "BlankNode",
-            "value": "e_bnode"
-          },
-          "predicate": {
-            "termType": "NamedNode",
-            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
-          },
-          "object": {
-            "termType": "Quad",
-            "value": "",
-            "subject": {
-              "termType": "NamedNode",
-              "value": "http://example.com/ns#iri"
-            },
-            "predicate": {
-              "termType": "NamedNode",
-              "value": "http://example.com/ns#r"
-            },
-            "object": {
-              "termType": "NamedNode",
-              "value": "http://example.com/ns#z"
-            },
-            "graph": {
-              "termType": "DefaultGraph",
-              "value": ""
-            }
-          },
-          "graph": {
-            "termType": "DefaultGraph",
-            "value": ""
-          }
-        },
-        {
-          "termType": "Quad",
-          "value": "",
-          "subject": {
             "termType": "NamedNode",
             "value": "http://example.com/ns#iri"
           },
@@ -121,6 +85,42 @@
             "object": {
               "termType": "NamedNode",
               "value": "http://example.com/ns#o"
+            },
+            "graph": {
+              "termType": "DefaultGraph",
+              "value": ""
+            }
+          },
+          "graph": {
+            "termType": "DefaultGraph",
+            "value": ""
+          }
+        },
+        {
+          "termType": "Quad",
+          "value": "",
+          "subject": {
+            "termType": "BlankNode",
+            "value": "e_bnode"
+          },
+          "predicate": {
+            "termType": "NamedNode",
+            "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
+          },
+          "object": {
+            "termType": "Quad",
+            "value": "",
+            "subject": {
+              "termType": "NamedNode",
+              "value": "http://example.com/ns#iri"
+            },
+            "predicate": {
+              "termType": "NamedNode",
+              "value": "http://example.com/ns#r"
+            },
+            "object": {
+              "termType": "NamedNode",
+              "value": "http://example.com/ns#z"
             },
             "graph": {
               "termType": "DefaultGraph",
