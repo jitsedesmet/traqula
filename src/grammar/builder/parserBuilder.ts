@@ -201,6 +201,7 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         });
 
         const selfRef = this.getSelfRef();
+        // Remember to change the reset function accordingly!
         this.initialParseContext = {
           dataFactory: new DataFactory({ blankNodePrefix: 'g_' }),
           baseIRI: undefined,
@@ -235,9 +236,11 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         // We need to keep the original object reference.
         Object.assign(this.runningContext, {
           ...this.initialParseContext,
-          prefixes: { ...this.initialParseContext.prefixes },
-          parseMode: new Set(this.initialParseContext.parseMode),
         });
+        this.runningContext.prefixes = { ...this.initialParseContext.prefixes };
+        this.runningContext.parseMode = new Set(this.initialParseContext.parseMode);
+        this.runningContext.usedBlankNodeLabels.clear();
+        this.runningContext.flushedBlankNodeLabels.clear();
       }
 
       private getSelfRef(): CstDef {
