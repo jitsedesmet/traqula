@@ -1,16 +1,16 @@
 import { DataFactory } from 'rdf-data-factory';
-import { Builder } from '../../grammar/builder/parserBuilder.js';
-import type { ImplArgs, RuleDef } from '../../grammar/builder/ruleDefTypes.js';
+import { Builder } from '../../grammar/builder/parserBuilder';
+import type { ImplArgs, RuleDef } from '../../grammar/builder/ruleDefTypes';
 import { canCreateBlankNodes } from '../../grammar/sparql11';
-import { canParseVars, prologue } from '../../grammar/sparql11/general.js';
-import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit.js';
+import { canParseVars, prologue } from '../../grammar/sparql11/general';
+import type { HandledByBase } from '../../grammar/sparql11/queryUnit/queryUnit';
 import {
   askQuery,
   constructQuery,
   describeQuery,
   selectQuery,
   valuesClause,
-} from '../../grammar/sparql11/queryUnit/queryUnit.js';
+} from '../../grammar/sparql11/queryUnit/queryUnit';
 import type {
   IriTerm,
   PropertyPath,
@@ -18,13 +18,13 @@ import type {
   SparqlParser as ISparqlParser,
   SparqlQuery,
   Update,
-} from '../../grammar/sparql11/Sparql11types.js';
-import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit.js';
+} from '../../grammar/sparql11/Sparql11types';
+import { update, update1 } from '../../grammar/sparql11/updateUnit/updateUnit';
 import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
-import * as l from '../../lexer/sparql11/index.js';
-import { sparql11Tokens } from '../../lexer/sparql11/index.js';
-import { queryUnitParserBuilder } from './queryUnitParser.js';
-import { updateParserBuilder } from './updateUnitParser.js';
+import * as l from '../../lexer/sparql11/index';
+import { sparql11Tokens } from '../../lexer/sparql11/index';
+import { queryUnitParserBuilder } from './queryUnitParser';
+import { updateParserBuilder } from './updateUnitParser';
 
 // Create merge of
 // ```

@@ -1,8 +1,8 @@
 import type { NamedNode } from 'rdf-data-factory';
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
-import { CommonIRIs, resolveIRI } from '../utils.js';
-import type { BlankTerm, IriTerm, LiteralTerm } from './Sparql11types.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
+import { CommonIRIs, resolveIRI } from '../utils';
+import type { BlankTerm, IriTerm, LiteralTerm } from './Sparql11types';
 
 /**
  * Parses an RDF literal, in the form of {value}@{lang} or {value}^^{datatype}.

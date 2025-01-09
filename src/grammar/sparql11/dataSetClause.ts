@@ -1,6 +1,6 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
-import { iri } from './literals.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
+import { iri } from './literals';
 import type { IriTerm } from './Sparql11types';
 
 /**

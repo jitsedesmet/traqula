@@ -1,9 +1,9 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
 import { CommonIRIs } from '../utils';
-import { var_, varOrTerm, verb } from './general.js';
+import { var_, varOrTerm, verb } from './general';
 import { canCreateBlankNodes } from './literals';
-import { path } from './propertyPaths.js';
+import { path } from './propertyPaths';
 import type {
   BgpPattern,
   IGraphNode,

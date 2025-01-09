@@ -1,10 +1,10 @@
 /* eslint-disable require-unicode-regexp */
 import { LexerBuilder } from '../builder/LexerBuilder';
 import { createToken } from '../utils';
-import { allBuiltInCalls, datatype } from './BuildinCalls.js';
+import { allBuiltInCalls, datatype } from './BuildinCalls';
 import { allGraphTokens } from './graph';
 import { allSymbols } from './symbols';
-import { allTerminals } from './terminals.js';
+import { allTerminals } from './terminals';
 
 export const baseDecl = createToken({ name: 'BaseDecl', pattern: /base/i, label: 'BASE' });
 export const prefixDecl = createToken({ name: 'PrefixDecl', pattern: /prefix/i, label: 'PREFIX' });

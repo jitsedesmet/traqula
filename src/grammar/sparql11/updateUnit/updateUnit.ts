@@ -1,9 +1,9 @@
 import type { TokenType } from 'chevrotain';
-import * as l from '../../../lexer/sparql11/index.js';
-import type { RuleDef, RuleDefReturn } from '../../builder/ruleDefTypes.js';
-import { unCapitalize } from '../../utils.js';
-import { canParseVars, prologue, triplesTemplate, varOrIri } from '../general.js';
-import { canCreateBlankNodes, iri } from '../literals.js';
+import * as l from '../../../lexer/sparql11/index';
+import type { RuleDef, RuleDefReturn } from '../../builder/ruleDefTypes';
+import { unCapitalize } from '../../utils';
+import { canParseVars, prologue, triplesTemplate, varOrIri } from '../general';
+import { canCreateBlankNodes, iri } from '../literals';
 import type {
   ClearDropOperation,
   GraphOrDefault,
@@ -16,7 +16,7 @@ import type {
   Update,
   UpdateOperation,
 } from '../Sparql11types';
-import { groupGraphPattern } from '../whereClause.js';
+import { groupGraphPattern } from '../whereClause';
 
 /**
  * [[3]](https://www.w3.org/TR/sparql11-query/#rUpdateUnit)

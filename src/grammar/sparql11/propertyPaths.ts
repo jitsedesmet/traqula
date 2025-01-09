@@ -1,8 +1,8 @@
 import type { TokenType } from 'chevrotain';
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
 import { verbA } from './general';
-import { iri } from './literals.js';
+import { iri } from './literals';
 import type { IriTerm, IriTermOrElt, NegatedPropertySet, PropertyPath } from './Sparql11types';
 
 /**

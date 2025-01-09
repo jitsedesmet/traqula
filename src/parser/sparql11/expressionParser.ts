@@ -1,5 +1,5 @@
 import { Builder } from '../../grammar/builder/parserBuilder';
-import type { builtInCall } from '../../grammar/sparql11/builtIn.js';
+import type { builtInCall } from '../../grammar/sparql11/builtIn';
 import {
   aggregate,
   aggregateAvg,
@@ -62,7 +62,7 @@ import {
   regexExpression,
   strReplaceExpression,
   substringExpression,
-} from '../../grammar/sparql11/builtIn.js';
+} from '../../grammar/sparql11/builtIn';
 import {
   additiveExpression,
   argList,
@@ -78,8 +78,8 @@ import {
   relationalExpression,
   unaryExpression,
   valueLogical,
-} from '../../grammar/sparql11/expression.js';
-import { var_ } from '../../grammar/sparql11/general.js';
+} from '../../grammar/sparql11/expression';
+import { var_ } from '../../grammar/sparql11/general';
 import {
   booleanLiteral,
   iri,
@@ -90,7 +90,7 @@ import {
   prefixedName,
   rdfLiteral,
   string,
-} from '../../grammar/sparql11/literals.js';
+} from '../../grammar/sparql11/literals';
 
 const rulesNoBuiltIn = <const> [
   expression,

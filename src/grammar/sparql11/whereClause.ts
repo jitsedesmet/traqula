@@ -1,11 +1,11 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
-import { deGroupSingle, isVariable } from '../utils.js';
-import { builtInCall } from './builtIn.js';
-import { argList, brackettedExpression, expression } from './expression.js';
-import { var_, varOrIri } from './general.js';
-import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals.js';
-import { subSelect } from './queryUnit/queryUnit.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
+import { deGroupSingle, isVariable } from '../utils';
+import { builtInCall } from './builtIn';
+import { argList, brackettedExpression, expression } from './expression';
+import { var_, varOrIri } from './general';
+import { booleanLiteral, iri, numericLiteral, rdfLiteral } from './literals';
+import { subSelect } from './queryUnit/queryUnit';
 import type {
   BindPattern,
   BlankTerm,
@@ -26,7 +26,7 @@ import type {
   ValuesPattern,
   VariableTerm,
 } from './Sparql11types';
-import { triplesBlock } from './tripleBlock.js';
+import { triplesBlock } from './tripleBlock';
 
 /**
  * [[17]](https://www.w3.org/TR/sparql11-query/#rWhereClause)

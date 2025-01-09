@@ -7,8 +7,8 @@
 
 import type { DirectionalLanguage } from '@rdfjs/types';
 import type { NamedNode } from 'rdf-data-factory';
-import * as l from '../../lexer/sparql11/index.js';
-import * as l12 from '../../lexer/sparql12/index.js';
+import * as l from '../../lexer/sparql11/index';
+import * as l12 from '../../lexer/sparql12/index';
 import type { RuleDefReturn, RuleDef } from '../builder/ruleDefTypes';
 import { funcExpr1, funcExpr3 } from '../expressionHelpers';
 import * as S11 from '../sparql11/index';

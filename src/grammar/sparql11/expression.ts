@@ -1,9 +1,9 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef, ImplArgs } from '../builder/ruleDefTypes.js';
-import { builtInCall } from './builtIn.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef, ImplArgs } from '../builder/ruleDefTypes';
+import { builtInCall } from './builtIn';
 import {
   var_,
-} from './general.js';
+} from './general';
 import {
   booleanLiteral,
   iri,
@@ -11,7 +11,7 @@ import {
   numericLiteralNegative,
   numericLiteralPositive,
   rdfLiteral,
-} from './literals.js';
+} from './literals';
 import type { Expression, IriTerm } from './Sparql11types';
 
 export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;

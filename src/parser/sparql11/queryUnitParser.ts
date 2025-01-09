@@ -4,8 +4,8 @@ import {
   defaultGraphClause,
   namedGraphClause,
   sourceSelector,
-} from '../../grammar/sparql11/dataSetClause.js';
-import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general.js';
+} from '../../grammar/sparql11/dataSetClause';
+import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general';
 import {
   askQuery,
   constructQuery,
@@ -16,9 +16,9 @@ import {
   queryUnit,
   selectQuery,
   valuesClause,
-} from '../../grammar/sparql11/queryUnit/queryUnit.js';
-import { subSelectParserBuilder } from './subSelectParser.js';
-import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
+} from '../../grammar/sparql11/queryUnit/queryUnit';
+import { subSelectParserBuilder } from './subSelectParser';
+import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
 const rules = <const> [
   queryUnit,

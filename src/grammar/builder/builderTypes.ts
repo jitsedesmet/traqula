@@ -1,5 +1,5 @@
 import type { ParserMethod } from 'chevrotain';
-import type { RuleDef } from './ruleDefTypes.js';
+import type { RuleDef } from './ruleDefTypes';
 
 export type RuleNamesFromList<T extends readonly RuleDef[]> = T[number]['name'];
 

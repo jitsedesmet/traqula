@@ -1,6 +1,6 @@
 import type { IOrAlt } from '@chevrotain/types';
-import * as l from '../../lexer/sparql11/index.js';
-import type { ImplArgs, RuleDef } from '../builder/ruleDefTypes.js';
+import * as l from '../../lexer/sparql11/index';
+import type { ImplArgs, RuleDef } from '../builder/ruleDefTypes';
 import {
   baseAggregateFunc,
   funcExpr1,
@@ -15,9 +15,9 @@ import {
 } from '../expressionHelpers';
 import {
   unCapitalize,
-} from '../utils.js';
-import { expression } from './expression.js';
-import { string } from './literals.js';
+} from '../utils';
+import { expression } from './expression';
+import { string } from './literals';
 import type { AggregateExpression, Expression } from './Sparql11types';
 
 export const builtInStr = funcExpr1(l.builtIn.str);

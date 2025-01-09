@@ -1,9 +1,9 @@
 import { Builder } from '../../grammar/builder/parserBuilder';
-import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general.js';
-import { iri, prefixedName } from '../../grammar/sparql11/literals.js';
+import { baseDecl, prefixDecl, prologue } from '../../grammar/sparql11/general';
+import { iri, prefixedName } from '../../grammar/sparql11/literals';
 import type {
   update1,
-} from '../../grammar/sparql11/updateUnit/updateUnit.js';
+} from '../../grammar/sparql11/updateUnit/updateUnit';
 import {
   quadPattern,
   quadsNotTriples,
@@ -24,8 +24,8 @@ import {
   quads,
   update,
   updateUnit,
-} from '../../grammar/sparql11/updateUnit/updateUnit.js';
-import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder.js';
+} from '../../grammar/sparql11/updateUnit/updateUnit';
+import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
 const update1Patch: typeof update1 = {
   name: 'update1',

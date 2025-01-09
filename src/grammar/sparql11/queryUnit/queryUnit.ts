@@ -1,11 +1,11 @@
-import * as l from '../../../lexer/sparql11/index.js';
-import { Wildcard } from '../../../misc/Wildcard.js';
-import type { RuleDef, ImplArgs } from '../../builder/ruleDefTypes.js';
+import * as l from '../../../lexer/sparql11/index';
+import { Wildcard } from '../../../misc/Wildcard';
+import type { RuleDef, ImplArgs } from '../../builder/ruleDefTypes';
 import { canParseAggregate } from '../builtIn';
-import { datasetClause, type IDatasetClause } from '../dataSetClause.js';
-import { expression } from '../expression.js';
-import { prologue, triplesTemplate, var_, varOrIri } from '../general.js';
-import { solutionModifier } from '../solutionModifier.js';
+import { datasetClause, type IDatasetClause } from '../dataSetClause';
+import { expression } from '../expression';
+import { prologue, triplesTemplate, var_, varOrIri } from '../general';
+import { solutionModifier } from '../solutionModifier';
 import type {
   AggregateExpression,
   AskQuery,
@@ -23,8 +23,8 @@ import type {
   VariableExpression,
   VariableTerm,
 } from '../Sparql11types';
-import { triplesSameSubject } from '../tripleBlock.js';
-import { dataBlock, whereClause } from '../whereClause.js';
+import { triplesSameSubject } from '../tripleBlock';
+import { dataBlock, whereClause } from '../whereClause';
 
 /**
  * [[1]](https://www.w3.org/TR/sparql11-query/#rQueryUnit)

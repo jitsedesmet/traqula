@@ -33,7 +33,7 @@ const ctx = await esbuild.context({
     '.js': '.cjs',
   },
   bundle: true,
-  target: 'ES2017',
+  target: 'ES2020',
   format: 'cjs',
   loader: { '.ts': 'ts' },
   platform: 'node',

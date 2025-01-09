@@ -9,7 +9,7 @@ import {
   pathOneInPropertySet,
   pathPrimary,
   pathSequence,
-} from '../../grammar/sparql11/propertyPaths.js';
+} from '../../grammar/sparql11/propertyPaths';
 import {
   blankNodePropertyListPath,
   collectionPath,
@@ -23,8 +23,8 @@ import {
   triplesSameSubjectPath,
   verbPath,
   verbSimple,
-} from '../../grammar/sparql11/tripleBlock.js';
-import { objectListBuilder } from './objectListParser.js';
+} from '../../grammar/sparql11/tripleBlock';
+import { objectListBuilder } from './objectListParser';
 
 export const triplesBlockParserBuilder = Builder.createBuilder(<const> [
   triplesBlock,

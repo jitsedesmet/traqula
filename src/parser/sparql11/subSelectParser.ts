@@ -1,6 +1,6 @@
 import { Builder } from '../../grammar/builder/parserBuilder';
-import { builtInCall, existsFunc, notExistsFunc } from '../../grammar/sparql11/builtIn.js';
-import { selectClause, subSelect, valuesClause } from '../../grammar/sparql11/queryUnit/queryUnit.js';
+import { builtInCall, existsFunc, notExistsFunc } from '../../grammar/sparql11/builtIn';
+import { selectClause, subSelect, valuesClause } from '../../grammar/sparql11/queryUnit/queryUnit';
 import {
   groupClause,
   groupCondition,
@@ -12,7 +12,7 @@ import {
   orderClause,
   orderCondition,
   solutionModifier,
-} from '../../grammar/sparql11/solutionModifier.js';
+} from '../../grammar/sparql11/solutionModifier';
 import {
   bind,
   constraint,
@@ -32,10 +32,10 @@ import {
   optionalGraphPattern,
   serviceGraphPattern,
   whereClause,
-} from '../../grammar/sparql11/whereClause.js';
+} from '../../grammar/sparql11/whereClause';
 
-import { expressionParserBuilder } from './expressionParser.js';
-import { triplesBlockParserBuilder } from './triplesBlockParser.js';
+import { expressionParserBuilder } from './expressionParser';
+import { triplesBlockParserBuilder } from './triplesBlockParser';
 
 const rules = <const> [
   subSelect,

@@ -1,9 +1,9 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
 import { CommonIRIs } from '../utils';
-import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals.js';
+import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals';
 import type { GraphTerm, Term, Triple, VerbA, IriTerm, VariableTerm, BaseQuery } from './Sparql11types';
-import { triplesSameSubject } from './tripleBlock.js';
+import { triplesSameSubject } from './tripleBlock';
 
 /**
  * [[4]](https://www.w3.org/TR/sparql11-query/#rPrologue)

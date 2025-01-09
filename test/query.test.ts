@@ -1,4 +1,4 @@
-/* eslint-disable import/no-nodejs-modules,no-sync */
+/* eslint-disable import/no-nodejs-modules */
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { DataFactory } from 'rdf-data-factory';

@@ -10,8 +10,8 @@ import type {
   RuleListToObject,
   RuleNamesFromList,
   ParseMethodsFromRules,
-} from './builderTypes.js';
-import type { CstDef, ImplArgs, RuleDef } from './ruleDefTypes.js';
+} from './builderTypes';
+import type { CstDef, ImplArgs, RuleDef } from './ruleDefTypes';
 
 function listToRuleDefMap<T extends readonly RuleDef[]>(rules: T): RuleListToObject<T> {
   const newRules: Record<string, RuleDef> = {};
@@ -142,7 +142,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     });
     const parser = this.consume({ tokenVocabulary, config: parserConfig }, context);
     const selfSufficientParser: Partial<ParserFromRules<Names, RuleDefs>> = {};
-    // eslint-disable-next-line ts/no-unnecessary-type-assertion
+
     for (const rule of <RuleDef<Names>[]> Object.values(this.rules)) {
       // @ts-expect-error TS7053
       selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {

@@ -1,10 +1,10 @@
-import * as l from '../../lexer/sparql11/index.js';
-import type { RuleDef } from '../builder/ruleDefTypes.js';
-import { builtInCall, canParseAggregate } from './builtIn.js';
-import { brackettedExpression, expression } from './expression.js';
-import { var_ } from './general.js';
+import * as l from '../../lexer/sparql11/index';
+import type { RuleDef } from '../builder/ruleDefTypes';
+import { builtInCall, canParseAggregate } from './builtIn';
+import { brackettedExpression, expression } from './expression';
+import { var_ } from './general';
 import type { Expression, Grouping, Ordering, SelectQuery } from './Sparql11types';
-import { constraint, functionCall } from './whereClause.js';
+import { constraint, functionCall } from './whereClause';
 
 /**
  * [[18]](https://www.w3.org/TR/sparql11-query/#rSolutionModifier)

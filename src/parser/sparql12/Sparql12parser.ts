@@ -7,7 +7,7 @@ import type {
   PropertyPath,
   SparqlParser as ISparqlParser,
   SparqlQuery,
-} from '../../grammar/sparql11/Sparql11types.js';
+} from '../../grammar/sparql11/Sparql11types';
 import * as S12 from '../../grammar/sparql12/sparql12';
 import { canParseReifier } from '../../grammar/sparql12/sparql12';
 import type { BaseQuadTerm } from '../../grammar/sparql12/sparql12Types';
