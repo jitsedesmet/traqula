@@ -142,7 +142,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     });
     const parser = this.consume({ tokenVocabulary, config: parserConfig }, context);
     const selfSufficientParser: Partial<ParserFromRules<Names, RuleDefs>> = {};
-
+    // eslint-disable-next-line ts/no-unnecessary-type-assertion
     for (const rule of <RuleDef<Names>[]> Object.values(this.rules)) {
       // @ts-expect-error TS7053
       selfSufficientParser[rule.name] = (input: string, ...args: unknown[]) => {
@@ -174,6 +174,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
         parser.input = lexResult.tokens;
         const result = parser[rule.name](...args);
         if (parser.errors.length > 0) {
+          console.log(lexResult.tokens);
           throw new Error(`Parse error on line ${parser.errors.map(x => x.token.startLine).join(', ')}
 ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
         }

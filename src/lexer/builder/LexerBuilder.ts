@@ -59,11 +59,12 @@ export class LexerBuilder<NAMES extends string = string> {
     return this;
   }
 
-  public moveBefore<Name extends string>(
+  private moveBeforeOrAfter<Name extends string>(
+    beforeOrAfter: 'before' | 'after',
     before: NamedToken<NAMES>,
     ...tokens: CheckOverlap<Name, NAMES, never, NamedToken<Name>[]>
   ): LexerBuilder<NAMES> {
-    const beforeIndex = this.tokens.indexOf(before);
+    const beforeIndex = this.tokens.indexOf(before) + (beforeOrAfter === 'before' ? 0 : 1);
     if (beforeIndex === -1) {
       throw new Error('BeforeToken not found');
     }
@@ -76,6 +77,20 @@ export class LexerBuilder<NAMES extends string = string> {
       this.tokens.splice(beforeIndex, 0, token);
     }
     return this;
+  }
+
+  public moveBefore<Name extends string>(
+    before: NamedToken<NAMES>,
+    ...tokens: CheckOverlap<Name, NAMES, never, NamedToken<Name>[]>
+  ): LexerBuilder<NAMES> {
+    return this.moveBeforeOrAfter('before', before, ...tokens);
+  }
+
+  public moveAfter<Name extends string>(
+    after: NamedToken<NAMES>,
+    ...tokens: CheckOverlap<Name, NAMES, never, NamedToken<Name>[]>
+  ): LexerBuilder<NAMES> {
+    return this.moveBeforeOrAfter('after', after, ...tokens);
   }
 
   public addAfter<Name extends string>(

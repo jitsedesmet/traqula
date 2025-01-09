@@ -1,5 +1,4 @@
 {
-  "extends": "@tsconfig/node12/tsconfig.json",
   "compileOnSave": true,
   "compilerOptions": {
     "target": "es2021",

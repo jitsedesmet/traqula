@@ -1,7 +1,7 @@
 /* eslint-disable require-unicode-regexp */
 import { LexerBuilder } from '../builder/LexerBuilder';
 import { createToken } from '../utils';
-import { allBuiltInCalls, datatype } from './BuildinCalls';
+import { allBuiltInCalls, avg, datatype } from './BuildinCalls';
 import { allGraphTokens } from './graph';
 import { allSymbols } from './symbols';
 import { allTerminals } from './terminals';
@@ -113,4 +113,5 @@ export const sparql11Tokens = LexerBuilder
   .merge(allBuiltInCalls)
   .merge(allGraphTokens)
   .merge(allSymbols)
-  .moveBefore(datatype, dataClause);
+  .moveBefore(datatype, dataClause)
+  .moveAfter(avg, a);

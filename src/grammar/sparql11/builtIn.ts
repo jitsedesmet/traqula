@@ -1,14 +1,15 @@
 import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../../lexer/sparql11/index';
 import type { ImplArgs, RuleDef } from '../builder/ruleDefTypes';
+import type { RuleDefExpressionFunctionX } from '../expressionHelpers';
 import {
   baseAggregateFunc,
   funcExpr1,
   funcExpr2,
   funcExpr2or3,
+  funcExpr3,
   funcExpr3or4,
   funcExprList1,
-  funcExprOrNil1,
   funcGroupGraphPattern,
   funcNil1,
   funcVar1,
@@ -27,7 +28,35 @@ export const builtInDatatype = funcExpr1(l.builtIn.datatype);
 export const builtInBound = funcVar1(l.builtIn.bound);
 export const builtInIri = funcExpr1(l.builtIn.iri);
 export const builtInUri = funcExpr1(l.builtIn.uri);
-export const builtInBnode = funcExprOrNil1(l.builtIn.bnode);
+// Todo: so ugly, just to be compatible with sparqlJS
+export const builtInBnodeSparqlJs: RuleDefExpressionFunctionX<Uncapitalize<'builtInBnode'>, [] | [Expression]> = {
+  name: 'builtInBnode',
+  impl: ({ CONSUME, OR, SUBRULE }) => () => {
+    const operator = CONSUME(l.builtIn.bnode);
+    const args = OR<[] | [Expression]>([
+      {
+        ALT: () => {
+          CONSUME(l.symbols.LParen);
+          const arg = SUBRULE(expression);
+          CONSUME(l.symbols.RParen);
+          return [ arg ];
+        },
+      },
+      {
+        ALT: () => {
+          CONSUME(l.terminals.nil);
+          return [];
+        },
+      },
+    ]);
+    return {
+      type: 'operation',
+      operator: operator.image,
+      args,
+    };
+  },
+};
+// Export const builtInBnode = funcExprOrNil1(l.builtIn.bnode);
 export const builtInRand = funcNil1(l.builtIn.rand);
 export const builtInAbs = funcExpr1(l.builtIn.abs);
 export const builtInCeil = funcExpr1(l.builtIn.ceil);
@@ -60,7 +89,7 @@ export const builtInSha256 = funcExpr1(l.builtIn.sha256);
 export const builtInSha384 = funcExpr1(l.builtIn.sha384);
 export const builtInSha512 = funcExpr1(l.builtIn.sha512);
 export const builtInCoalesce = funcExprList1(l.builtIn.coalesce);
-export const builtInIf = funcExpr2(l.builtIn.if_);
+export const builtInIf = funcExpr3(l.builtIn.if_);
 export const builtInStrlang = funcExpr2(l.builtIn.strlang);
 export const builtInStrdt = funcExpr2(l.builtIn.strdt);
 export const builtInSameterm = funcExpr2(l.builtIn.sameterm);
@@ -80,7 +109,7 @@ export function builtInCallList(SUBRULE: ImplArgs['SUBRULE']): IOrAlt<Expression
     { ALT: () => SUBRULE(builtInBound) },
     { ALT: () => SUBRULE(builtInIri) },
     { ALT: () => SUBRULE(builtInUri) },
-    { ALT: () => SUBRULE(builtInBnode) },
+    { ALT: () => SUBRULE(builtInBnodeSparqlJs) },
     { ALT: () => SUBRULE(builtInRand) },
     { ALT: () => SUBRULE(builtInAbs) },
     { ALT: () => SUBRULE(builtInCeil) },

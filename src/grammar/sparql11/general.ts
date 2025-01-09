@@ -1,6 +1,6 @@
 import * as l from '../../lexer/sparql11/index';
 import type { RuleDef } from '../builder/ruleDefTypes';
-import { CommonIRIs } from '../utils';
+import { CommonIRIs, resolveIRI } from '../utils';
 import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals';
 import type { GraphTerm, Term, Triple, VerbA, IriTerm, VariableTerm, BaseQuery } from './Sparql11types';
 import { triplesSameSubject } from './tripleBlock';
@@ -62,8 +62,12 @@ export const prefixDecl: RuleDef<'prefixDecl', [string, string]> = <const> {
     CONSUME(l.prefixDecl);
     const name = CONSUME(l.terminals.pNameNs).image.slice(0, -1);
     const value = CONSUME(l.terminals.iriRef).image.slice(1, -1);
-    ACTION(() => context.prefixes[name] = value);
-    return [ name, value ];
+
+    return ACTION(() => {
+      const fullIri = resolveIRI(value, context.baseIRI);
+      context.prefixes[name] = fullIri;
+      return [ name, fullIri ];
+    });
   },
 };
 
