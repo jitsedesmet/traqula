@@ -411,7 +411,7 @@ export const unaryExpression: RuleDef<'unaryExpression', Expression> = <const> {
         const expr = SUBRULE2(primaryExpression);
         return {
           type: 'operation',
-          operator: '+',
+          operator: 'UPLUS',
           args: [ expr ],
         };
       },
@@ -422,7 +422,7 @@ export const unaryExpression: RuleDef<'unaryExpression', Expression> = <const> {
         const expr = SUBRULE3(primaryExpression);
         return {
           type: 'operation',
-          operator: '-',
+          operator: 'UMINUS',
           args: [ expr ],
         };
       },

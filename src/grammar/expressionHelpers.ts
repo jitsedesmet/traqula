@@ -205,6 +205,7 @@ RuleDefExpressionFunctionX<
         CONSUME3(l.symbols.comma);
         return SUBRULE4(expression);
       });
+      CONSUME(l.symbols.RParen);
       return {
         type: 'operation',
         operator: formatOperator(operator.image),
