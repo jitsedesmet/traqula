@@ -27,7 +27,7 @@ const plugins = [{
 }];
 
 const srcCtx = await esbuild.context({
-  entryPoints: [ 'src/index.ts' ],
+  entryPoints: [ 'lib/index.ts' ],
   outdir: 'out',
   outExtension: {
     '.js': '.cjs',

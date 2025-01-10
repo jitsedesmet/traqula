@@ -24,7 +24,8 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*.ts",
+    "engines/*/lib/**/*.ts",
+    "packages/*/lib/**/*.ts",
     "test/**/*.ts",
     "spec/**/*.ts"
   ],

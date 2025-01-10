@@ -1,6 +1,6 @@
 import { BlankNode, DefaultGraph, NamedNode, Quad, Variable } from 'rdf-data-factory';
 import { expect } from 'vitest';
-import { Wildcard } from '../../src/misc/Wildcard.js';
+import { Wildcard } from '../../packages/core/lib/Wildcard';
 
 expect.extend({
   toEqualParsedQuery(received, expected) {

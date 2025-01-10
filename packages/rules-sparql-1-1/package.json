@@ -1,0 +1,37 @@
+{
+  "name": "@traqula/rules-sparql-1-1",
+  "version": "0.0.1",
+  "description": "Core components of Traqula",
+  "lsd:module": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jitsedesmet/traqula",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/jitsedesmet/traqula/issues"
+  },
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "files": [
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map"
+  ],
+  "engines": {
+    "node": ">=18.0"
+  },
+  "typings": "lib/index",
+  "scripts": {
+    "build": "node \"../../node_modules/typescript/bin/tsc\""
+  },
+  "dependencies": {
+    "@traqula/core": "workspace:^",
+    "chevrotain": "^11.0.3",
+    "rdf-data-factory": "^2.0.1"
+  },
+  "devDependencies": {
+    "@rdfjs/types": "^2.0.0"
+  }
+}

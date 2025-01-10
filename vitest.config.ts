@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     coverage: {
       enabled: true,
-      include: ['src/**/*.js'],
+      include: ['lib/**/*.js'],
     },
   },
 })

@@ -1,15 +1,14 @@
 {
   "name": "traqula",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
-  "packageManager": "yarn@1.22.22",
-  "description": "",
-  "main": "out/index.cjs",
-  "files": [
-    "out",
-    "src"
+  "packageManager": "yarn@4.6.0",
+  "workspaces": [
+    "engines/*",
+    "packages/*"
   ],
+  "description": "",
   "scripts": {
     "build": "tsc && node esbuild.mjs",
     "clean": "git clean -dfx",
@@ -33,15 +32,13 @@
   },
   "devDependencies": {
     "@rdfjs/types": "^2.0.0",
-    "@rubensworks/eslint-config": "^3.0.0",
     "@types/sparqljs": "^3.1.12",
     "@vitest/coverage-v8": "2.1.8",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
+    "rdf-test-suite": "^2.0.0",
     "sparqljs": "^3.7.3",
-    "ts-jest": "^29.2.5",
     "typescript": "^5.3.3",
-    "vitest": "^2.1.8",
-    "rdf-test-suite": "^2.0.0"
+    "vitest": "^2.1.8"
   }
 }

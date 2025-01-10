@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { Builder } from '../src/grammar/builder/parserBuilder';
-import { path, pathAlternative, pathElt, pathMod } from '../src/grammar/sparql11/propertyPaths.js';
+import { Builder } from '../packages/core/lib/grammar-builder/parserBuilder';
+import { path, pathAlternative, pathElt, pathMod } from '../packages/rules-sparql-1-1/lib/grammar/propertyPaths';
 
 describe('parserBuilder', () => {
   describe('types', () => {

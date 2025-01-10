@@ -1,7 +1,7 @@
 /* eslint-disable test/consistent-test-it */
 import { Parser } from 'sparqljs';
 import { describe, bench } from 'vitest';
-import { Sparql11Parser } from '../src/parser/sparql11/Sparql11Parser';
+import { Sparql11Parser } from '../engines/engine-sparql-1-1/lib/Sparql11Parser';
 
 describe('query, exclude construction', () => {
   const newParser = new Sparql11Parser();

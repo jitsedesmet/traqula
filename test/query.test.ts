@@ -5,8 +5,8 @@ import { DataFactory } from 'rdf-data-factory';
 import type { TestFunction } from 'vitest';
 import { beforeEach, describe, it } from 'vitest';
 import './matchers/toEqualParsedQuery.js';
-import { Sparql11Parser } from '../src/parser/sparql11/Sparql11Parser';
-import { Sparql12Parser } from '../src/parser/sparql12/Sparql12parser';
+import { Sparql11Parser } from '../engines/engine-sparql-1-1/lib/Sparql11Parser';
+import { Sparql12Parser } from '../engines/engine-sparql-1-2/lib/Sparql12parser';
 
 describe('a SPARQL parser', () => {
   const dataFactory = new DataFactory();

@@ -1,5 +1,5 @@
 import { ErrorSkipped, } from 'rdf-test-suite';
-import { Sparql11Parser } from '../src'
+import { Sparql11Parser } from '../lib'
 
 export async function parse(query: string, baseIRI: string) {
   const parser = new Sparql11Parser({ baseIRI });
