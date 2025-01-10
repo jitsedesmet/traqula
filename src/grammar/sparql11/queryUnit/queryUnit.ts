@@ -148,6 +148,9 @@ export const selectQuery: RuleDef<'selectQuery', Omit<SelectQuery, HandledByBase
 
     ACTION(() => {
       if (selectVal.variables.length === 1 && selectVal.variables[0] instanceof Wildcard) {
+        if (modifier.group !== undefined) {
+          throw new Error('GROUP BY not allowed with wildcard');
+        }
         return;
       }
       const variables = <Variable[]> selectVal.variables;
@@ -262,19 +265,35 @@ export const selectClause: RuleDef<'selectClause', ISelectClause> = <const> {
         return [ new Wildcard() ];
       } },
       { ALT: () => {
+        const usedVars: VariableTerm[] = [];
         const result: Variable[] = [];
         AT_LEAST_ONE(() => OR3([
-          { ALT: () => result.push(SUBRULE1(var_)) },
+          { ALT: () => {
+            const raw = SUBRULE1(var_);
+            ACTION(() => {
+              if (usedVars.some(v => v.equals(raw))) {
+                throw new Error(`Variable ${raw.value} used more than once in SELECT clause`);
+              }
+              usedVars.push(raw);
+              result.push(raw);
+            });
+          } },
           { ALT: () => {
             CONSUME(l.symbols.LParen);
             const expr = SUBRULE(expression);
             CONSUME(l.as);
             const variable = SUBRULE2(var_);
             CONSUME(l.symbols.RParen);
-            result.push({
-              expression: expr,
-              variable,
-            } satisfies VariableExpression);
+            ACTION(() => {
+              if (usedVars.some(v => v.equals(variable))) {
+                throw new Error(`Variable ${variable.value} used more than once in SELECT clause`);
+              }
+              usedVars.push(variable);
+              result.push({
+                expression: expr,
+                variable,
+              } satisfies VariableExpression);
+            });
           } },
         ]));
         return result;

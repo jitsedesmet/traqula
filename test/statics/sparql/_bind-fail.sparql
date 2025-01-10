@@ -1,9 +1,0 @@
-SELECT *
-  {
-    {
-       { :s :p ?Y }
-       UNION
-       { :s :p ?Z }
-    }
-   BIND (1 AS ?Y)
- }

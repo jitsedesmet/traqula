@@ -177,7 +177,7 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
     ]);
     return ACTION(() => {
       const [ prefix, localName ] = fullStr.split(':');
-      const value = prefix ? context.prefixes[prefix] : prefix;
+      const value = context.prefixes[prefix];
       if (value === undefined) {
         throw new Error(`Unknown prefix: ${prefix}`);
       }

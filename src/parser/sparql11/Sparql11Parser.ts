@@ -48,8 +48,6 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
           { ALT: () => SUBRULE(describeQuery) },
           { ALT: () => SUBRULE(askQuery) },
         ]);
-        // TODO: tackle variable scope of select: you can only fail on note 12 after parsing the whole query.
-        //  As such, you can use the context entry skipValidation. (So you can test partial queries)
         const values = SUBRULE(valuesClause);
         return ACTION(() => (<Query>{
           ...prologueValues,
