@@ -177,7 +177,11 @@ export const prefixedName: RuleDef<'prefixedName', IriTerm> = <const> {
     ]);
     return ACTION(() => {
       const [ prefix, localName ] = fullStr.split(':');
-      return context.dataFactory.namedNode(context.prefixes[prefix] + localName);
+      const value = prefix ? context.prefixes[prefix] : prefix;
+      if (value === undefined) {
+        throw new Error(`Unknown prefix: ${prefix}`);
+      }
+      return context.dataFactory.namedNode(resolveIRI(value + localName, context.baseIRI));
     });
   },
 };

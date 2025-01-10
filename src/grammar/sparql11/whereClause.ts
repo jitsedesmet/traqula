@@ -62,23 +62,21 @@ export const groupGraphPattern: RuleDef<'groupGraphPattern', GroupPattern> = <co
 };
 
 function findBoundVarsFromGroupGraphPattern(pattern: Pattern, boundedVars: Set<string>): void {
-  if (pattern.type === 'group' || pattern.type === 'bgp') {
-    if ('triples' in pattern) {
-      for (const triple of pattern.triples) {
-        if (isVariable(triple.subject)) {
-          boundedVars.add(triple.subject.value);
-        }
-        if (isVariable(triple.predicate)) {
-          boundedVars.add(triple.predicate.value);
-        }
-        if (isVariable(triple.object)) {
-          boundedVars.add(triple.object.value);
-        }
+  if ('triples' in pattern) {
+    for (const triple of pattern.triples) {
+      if (isVariable(triple.subject)) {
+        boundedVars.add(triple.subject.value);
       }
-    } else if ('patterns' in pattern) {
-      for (const pat of pattern.patterns) {
-        findBoundVarsFromGroupGraphPattern(pat, boundedVars);
+      if (isVariable(triple.predicate)) {
+        boundedVars.add(triple.predicate.value);
       }
+      if (isVariable(triple.object)) {
+        boundedVars.add(triple.object.value);
+      }
+    }
+  } else if ('patterns' in pattern) {
+    for (const pat of pattern.patterns) {
+      findBoundVarsFromGroupGraphPattern(pat, boundedVars);
     }
   }
 }
@@ -111,6 +109,8 @@ export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = 
 
     // Check note 13 of the spec.
     // TODO: currently optimized for case bind is present.
+    //  Since every iteration, even when no bind is present, we walk the tree collecting variables.
+    //  optimize either by: checking whether bind is present, or by keeping track of variables and passing them through
     ACTION(() => {
       const boundedVars = new Set<string>();
       for (const pattern of patterns) {
@@ -119,7 +119,7 @@ export const groupGraphPatternSub: RuleDef<'groupGraphPatternSub', Pattern[]> = 
           if (boundedVars.has(pattern.variable.value)) {
             throw new Error(`Variable used to bind is already bound (?${pattern.variable.value})`);
           }
-        } else {
+        } else if (pattern.type === 'group' || pattern.type === 'bgp') {
           findBoundVarsFromGroupGraphPattern(pattern, boundedVars);
         }
       }

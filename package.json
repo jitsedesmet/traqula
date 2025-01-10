@@ -18,7 +18,16 @@
     "build & run ESM": "yarn build && node src/index.js",
     "build & run CJS": "yarn build && node out/index.cjs",
     "test": "yarn build && vitest test --run",
-    "bench": "yarn build && vitest bench --run"
+    "bench": "yarn build && vitest bench --run",
+    "spec:base": "rdf-test-suite out/parser.cjs http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl -c .rdf-test-suite-cache/",
+    "spec:query": "npm run spec:base -- -s http://www.w3.org/TR/sparql11-query/",
+    "spec:update": "npm run spec:base -- -s http://www.w3.org/TR/sparql11-update/",
+    "spec:star": "rdf-test-suite spec/parser.js https://w3c.github.io/rdf-star/tests/sparql/syntax/manifest.jsonld -i '{ \"sparqlStar\": true }' -c .rdf-test-suite-cache/",
+    "spec:earl:query": "npm run spec:query --silent -- -o earl -p spec/earl-meta.json > spec/earl-query.ttl",
+    "spec:earl:update": "npm run spec:update --silent -- -o earl -p spec/earl-meta.json > spec/earl-update.ttl",
+    "spec:earl:star": "npm run spec:star --silent -- -o earl -p spec/earl-meta.json > spec/earl-star.ttl",
+    "spec:all": "npm run spec:base && npm run spec:query && npm run spec:update && npm run spec:star",
+    "spec:earl": "npm run spec:earl:query && npm run spec:earl:update && npm run spec:earl:star"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",
@@ -34,6 +43,7 @@
     "sparqljs": "^3.7.3",
     "ts-jest": "^29.2.5",
     "typescript": "^5.3.3",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "rdf-test-suite": "^2.0.0"
   }
 }

@@ -22,10 +22,6 @@ export function unCapitalize<T extends string>(str: T): Uncapitalize<T> {
  * Resolves an IRI against a base path
  */
 export function resolveIRI(iri: string, base: string | undefined): string {
-  // Strip off possible angular brackets
-  if (iri.startsWith('<')) {
-    iri = iri.slice(1, -1);
-  }
   // Return absolute IRIs unmodified
   if (/^[a-z][\d+.a-z-]*:/iu.test(iri)) {
     return iri;

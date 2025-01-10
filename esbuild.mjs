@@ -26,7 +26,7 @@ const plugins = [{
   },
 }];
 
-const ctx = await esbuild.context({
+const srcCtx = await esbuild.context({
   entryPoints: [ 'src/index.ts' ],
   outdir: 'out',
   outExtension: {
@@ -42,9 +42,28 @@ const ctx = await esbuild.context({
   plugins,
 });
 
+const specCtx = await esbuild.context({
+  entryPoints: [ 'spec/parser.ts' ],
+  outfile: 'out/parser.cjs',
+  outExtension: {
+    '.js': '.cjs',
+  },
+  bundle: true,
+  target: 'ES2020',
+  format: 'cjs',
+  loader: { '.ts': 'ts' },
+  platform: 'node',
+  sourcemap: !minify,
+  minify,
+  plugins,
+});
+
 if (watch) {
-  await ctx.watch();
+  await srcCtx.watch();
+  await specCtx.watch();
 } else {
-  await ctx.rebuild();
-  ctx.dispose();
+  await srcCtx.rebuild();
+  srcCtx.dispose();
+  await specCtx.rebuild();
+  specCtx.dispose();
 }
