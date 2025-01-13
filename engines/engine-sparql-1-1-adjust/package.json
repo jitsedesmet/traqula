@@ -28,7 +28,6 @@
     "build:ts": "node \"../../node_modules/typescript/bin/tsc\"",
     "build:transpile": " node \"../../node_modules/esbuild/bin/esbuild\" --format=cjs --bundle --log-level=error --outfile=lib/index.cjs lib/index.ts",
     "build:transpile-spec": " node \"../../node_modules/esbuild/bin/esbuild\" --format=cjs --platform=node --bundle --log-level=error --outfile=spec/parser.cjs spec/parser.ts",
-
     "spec:base": "rdf-test-suite spec/parser.cjs http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl -c ../../.rdf-test-suite-cache/",
     "spec:query": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-query/",
     "spec:update": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-update/",

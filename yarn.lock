@@ -885,11 +885,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/test-utils@workspace:packages/test-utils"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
-    "@traqula/rules-sparql-1-1": "workspace:^"
-    chevrotain: "npm:^11.0.3"
     rdf-data-factory: "npm:^2.0.1"
+    vitest: "npm:^2.1.8"
   languageName: unknown
   linkType: soft
 

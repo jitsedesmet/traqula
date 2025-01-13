@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@traqula/core": "workspace:^",
-    "vitest": "^2.1.8",
-    "rdf-data-factory": "^2.0.1"
+    "rdf-data-factory": "^2.0.1",
+    "vitest": "^2.1.8"
   }
 }
