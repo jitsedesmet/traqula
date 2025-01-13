@@ -13,6 +13,7 @@
     "build": "yarn build:ts && yarn build:transpile",
     "build:ts": "tsc",
     "build:transpile": "yarn workspaces foreach --all -pt run build:transpile",
+    "publish": "yarn workspaces foreach --all -pt npm publish",
     "clean": "git clean -dfx",
     "lint": "eslint . --cache",
     "lint-fix": "eslint . --fix",

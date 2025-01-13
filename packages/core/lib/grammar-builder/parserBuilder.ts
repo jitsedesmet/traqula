@@ -26,7 +26,7 @@ export class Builder<Names extends string, RuleDefs extends RuleDefMap<Names>> {
     Rules extends readonly RuleDef[] = RuleDef[],
     Names extends string = RuleNamesFromList<Rules>,
     // @ts-expect-error TS2344
-    RuleDefs extends RuleDefMap<Names> = RuleDefsToRecord<Rules>,
+    RuleDefs extends RuleDefMap<Names> = RuleListToObject<Rules>,
 // eslint-disable-next-line antfu/consistent-list-newline
 >(start: Rules | Builder<Names, RuleDefs>): Builder<Names, RuleDefs> {
     if (start instanceof Builder) {

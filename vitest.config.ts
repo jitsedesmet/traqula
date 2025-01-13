@@ -5,7 +5,18 @@ export default defineConfig({
   test: {
     coverage: {
       enabled: true,
-      include: ['lib/**/*.js'],
+      include: [
+        'packages/*/lib/**/*.ts'
+      ],
+    },
+    include: [
+      'test/**/*.test.ts',
+    ],
+    typecheck: {
+      enabled: true,
+      include: [
+        'packages/*/test/**/*.types.ts',
+      ]
     },
   },
 })
