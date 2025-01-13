@@ -1,93 +1,14 @@
-/* eslint-disable import/no-nodejs-modules */
-import * as fs from 'node:fs';
-import * as fsp from 'node:fs/promises';
-import { DataFactory } from 'rdf-data-factory';
-import type { TestFunction } from 'vitest';
-import { beforeEach, describe, it } from 'vitest';
-import './matchers/toEqualParsedQuery.js';
-import { Sparql11Parser } from '../engines/engine-sparql-1-1/lib/Sparql11Parser';
-import { Sparql12Parser } from '../engines/engine-sparql-1-2/lib/Sparql12parser';
+import {beforeEach, describe, it} from "vitest";
+import type {TestFunction} from "vitest";
+import {Sparql11Parser} from "@traqula/engine-sparql-1-1";
+import {DataFactory} from "rdf-data-factory";
+import {BaseQuad} from "@rdfjs/types";
 
-describe('a SPARQL parser', () => {
-  const dataFactory = new DataFactory();
-  const parser = new Sparql11Parser();
-  beforeEach(() => {
-    parser._resetBlanks();
-  });
+interface Parser {
+  parse: (query: string) => unknown;
+}
 
-  function testPositiveQueriesInDir(
-    dir: string,
-    parsers: [string, { parse: (input: string) => unknown; _resetBlanks: () => void }][],
-  ): void {
-    const statics = fs.readdirSync(dir);
-    for (const file of statics) {
-      if (file.endsWith('.sparql')) {
-        describe(`test file ${file}`, async() => {
-          const query = await fsp.readFile(`${dir}/${file}`, 'utf-8');
-          const result = await fsp.readFile(`${dir}/${file.replace('.sparql', '.json')}`, 'utf-8');
-          const json: unknown = JSON.parse(result);
-          for (const [ name, parser ] of parsers) {
-            it(`can be parsed by ${name}`, async({ expect }) => {
-              parser._resetBlanks();
-              const res: any = parser.parse(query);
-              expect(res).toEqualParsedQuery(json);
-            });
-          }
-        });
-      }
-    }
-  }
-
-  function testNegativeQueriesInDir(
-    dir: string,
-    parsers: [string, { parse: (input: string) => unknown; _resetBlanks: () => void }][],
-  ): void {
-    const statics = fs.readdirSync(dir);
-    for (const file of statics) {
-      if (file.endsWith('.sparql')) {
-        describe(`negative test file ${file}`, async() => {
-          const query = await fsp.readFile(`${dir}/${file}`, 'utf-8');
-          for (const [ name, parser ] of parsers) {
-            it(`cannot be parsed by ${name}`, async({ expect }) => {
-              parser._resetBlanks();
-              expect(() => parser.parse(query)).toThrow();
-            });
-          }
-        });
-      }
-    }
-  }
-
-  describe('confirms to SPARQL tests', () => {
-    testPositiveQueriesInDir('./test/statics/sparql', [
-      [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
-      [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
-    ]);
-  });
-
-  describe('confirms to SPARQL-PATH tests', () => {
-    const sparql11Parser = new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }});
-    const sparql12Parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
-    testPositiveQueriesInDir('./test/statics/paths', [
-      [ 'SPARQL 1.1 parser', {
-        parse: (input: string) => sparql11Parser.parsePath(input),
-        _resetBlanks: () => sparql11Parser._resetBlanks(),
-      }],
-      [ 'SPARQL 1.2 parser', {
-        parse: (input: string) => sparql12Parser.parsePath(input),
-        _resetBlanks: () => sparql11Parser._resetBlanks(),
-      }],
-    ]);
-  });
-
-  describe('confirms to SPARQL12 tests', () => {
-    testPositiveQueriesInDir('./test/statics/sparql-1-2', [
-      [ 'SPARQL 1.2 parser', new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }}) ],
-    ]);
-    testNegativeQueriesInDir('./test/statics/sparql-1-2-invalid', [
-      [ 'SPARQL 1.1 parser', new Sparql11Parser({ prefixes: { ex: 'http://example.org/' }}) ],
-    ]);
-  });
+export function importSparql11NoteTests(parser: Parser, dataFactory: DataFactory<BaseQuad>) {
 
   function testErroneousQuery(query: string, errorMsg: string): TestFunction<object> {
     return ({ expect }) => {
@@ -102,6 +23,7 @@ describe('a SPARQL parser', () => {
       // Expect(error.message).toContain(errorMsg);
     };
   }
+
 
   it('should throw an error on an invalid query', testErroneousQuery('invalid', 'Parse error on line 1'));
 
@@ -425,4 +347,4 @@ DATA { GRAPH <ex:G> { <ex:s> <ex:p> 'o1', 'o2', 'o3' } }`;
       expect(parser.parse(query)).toMatchObject({});
     },
   );
-});
+}

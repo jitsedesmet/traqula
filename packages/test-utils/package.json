@@ -1,0 +1,42 @@
+{
+  "name": "@traqula/test-utils",
+  "version": "0.0.1",
+  "description": "Core components of Traqula",
+  "lsd:module": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jitsedesmet/traqula",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/jitsedesmet/traqula/issues"
+  },
+  "sideEffects": false,
+  "files": [
+    "lib/statics/**",
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map"
+  ],
+  "engines": {
+    "node": ">=18.0"
+  },
+  "typings": "lib/index",
+  "type": "module",
+  "main": "lib/lexer.js",
+  "exports": {
+    "import": "./lib/index.js",
+    "require": "./lib/index.cjs"
+  },
+  "scripts": {
+    "build": "yarn build:ts && yarn build:transpile",
+    "build:ts": "node \"../../node_modules/typescript/bin/tsc\"",
+    "build:transpile": " node \"../../node_modules/esbuild/bin/esbuild\" --platform=node --format=cjs --bundle --log-level=error --outfile=lib/index.cjs lib/index.ts"
+  },
+  "dependencies": {
+    "@traqula/core": "workspace:^",
+    "vitest": "^2.1.8",
+    "rdf-data-factory": "^2.0.1"
+  }
+}

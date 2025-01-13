@@ -19,13 +19,7 @@
     "lint-fix": "eslint . --fix",
     "test": "yarn build && vitest test --run",
     "bench": "yarn build && vitest bench --run",
-    "spec:base": "rdf-test-suite out/parser.cjs http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl -c .rdf-test-suite-cache/",
-    "spec:query": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-query/",
-    "spec:update": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-update/",
-    "spec:earl:query": "yarn spec:query --silent -- -o earl -p spec/earl-meta.json > spec/earl-query.ttl",
-    "spec:earl:update": "yarn spec:update --silent -- -o earl -p spec/earl-meta.json > spec/earl-update.ttl",
-    "spec:all": "yarn spec:base && yarn spec:query && yarn spec:update",
-    "spec:earl": "yarn spec:earl:query && yarn spec:earl:update"
+    "spec:all": "yarn workspaces foreach --all -pt --include \"engines/*\" run spec:all"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",

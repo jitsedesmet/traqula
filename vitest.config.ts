@@ -10,7 +10,8 @@ export default defineConfig({
       ],
     },
     include: [
-      'test/**/*.test.ts',
+      'engines/*/test/**/*.test.ts',
+      'packages/*/test/**/*.test.ts',
     ],
     typecheck: {
       enabled: true,

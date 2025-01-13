@@ -828,6 +828,7 @@ __metadata:
     "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
+    "@traqula/test-utils": "workspace:^"
     chevrotain: "npm:^11.0.3"
     rdf-data-factory: "npm:^2.0.1"
   languageName: unknown
@@ -871,6 +872,18 @@ __metadata:
 "@traqula/rules-sparql-1-2@workspace:packages/rules-sparql-1-2":
   version: 0.0.0-use.local
   resolution: "@traqula/rules-sparql-1-2@workspace:packages/rules-sparql-1-2"
+  dependencies:
+    "@rdfjs/types": "npm:^2.0.0"
+    "@traqula/core": "workspace:^"
+    "@traqula/rules-sparql-1-1": "workspace:^"
+    chevrotain: "npm:^11.0.3"
+    rdf-data-factory: "npm:^2.0.1"
+  languageName: unknown
+  linkType: soft
+
+"@traqula/test-utils@workspace:^, @traqula/test-utils@workspace:packages/test-utils":
+  version: 0.0.0-use.local
+  resolution: "@traqula/test-utils@workspace:packages/test-utils"
   dependencies:
     "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
