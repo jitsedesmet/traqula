@@ -10,16 +10,18 @@
   ],
   "description": "",
   "scripts": {
-    "build": "yarn build:ts && yarn build:transpile",
+    "build": "yarn build:ts && yarn build:transpile && yarn build:transpile-spec",
     "build:ts": "tsc",
     "build:transpile": "yarn workspaces foreach --all -pt run build:transpile",
+    "build:transpile-spec": "yarn workspaces foreach --all -pt --include \"engines/*\" run build:transpile-spec",
     "publish": "yarn workspaces foreach --all -pt npm publish",
     "clean": "git clean -dfx",
     "lint": "eslint . --cache",
     "lint-fix": "eslint . --fix",
     "test": "yarn build && vitest test --run",
     "bench": "yarn build && vitest bench --run",
-    "spec:all": "yarn workspaces foreach --all -pt --include \"engines/*\" run spec:all"
+    "spec:all": "yarn workspaces foreach --all -pt --include \"engines/*\" run spec:all",
+    "spec:earl": "yarn workspaces foreach --all -pt --include \"engines/*\" run spec:earl"
   },
   "dependencies": {
     "chevrotain": "^11.0.3",

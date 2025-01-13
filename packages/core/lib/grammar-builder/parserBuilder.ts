@@ -1,6 +1,6 @@
 /* eslint-disable ts/ban-ts-comment */
 import type { ILexerConfig, IParserConfig } from '@chevrotain/types';
-import type { TokenType, TokenVocabulary } from 'chevrotain';
+import type {IToken, TokenType, TokenVocabulary} from 'chevrotain';
 import { EmbeddedActionsParser, Lexer } from 'chevrotain';
 import { DataFactory } from 'rdf-data-factory';
 import type {
@@ -323,8 +323,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.BACKTRACK(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -334,8 +332,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -345,8 +341,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE1(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -356,8 +350,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE2(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -367,8 +359,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE3(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -378,8 +368,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE4(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -389,8 +377,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE5(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -400,8 +386,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE6(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -411,8 +395,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE7(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -422,8 +404,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE8(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },
@@ -433,8 +413,6 @@ ${parser.errors.map(x => `${x.token.startLine}: ${x.message}`).join('\n')}`);
               // eslint-disable-next-line ts/no-unsafe-argument
               return this.SUBRULE9(this[cstDef.name], { ARGS: args });
             } catch (error: unknown) {
-              // eslint-disable-next-line no-console
-              console.error(`Error with subrule: ${cstDef.name}`);
               throw error;
             }
           },

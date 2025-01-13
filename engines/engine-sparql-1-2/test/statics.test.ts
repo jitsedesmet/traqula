@@ -35,7 +35,7 @@ describe('a SPARQL 1.1 parser', () => {
   }
 
   for (const { name, statics } of [...negativeTest('sparql-1-2-invalid')]) {
-    it(`can parse ${name}`, async({expect}) => {
+    it(`should NOT parse ${name}`, async({expect}) => {
       const { query } = await statics();
       parser._resetBlanks();
       expect(() => parser.parse(query)).toThrow();
