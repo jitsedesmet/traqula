@@ -1,6 +1,6 @@
 import * as l from '../../lexer';
-import { Wildcard } from '@traqula/core/lib/Wildcard';
-import type { RuleDef, ImplArgs } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import { Wildcard } from '@traqula/core';
+import type { RuleDef, ImplArgs } from '@traqula/core';
 import { canParseAggregate } from '../builtIn';
 import { datasetClause, type IDatasetClause } from '../dataSetClause';
 import { expression } from '../expression';
@@ -22,7 +22,7 @@ import type {
   Variable,
   VariableExpression,
   VariableTerm,
-} from '../Sparql11types';
+} from '../../Sparql11types';
 import { triplesSameSubject } from '../tripleBlock';
 import { dataBlock, whereClause } from '../whereClause';
 

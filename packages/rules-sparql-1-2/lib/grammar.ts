@@ -7,13 +7,12 @@
 
 import type { DirectionalLanguage } from '@rdfjs/types';
 import type { NamedNode } from 'rdf-data-factory';
-import * as l from '@traqula/rules-sparql-1-1/lib/lexer';
-import * as l12 from '../lexer';
-import type { RuleDefReturn, RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { funcExpr1, funcExpr3 } from '@traqula/rules-sparql-1-1/lib/expressionHelpers';
-import * as S11 from '@traqula/rules-sparql-1-1/lib/grammar';
-import type * as T11 from '@traqula/rules-sparql-1-1/lib/grammar/Sparql11types';
-import { CommonIRIs } from '@traqula/core/lib/grammar-helpers/utils';
+import * as l12 from './lexer';
+import type { RuleDefReturn, RuleDef } from '@traqula/core';
+import { funcExpr1, funcExpr3 } from '@traqula/rules-sparql-1-1';
+import { gram as S11, lex as l11 } from '@traqula/rules-sparql-1-1';
+import type * as T11 from '@traqula/rules-sparql-1-1';
+import { CommonIRIs } from '@traqula/core';
 import type {
   BaseQuadTerm,
   Expression,
@@ -267,7 +266,7 @@ export const varOrTerm: RuleDef<'varOrTerm', Term> = <const> {
     { ALT: () => SUBRULE(S11.booleanLiteral) },
     { ALT: () => SUBRULE(S11.blankNode) },
     { ALT: () => {
-      CONSUME(l.terminals.nil);
+      CONSUME(l11.terminals.nil);
       return context.dataFactory.namedNode(CommonIRIs.NIL);
     } },
     { ALT: () => SUBRULE(tripleTerm) },
@@ -388,7 +387,7 @@ export const tripleTermData: RuleDef<'tripleTermData', BaseQuadTerm> = <const> {
     const predicate = OR([
       { ALT: () => SUBRULE(S11.iri) },
       { ALT: () => {
-        CONSUME(l.a);
+        CONSUME(l11.a);
         return ACTION(() => context.dataFactory.namedNode(CommonIRIs.TYPE));
       } },
     ]);
@@ -544,7 +543,7 @@ export const rdfLiteral: typeof S11.rdfLiteral = <const> {
         });
       } },
       { ALT: () => {
-        CONSUME(l.symbols.hathat);
+        CONSUME(l11.symbols.hathat);
         return SUBRULE(S11.iri);
       } },
     ]));

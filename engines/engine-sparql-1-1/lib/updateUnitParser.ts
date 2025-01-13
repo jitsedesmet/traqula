@@ -1,20 +1,19 @@
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
+import { Builder } from '@traqula/core';
 
-import {
-  deleteClause,
-  insertClause,
-  modify,
-  update1,
-  usingClause,
-} from '@traqula/rules-sparql-1-1/lib/grammar/updateUnit/updateUnit';
-import { groupGraphPattern } from '@traqula/rules-sparql-1-1/lib/grammar/whereClause';
+import { gram } from '@traqula/rules-sparql-1-1';
 import { objectListBuilder } from './objectListParser';
 import { subSelectParserBuilder } from './subSelectParser';
 import { updateNoModifyParserBuilder } from './updateNoModifyParser';
 
 export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder)
-  .patchRule(update1)
-  .addMany(modify, deleteClause, insertClause, usingClause, groupGraphPattern)
-// This substitutes all of propertyListNotEmpty
+  .patchRule(gram.update1)
+  .addMany(
+    gram.modify,
+    gram.deleteClause,
+    gram.insertClause,
+    gram.usingClause,
+    gram.groupGraphPattern
+  )
+  // This substitutes all of propertyListNotEmpty
   .merge(objectListBuilder, <const> [])
   .merge(subSelectParserBuilder, <const> []);

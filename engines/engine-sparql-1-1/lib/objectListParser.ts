@@ -1,54 +1,31 @@
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import { graphTerm, var_, varOrIri, varOrTerm, verb, verbA } from '@traqula/rules-sparql-1-1/lib/grammar/general';
-import {
-  blankNodePropertyList,
-  collection,
-  graphNode,
-  object,
-  objectList,
-  propertyListNotEmpty,
-  triplesNode,
-} from '@traqula/rules-sparql-1-1/lib/grammar';
-import {
-  blankNode,
-  booleanLiteral,
-  iri,
-  numericLiteral,
-  numericLiteralNegative,
-  numericLiteralPositive,
-  numericLiteralUnsigned,
-  prefixedName,
-  rdfLiteral,
-  string,
-} from '@traqula/rules-sparql-1-1/lib/grammar/literals';
+import { Builder } from '@traqula/core';
+import {gram} from '@traqula/rules-sparql-1-1';
 
 const rules = <const> [
-  objectList,
-  object,
-  graphNode,
-  varOrTerm,
-  triplesNode,
-  collection,
-  blankNodePropertyList,
-  propertyListNotEmpty,
+  gram.objectList,
+  gram.object,
+  gram.graphNode,
+  gram.varOrTerm,
+  gram.triplesNode,
+  gram.collection,
+  gram.blankNodePropertyList,
+  gram.propertyListNotEmpty,
   // PropertyListNotEmpty
-  verb,
-  verbA,
-  varOrIri,
-  var_,
-  iri,
-  prefixedName,
-  graphTerm,
-  rdfLiteral,
-  numericLiteral,
-  booleanLiteral,
-  blankNode,
-  string,
-  numericLiteralUnsigned,
-  numericLiteralPositive,
-  numericLiteralNegative,
+  gram.verb,
+  gram.verbA,
+  gram.varOrIri,
+  gram.var_,
+  gram.iri,
+  gram.prefixedName,
+  gram.graphTerm,
+  gram.rdfLiteral,
+  gram.numericLiteral,
+  gram.booleanLiteral,
+  gram.blankNode,
+  gram.string,
+  gram.numericLiteralUnsigned,
+  gram.numericLiteralPositive,
+  gram.numericLiteralNegative,
 ];
-
-export type ObjectListParserArgs = [...typeof rules];
 
 export const objectListBuilder = Builder.createBuilder(rules);

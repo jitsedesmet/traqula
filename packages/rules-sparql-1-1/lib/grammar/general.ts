@@ -1,8 +1,8 @@
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { CommonIRIs, resolveIRI } from '@traqula/core/lib/grammar-helpers/utils';
+import type { RuleDef } from '@traqula/core';
+import { CommonIRIs, resolveIRI } from '@traqula/core';
 import { blankNode, booleanLiteral, canCreateBlankNodes, iri, numericLiteral, rdfLiteral } from './literals';
-import type { GraphTerm, Term, Triple, VerbA, IriTerm, VariableTerm, BaseQuery } from './Sparql11types';
+import type { GraphTerm, Term, Triple, VerbA, IriTerm, VariableTerm, BaseQuery } from '../Sparql11types';
 import { triplesSameSubject } from './tripleBlock';
 
 /**

@@ -1,5 +1,5 @@
 import * as l from '../lexer';
-import type { RuleDef, ImplArgs } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import type { RuleDef, ImplArgs } from '@traqula/core';
 import { builtInCall } from './builtIn';
 import {
   var_,
@@ -12,7 +12,7 @@ import {
   numericLiteralPositive,
   rdfLiteral,
 } from './literals';
-import type { Expression, IriTerm } from './Sparql11types';
+import type { Expression, IriTerm } from '../Sparql11types';
 
 export type Operation = '||' | '&&' | RelationalOperator | AdditiveOperator | aggregatorOperator | buildInOperator;
 export type RelationalOperator = '=' | '!=' | '<' | '>' | '<=' | '>=' | 'in' | 'notin';

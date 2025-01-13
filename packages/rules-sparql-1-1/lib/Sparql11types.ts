@@ -1,6 +1,6 @@
 import type * as RdfJs from '@rdfjs/types';
 import type { BlankNode } from 'rdf-data-factory';
-import type { CommonIRIs } from '@traqula/core/lib/grammar-helpers/utils';
+import type { CommonIRIs } from '@traqula/core';
 
 export type GraphTerm = IriTerm | BlankTerm | LiteralTerm;
 export type Term = GraphTerm | VariableTerm;

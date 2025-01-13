@@ -1,7 +1,7 @@
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import type { RuleDef } from '@traqula/core';
 import { iri } from './literals';
-import type { IriTerm } from './Sparql11types';
+import type { IriTerm } from '../Sparql11types';
 
 /**
  * [[13]](https://www.w3.org/TR/sparql11-query/#rDatasetClause)

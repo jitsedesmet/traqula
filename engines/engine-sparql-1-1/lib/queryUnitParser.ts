@@ -1,46 +1,29 @@
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import {
-  datasetClause,
-  defaultGraphClause,
-  namedGraphClause,
-  sourceSelector,
-} from '@traqula/rules-sparql-1-1/lib/grammar/dataSetClause';
-import { baseDecl, prefixDecl, prologue } from '@traqula/rules-sparql-1-1/lib/grammar/general';
-import {
-  askQuery,
-  constructQuery,
-  constructTemplate,
-  constructTriples,
-  describeQuery,
-  query,
-  queryUnit,
-  selectQuery,
-  valuesClause,
-} from '@traqula/rules-sparql-1-1/lib/grammar/queryUnit/queryUnit';
+import { Builder } from '@traqula/core';
+import { gram } from '@traqula/rules-sparql-1-1';
 import { subSelectParserBuilder } from './subSelectParser';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
 const rules = <const> [
-  queryUnit,
-  query,
-  prologue,
-  selectQuery,
-  constructQuery,
-  describeQuery,
-  askQuery,
-  valuesClause,
-  baseDecl,
-  prefixDecl,
+  gram.queryUnit,
+  gram.query,
+  gram.prologue,
+  gram.selectQuery,
+  gram.constructQuery,
+  gram.describeQuery,
+  gram.askQuery,
+  gram.valuesClause,
+  gram.baseDecl,
+  gram.prefixDecl,
 ];
 
 export const queryUnitParserBuilder = Builder.createBuilder(rules)
   // Select Query
   .merge(subSelectParserBuilder, <const> [])
-  .addRule(datasetClause)
-  .addRule(defaultGraphClause)
-  .addRule(namedGraphClause)
-  .addRule(sourceSelector)
+  .addRule(gram.datasetClause)
+  .addRule(gram.defaultGraphClause)
+  .addRule(gram.namedGraphClause)
+  .addRule(gram.sourceSelector)
   // Construct Query
-  .addRule(constructTemplate)
+  .addRule(gram.constructTemplate)
   .merge(triplesTemplateParserBuilder, <const> [])
-  .addRule(constructTriples);
+  .addRule(gram.constructTriples);

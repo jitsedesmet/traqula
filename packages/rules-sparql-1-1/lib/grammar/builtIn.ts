@@ -1,6 +1,6 @@
 import type { IOrAlt } from '@chevrotain/types';
 import * as l from '../lexer';
-import type { ImplArgs, RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import type { ImplArgs, RuleDef } from '@traqula/core';
 import type { RuleDefExpressionFunctionX } from '../expressionHelpers';
 import {
   baseAggregateFunc,
@@ -16,10 +16,10 @@ import {
 } from '../expressionHelpers';
 import {
   unCapitalize,
-} from '@traqula/core/lib/grammar-helpers/utils';
+} from '@traqula/core';
 import { expression } from './expression';
 import { string } from './literals';
-import type { AggregateExpression, Expression } from './Sparql11types';
+import type { AggregateExpression, Expression } from '../Sparql11types';
 
 export const builtInStr = funcExpr1(l.builtIn.str);
 export const builtInLang = funcExpr1(l.builtIn.lang);

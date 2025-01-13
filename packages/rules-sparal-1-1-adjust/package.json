@@ -13,7 +13,6 @@
     "url": "https://github.com/jitsedesmet/traqula/issues"
   },
   "sideEffects": false,
-  "main": "lib/index.js",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
@@ -23,8 +22,11 @@
     "node": ">=18.0"
   },
   "typings": "lib/index",
-  "scripts": {
-    "build": "node \"../../node_modules/typescript/bin/tsc\""
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    "import": "./lib/index.js",
+    "require": "./lib/index.cjs"
   },
   "dependencies": {
     "@traqula/core": "workspace:^",

@@ -1,72 +1,47 @@
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import { baseDecl, prefixDecl, prologue } from '@traqula/rules-sparql-1-1/lib/grammar/general';
-import { iri, prefixedName } from '@traqula/rules-sparql-1-1/lib/grammar/literals';
-import type {
-  update1,
-} from '@traqula/rules-sparql-1-1/lib/grammar/updateUnit/updateUnit';
-import {
-  quadPattern,
-  quadsNotTriples,
-  add,
-  clear,
-  copy,
-  create,
-  deleteData,
-  deleteWhere,
-  drop,
-  graphOrDefault,
-  graphRef,
-  graphRefAll,
-  insertData,
-  load,
-  move,
-  quadData,
-  quads,
-  update,
-  updateUnit,
-} from '@traqula/rules-sparql-1-1/lib/grammar/updateUnit/updateUnit';
+import { Builder } from '@traqula/core';
+import { gram } from '@traqula/rules-sparql-1-1';
 import { triplesTemplateParserBuilder } from './triplesTemplateParserBuilder';
 
-const update1Patch: typeof update1 = {
+const update1Patch: typeof gram.update1 = {
   name: 'update1',
   impl: ({ SUBRULE, OR }) => () => OR([
-    { ALT: () => SUBRULE(load) },
-    { ALT: () => SUBRULE(clear) },
-    { ALT: () => SUBRULE(drop) },
-    { ALT: () => SUBRULE(add) },
-    { ALT: () => SUBRULE(move) },
-    { ALT: () => SUBRULE(copy) },
-    { ALT: () => SUBRULE(create) },
-    { ALT: () => SUBRULE(insertData) },
-    { ALT: () => SUBRULE(deleteData) },
-    { ALT: () => SUBRULE(deleteWhere) },
+    { ALT: () => SUBRULE(gram.load) },
+    { ALT: () => SUBRULE(gram.clear) },
+    { ALT: () => SUBRULE(gram.drop) },
+    { ALT: () => SUBRULE(gram.add) },
+    { ALT: () => SUBRULE(gram.move) },
+    { ALT: () => SUBRULE(gram.copy) },
+    { ALT: () => SUBRULE(gram.create) },
+    { ALT: () => SUBRULE(gram.insertData) },
+    { ALT: () => SUBRULE(gram.deleteData) },
+    { ALT: () => SUBRULE(gram.deleteWhere) },
   ]),
 };
 
 const rulesNoUpdate1 = <const>[
-  updateUnit,
-  update,
-  prologue,
+  gram.updateUnit,
+  gram.update,
+  gram.prologue,
   // Update1,
-  baseDecl,
-  prefixDecl,
-  load,
-  clear,
-  drop,
-  add,
-  move,
-  copy,
-  create,
-  insertData,
-  deleteData,
-  deleteWhere,
-  iri,
-  prefixedName,
-  graphRef,
-  graphRefAll,
-  graphOrDefault,
-  quadData,
-  quads,
+  gram.baseDecl,
+  gram.prefixDecl,
+  gram.load,
+  gram.clear,
+  gram.drop,
+  gram.add,
+  gram.move,
+  gram.copy,
+  gram.create,
+  gram.insertData,
+  gram.deleteData,
+  gram.deleteWhere,
+  gram.iri,
+  gram.prefixedName,
+  gram.graphRef,
+  gram.graphRefAll,
+  gram.graphOrDefault,
+  gram.quadData,
+  gram.quads,
 ];
 
 /**
@@ -77,27 +52,6 @@ export const updateNoModifyParserBuilder = Builder
   .createBuilder(rulesNoUpdate1)
   .addRule(update1Patch)
   .merge(triplesTemplateParserBuilder, <const> [])
-  .addRule(quadPattern)
-  .addRule(quadsNotTriples);
+  .addRule(gram.quadPattern)
+  .addRule(gram.quadsNotTriples);
 
-// Export type A = typeof triplesTemplateParserBuilder;
-// export type B = A extends Builder<infer T, any> ? T : never;
-// export const a = <const> [];
-// export type C = B | RuleNames<typeof a>;
-// export type D = RuleDefsToRecord<typeof a>;
-// export type E = A extends Builder<any, infer U> ? U : never;
-// export type F = Omit<E, RuleNames<typeof a>>;
-// export type G = Omit<E, 'triplesTemplate'>;
-// export type H = E & Record<'triplesTemplate', never>;
-// const a2: G = <G> <unknown> null;
-// a2.string = null;
-//
-// export type I = typeof updateNoModifyParserBuilder;
-// export type J = I extends Builder<infer T, any> ? T : never;
-// export type K = I extends Builder<any, infer U> ? U : never;
-//
-// // Export type G = Exclude<E, Record<, any>>
-// const a1: K = <any> null;
-// a1.quadPattern = null;
-//
-// export const updateParserBuilder = Builder.createBuilder(updateNoModifyParserBuilder);

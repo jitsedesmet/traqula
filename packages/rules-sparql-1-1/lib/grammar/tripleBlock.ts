@@ -1,6 +1,6 @@
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { CommonIRIs } from '@traqula/core/lib/grammar-helpers/utils';
+import type { RuleDef } from '@traqula/core';
+import { CommonIRIs } from '@traqula/core';
 import { var_, varOrTerm, verb } from './general';
 import { canCreateBlankNodes } from './literals';
 import { path } from './propertyPaths';
@@ -14,7 +14,7 @@ import type {
   TripleCreatorS,
   TripleCreatorSP,
   VariableTerm,
-} from './Sparql11types';
+} from '../Sparql11types';
 
 /**
  * [[55]](https://www.w3.org/TR/sparql11-query/#rTriplesBlock)

@@ -13,7 +13,12 @@
     "url": "https://github.com/jitsedesmet/traqula/issues"
   },
   "sideEffects": false,
+  "type": "module",
   "main": "lib/index.js",
+  "exports": {
+    "import": "./lib/index.js",
+    "require": "./lib/index.cjs"
+  },
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",

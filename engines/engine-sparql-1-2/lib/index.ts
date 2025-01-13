@@ -1,0 +1,1 @@
+export * from './Sparql12parser';

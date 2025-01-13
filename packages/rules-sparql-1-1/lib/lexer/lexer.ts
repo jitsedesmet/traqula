@@ -1,6 +1,6 @@
 /* eslint-disable require-unicode-regexp */
-import { LexerBuilder } from '@traqula/core/lib/lexer-builder/LexerBuilder';
-import { createToken } from '@traqula/core/lib/lexer-helper/utils';
+import { LexerBuilder } from '@traqula/core';
+import { createToken } from '@traqula/core';
 import { allBuiltInCalls, avg, datatype } from './BuildinCalls';
 import { allGraphTokens } from './graph';
 import { allSymbols } from './symbols';

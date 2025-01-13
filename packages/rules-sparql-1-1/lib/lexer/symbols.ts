@@ -1,5 +1,5 @@
-import { LexerBuilder } from '@traqula/core/lib/lexer-builder/LexerBuilder';
-import { createToken } from '@traqula/core/lib/lexer-helper/utils';
+import { LexerBuilder } from '@traqula/core';
+import { createToken } from '@traqula/core';
 
 export const LCurly = createToken({ name: 'LCurly', pattern: '{', label: '{' });
 export const RCurly = createToken({ name: 'RCurly', pattern: '}', label: '}' });

@@ -1,16 +1,7 @@
 import { DataFactory } from 'rdf-data-factory';
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import type { ImplArgs, RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { canCreateBlankNodes } from '@traqula/rules-sparql-1-1/lib/grammar';
-import { canParseVars, prologue } from '@traqula/rules-sparql-1-1/lib/grammar/general';
-import type { HandledByBase } from '@traqula/rules-sparql-1-1/lib/grammar/queryUnit/queryUnit';
-import {
-  askQuery,
-  constructQuery,
-  describeQuery,
-  selectQuery,
-  valuesClause,
-} from '@traqula/rules-sparql-1-1/lib/grammar/queryUnit/queryUnit';
+import { Builder } from '@traqula/core';
+import type { ImplArgs, RuleDef } from '@traqula/core';
+import { gram, lex as l } from '@traqula/rules-sparql-1-1';
 import type {
   IriTerm,
   PropertyPath,
@@ -18,13 +9,10 @@ import type {
   SparqlParser as ISparqlParser,
   SparqlQuery,
   Update,
-} from '@traqula/rules-sparql-1-1/lib/grammar/Sparql11types';
-import { update, update1 } from '@traqula/rules-sparql-1-1/lib/grammar/updateUnit/updateUnit';
-import type { BaseQuadTerm } from '@traqula/rules-sparql-1-2/lib/grammar/sparql12Types';
-import * as l from '@traqula/rules-sparql-1-1/lib/lexer';
-import { sparql11Tokens } from '@traqula/rules-sparql-1-1/lib/lexer';
+} from '@traqula/rules-sparql-1-1';
 import { queryUnitParserBuilder } from './queryUnitParser';
 import { updateParserBuilder } from './updateUnitParser';
+import type * as RDF from '@rdfjs/types';
 
 // Create merge of
 // ```
@@ -39,16 +27,16 @@ import { updateParserBuilder } from './updateUnitParser';
 const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'base' | 'prefixes'>> = {
   name: 'queryOrUpdate',
   impl: ({ ACTION, SUBRULE, OR1, OR2, CONSUME, OPTION1, OPTION2, context }) => () => {
-    const prologueValues = SUBRULE(prologue);
+    const prologueValues = SUBRULE(gram.prologue);
     return OR1<Query | Update | Pick<Update, 'base' | 'prefixes'>>([
       { ALT: () => {
-        const queryType = OR2<Omit<Query, HandledByBase>>([
-          { ALT: () => SUBRULE(selectQuery) },
-          { ALT: () => SUBRULE(constructQuery) },
-          { ALT: () => SUBRULE(describeQuery) },
-          { ALT: () => SUBRULE(askQuery) },
+        const queryType = OR2<Omit<Query, gram.HandledByBase>>([
+          { ALT: () => SUBRULE(gram.selectQuery) },
+          { ALT: () => SUBRULE(gram.constructQuery) },
+          { ALT: () => SUBRULE(gram.describeQuery) },
+          { ALT: () => SUBRULE(gram.askQuery) },
         ]);
-        const values = SUBRULE(valuesClause);
+        const values = SUBRULE(gram.valuesClause);
         return ACTION(() => (<Query>{
           ...prologueValues,
           ...queryType,
@@ -59,7 +47,7 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
       { ALT: () => {
         let result: Update | Pick<Update, 'base' | 'prefixes'> = prologueValues;
         OPTION1(() => {
-          const updateOperation = SUBRULE(update1);
+          const updateOperation = SUBRULE(gram.update1);
 
           ACTION(() => {
             for (const label of context.usedBlankNodeLabels) {
@@ -70,7 +58,7 @@ const queryOrUpdate: RuleDef<'queryOrUpdate', Query | Update | Pick<Update, 'bas
 
           const recursiveRes = OPTION2(() => {
             CONSUME(l.symbols.semi);
-            return SUBRULE(update);
+            return SUBRULE(gram.update);
           });
 
           return ACTION(() => {
@@ -108,14 +96,14 @@ export class Sparql11Parser implements ISparqlParser {
     path: (input: string) => PropertyPath | IriTerm;
   };
 
-  private readonly dataFactory: DataFactory<BaseQuadTerm>;
+  private readonly dataFactory: DataFactory<RDF.BaseQuad>;
 
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
     this.parser = sparql11ParserBuilder.consumeToParser({
-      tokenVocabulary: sparql11Tokens.build(),
+      tokenVocabulary: l.sparql11Tokens.build(),
     }, {
-      parseMode: new Set([ canParseVars, canCreateBlankNodes ]),
+      parseMode: new Set([ gram.canParseVars, gram.canCreateBlankNodes ]),
       ...context,
       dataFactory: this.dataFactory,
     });

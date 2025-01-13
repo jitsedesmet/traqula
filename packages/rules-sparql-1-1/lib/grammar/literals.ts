@@ -1,8 +1,8 @@
 import type { NamedNode } from 'rdf-data-factory';
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { CommonIRIs, resolveIRI } from '@traqula/core/lib/grammar-helpers/utils';
-import type { BlankTerm, IriTerm, LiteralTerm } from './Sparql11types';
+import type { RuleDef } from '@traqula/core';
+import { CommonIRIs, resolveIRI } from '@traqula/core';
+import type { BlankTerm, IriTerm, LiteralTerm } from '../Sparql11types';
 
 /**
  * Parses an RDF literal, in the form of {value}@{lang} or {value}^^{datatype}.

@@ -1,5 +1,5 @@
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import type { RuleDef } from '@traqula/core';
 import { deGroupSingle, isVariable } from '../utils';
 import { builtInCall } from './builtIn';
 import { argList, brackettedExpression, expression } from './expression';
@@ -25,7 +25,7 @@ import type {
   ValuePatternRow,
   ValuesPattern,
   VariableTerm,
-} from './Sparql11types';
+} from '../Sparql11types';
 import { triplesBlock } from './tripleBlock';
 
 /**

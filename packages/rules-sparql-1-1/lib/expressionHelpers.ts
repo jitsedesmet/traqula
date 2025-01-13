@@ -1,12 +1,12 @@
 import type { TokenType } from 'chevrotain';
 import * as l from './lexer';
-import { Wildcard } from '@traqula/core/lib/Wildcard';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import { Wildcard } from '@traqula/core';
+import type { RuleDef } from '@traqula/core';
 import { expression, expressionList } from './grammar/expression';
 import { var_ } from './grammar/general';
-import type { Expression, Pattern, VariableTerm } from './grammar/Sparql11types';
+import type { Expression, Pattern, VariableTerm } from './Sparql11types';
 import { groupGraphPattern } from './grammar/whereClause';
-import { unCapitalize } from '@traqula/core/lib/grammar-helpers/utils';
+import { unCapitalize } from '@traqula/core';
 import { deGroupSingle } from './utils';
 
 export interface IExpressionFunctionX<U extends (Expression | Pattern)[]> {

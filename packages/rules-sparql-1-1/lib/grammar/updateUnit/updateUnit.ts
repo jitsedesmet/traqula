@@ -1,7 +1,7 @@
 import type { TokenType } from 'chevrotain';
 import * as l from '../../lexer';
-import type { RuleDef, RuleDefReturn } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { unCapitalize } from '@traqula/core/lib/grammar-helpers/utils';
+import type { RuleDef, RuleDefReturn } from '@traqula/core';
+import { unCapitalize } from '@traqula/core';
 import { canParseVars, prologue, triplesTemplate, varOrIri } from '../general';
 import { canCreateBlankNodes, iri } from '../literals';
 import type {
@@ -15,7 +15,7 @@ import type {
   Quads,
   Update,
   UpdateOperation,
-} from '../Sparql11types';
+} from '../../Sparql11types';
 import { groupGraphPattern } from '../whereClause';
 
 /**

@@ -1,58 +1,34 @@
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import {
-  path,
-  pathAlternative,
-  pathElt,
-  pathEltOrInverse,
-  pathMod,
-  pathNegatedPropertySet,
-  pathOneInPropertySet,
-  pathPrimary,
-  pathSequence,
-} from '@traqula/rules-sparql-1-1/lib/grammar/propertyPaths';
-import {
-  blankNodePropertyListPath,
-  collectionPath,
-  graphNodePath,
-  objectListPath,
-  objectPath,
-  propertyListPath,
-  propertyListPathNotEmpty,
-  triplesBlock,
-  triplesNodePath,
-  triplesSameSubjectPath,
-  verbPath,
-  verbSimple,
-} from '@traqula/rules-sparql-1-1/lib/grammar/tripleBlock';
+import { Builder } from '@traqula/core';
+import { gram } from '@traqula/rules-sparql-1-1';
 import { objectListBuilder } from './objectListParser';
 
 export const triplesBlockParserBuilder = Builder.createBuilder(<const> [
-  triplesBlock,
-  triplesSameSubjectPath,
+  gram.triplesBlock,
+  gram.triplesSameSubjectPath,
   // VarOrTerm is included in the required ObjectList rule
-  propertyListPathNotEmpty,
-  triplesNodePath,
-  propertyListPath,
+  gram.propertyListPathNotEmpty,
+  gram.triplesNodePath,
+  gram.propertyListPath,
   // PropertyListNotEmpty
-  verbPath,
-  verbSimple,
-  objectListPath,
+  gram.verbPath,
+  gram.verbSimple,
+  gram.objectListPath,
 ])
   .merge(objectListBuilder, <const> [])
   // Verb path
   .addMany(
-    path,
-    pathAlternative,
-    pathSequence,
-    pathEltOrInverse,
-    pathElt,
-    pathPrimary,
-    pathMod,
-    pathNegatedPropertySet,
-    pathOneInPropertySet,
+    gram.path,
+    gram.pathAlternative,
+    gram.pathSequence,
+    gram.pathEltOrInverse,
+    gram.pathElt,
+    gram.pathPrimary,
+    gram.pathMod,
+    gram.pathNegatedPropertySet,
+    gram.pathOneInPropertySet,
     // ObjectListPath
-    objectPath,
-    graphNodePath,
-    collectionPath,
-    blankNodePropertyListPath,
+    gram.objectPath,
+    gram.graphNodePath,
+    gram.collectionPath,
+    gram.blankNodePropertyListPath,
   );

@@ -1,5 +1,5 @@
 import type * as RdfJs from '@rdfjs/types';
-import type * as T11 from '../../../rules-sparql-1-1/lib/grammar/Sparql11types';
+import type * as T11 from '@traqula/rules-sparql-1-1';
 
 export type BaseQuadTerm = RdfJs.BaseQuad;
 export type GraphTerm = T11.GraphTerm | BaseQuadTerm;

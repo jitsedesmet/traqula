@@ -1,9 +1,9 @@
 import * as l from '../lexer';
-import type { RuleDef } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
+import type { RuleDef } from '@traqula/core';
 import { builtInCall, canParseAggregate } from './builtIn';
 import { brackettedExpression, expression } from './expression';
 import { var_ } from './general';
-import type { Expression, Grouping, Ordering, SelectQuery } from './Sparql11types';
+import type { Expression, Grouping, Ordering, SelectQuery } from '../Sparql11types';
 import { constraint, functionCall } from './whereClause';
 
 /**

@@ -1,18 +1,16 @@
 import { DataFactory } from 'rdf-data-factory';
-import { Builder } from '@traqula/core/lib/grammar-builder/parserBuilder';
-import type { ImplArgs } from '@traqula/core/lib/grammar-builder/ruleDefTypes';
-import { canCreateBlankNodes, canParseVars } from '@traqula/rules-sparql-1-1/lib/grammar';
+import {Builder, ImplArgs} from '@traqula/core';
+import { gram as S11 } from '@traqula/rules-sparql-1-1';
 import type {
   IriTerm,
   PropertyPath,
   SparqlParser as ISparqlParser,
   SparqlQuery,
-} from '@traqula/rules-sparql-1-1/lib/grammar/Sparql11types';
-import * as S12 from '@traqula/rules-sparql-1-2/lib/grammar/sparql12';
-import { canParseReifier } from '@traqula/rules-sparql-1-2/lib/grammar/sparql12';
-import type { BaseQuadTerm } from '@traqula/rules-sparql-1-2/lib/grammar/sparql12Types';
-import { sparql12Tokens } from '@traqula/rules-sparql-1-2/lib/lexer';
-import { sparql11ParserBuilder } from '../../engine-sparql-1-1/lib/Sparql11Parser';
+} from '@traqula/rules-sparql-1-1';
+import { gram as S12 } from '@traqula/rules-sparql-1-2';
+import type { BaseQuadTerm } from '@traqula/rules-sparql-1-2';
+import { lex as l12 } from '@traqula/rules-sparql-1-2';
+import { sparql11ParserBuilder } from '@traqula/engine-sparql-1-1';
 
 export const sparql12ParserBuilder = Builder.createBuilder(sparql11ParserBuilder)
   .addMany(
@@ -69,9 +67,9 @@ export class Sparql12Parser implements ISparqlParser {
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
     this.parser = sparql12ParserBuilder.consumeToParser({
-      tokenVocabulary: sparql12Tokens.build(),
+      tokenVocabulary: l12.sparql12Tokens.build(),
     }, {
-      parseMode: new Set([ canParseVars, canCreateBlankNodes, canParseReifier ]),
+      parseMode: new Set([ S11.canParseVars, S11.canCreateBlankNodes, S12.canParseReifier ]),
       ...context,
       dataFactory: this.dataFactory,
     });
