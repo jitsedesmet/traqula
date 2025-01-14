@@ -49,7 +49,6 @@
     "rdf-data-factory": "^2.0.1"
   },
   "devDependencies": {
-    "@rdfjs/types": "^2.0.0",
     "@traqula/test-utils": "workspace:^"
   }
 }

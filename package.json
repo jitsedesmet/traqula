@@ -14,6 +14,7 @@
     "build:ts": "tsc",
     "build:transpile": "yarn workspaces foreach --all -pt run build:transpile",
     "build:transpile-spec": "yarn workspaces foreach --all -pt --include \"engines/*\" run build:transpile-spec",
+    "version": "yarn workspaces foreach --all -pt version $1",
     "publish": "yarn workspaces foreach --all -pt npm publish",
     "clean": "git clean -dfx",
     "lint": "eslint . --cache",

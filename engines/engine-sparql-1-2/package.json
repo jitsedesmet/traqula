@@ -47,8 +47,5 @@
     "@traqula/rules-sparql-1-1": "workspace:^",
     "chevrotain": "^11.0.3",
     "rdf-data-factory": "^2.0.1"
-  },
-  "devDependencies": {
-    "@rdfjs/types": "^2.0.0"
   }
 }

@@ -803,7 +803,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/core@workspace:packages/core"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     chevrotain: "npm:^11.0.3"
     rdf-data-factory: "npm:^2.0.1"
   languageName: unknown
@@ -813,7 +812,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/engine-sparql-1-1-adjust@workspace:engines/engine-sparql-1-1-adjust"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
     chevrotain: "npm:^11.0.3"
@@ -825,7 +823,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/engine-sparql-1-1@workspace:engines/engine-sparql-1-1"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
     "@traqula/test-utils": "workspace:^"
@@ -838,7 +835,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/engine-sparql-1-2@workspace:engines/engine-sparql-1-2"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
     chevrotain: "npm:^11.0.3"
@@ -850,7 +846,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/rules-sparql-1-1-adjust@workspace:packages/rules-sparal-1-1-adjust"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
     chevrotain: "npm:^11.0.3"
@@ -862,7 +857,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/rules-sparql-1-1@workspace:packages/rules-sparql-1-1"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     chevrotain: "npm:^11.0.3"
     rdf-data-factory: "npm:^2.0.1"
@@ -873,7 +867,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@traqula/rules-sparql-1-2@workspace:packages/rules-sparql-1-2"
   dependencies:
-    "@rdfjs/types": "npm:^2.0.0"
     "@traqula/core": "workspace:^"
     "@traqula/rules-sparql-1-1": "workspace:^"
     chevrotain: "npm:^11.0.3"
