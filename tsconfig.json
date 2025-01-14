@@ -29,8 +29,6 @@
     "engines/*/test/**/*.ts",
     "packages/*/lib/**/*.ts",
     "packages/*/test/**/*.ts",
-    "test/**/*.ts",
-    "spec/**/*.ts"
   ],
   "exclude": [
     "node_modules"
