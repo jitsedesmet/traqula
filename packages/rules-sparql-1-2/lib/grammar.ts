@@ -23,8 +23,6 @@ import type {
   TripleCreatorSP,
 } from './sparql12Types';
 
-export const canParseReifier = Symbol('canParseReifier');
-
 function reifiedTripleBlockImpl<T extends string>(name: T, allowPath: boolean): RuleDef<T, Triple[]> {
   return <const> {
     name,
@@ -70,8 +68,8 @@ export const reifier: RuleDef<'reifier', T11.VariableTerm | T11.IriTerm | T11.Bl
     CONSUME(l12.tilde);
     const reifier = OPTION(() => SUBRULE(varOrReifierId));
     return ACTION(() => {
-      if (!context.parseMode.has(canParseReifier)) {
-        throw new Error('Reifiers are not allowed in this context');
+      if (reifier === undefined && !context.parseMode.has(S11.canCreateBlankNodes)) {
+        throw new Error('Cannot create blanknodes in current parse mode');
       }
       return reifier ?? context.dataFactory.blankNode();
     });
@@ -125,15 +123,20 @@ function objectImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, 
           ...objectVal.triples.map(triple => () => triple),
         ];
         for (const annotation of annotationVal) {
-          result.push(({ subject, predicate }) => <Triple> context.dataFactory.quad(
-            annotation.node,
-            context.dataFactory.namedNode(CommonIRIs.REIFIES),
-            context.dataFactory.quad(
-              subject,
-              <Exclude<typeof predicate, T11.PropertyPath>>predicate,
-              objectVal.node,
-            ),
-          ));
+          result.push(({ subject, predicate }) => {
+            if ('type' in predicate && predicate.type === 'path') {
+              throw new Error('Note 17 violation');
+            }
+            return <Triple> context.dataFactory.quad(
+              annotation.node,
+              context.dataFactory.namedNode(CommonIRIs.REIFIES),
+              context.dataFactory.quad(
+                subject,
+                <Exclude<typeof predicate, T11.PropertyPath>>predicate,
+                objectVal.node,
+              ),
+            )
+          });
           result.push(...annotation.triples.map(triple => () => triple));
         }
         return result;
@@ -177,6 +180,9 @@ function annotationImpl<T extends string>(name: T, allowPaths: boolean): RuleDef
             const block = SUBRULE(allowPaths ? annotationBlockPath : annotationBlock);
 
             ACTION(() => {
+              if (currentReifier === undefined && !context.parseMode.has(S11.canCreateBlankNodes)) {
+                throw new Error('Cannot create blanknodes in current parse mode');
+              }
               const node = currentReifier ?? context.dataFactory.blankNode();
               annotations.push({
                 node,
@@ -206,17 +212,12 @@ export const annotation = annotationImpl('annotation', false);
 function annotationBlockImpl<T extends string>(name: T, allowPaths: boolean): RuleDef<T, TripleCreatorS[]> {
   return <const> {
     name,
-    impl: ({ ACTION, SUBRULE, CONSUME, context }) => () => {
+    impl: ({ SUBRULE, CONSUME }) => () => {
       CONSUME(l12.annotationOpen);
       const res = <TripleCreatorS[]> SUBRULE(allowPaths ? S11.propertyListPathNotEmpty : S11.propertyListNotEmpty);
       CONSUME(l12.annotationClose);
 
-      return ACTION(() => {
-        if (!context.parseMode.has(canParseReifier)) {
-          throw new Error('Reifiers are not allowed in this context');
-        }
-        return res;
-      });
+      return res;
     },
   };
 }
@@ -288,6 +289,9 @@ RuleDef<'reifiedTriple', IGraphNode & { node: T11.BlankTerm | T11.VariableTerm |
     CONSUME(l12.reificationClose);
 
     return ACTION(() => {
+      if (reifierVal === undefined && !context.parseMode.has(S11.canCreateBlankNodes)) {
+        throw new Error('Cannot create blanknodes in current parse mode');
+      }
       const reifier = reifierVal ?? context.dataFactory.blankNode();
       const tripleTerm = context.dataFactory.quad(subject.node, predicate, object.node);
       return {

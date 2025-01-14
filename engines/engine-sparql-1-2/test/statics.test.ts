@@ -4,7 +4,7 @@ import {positiveTest, importSparql11NoteTests, negativeTest} from "@traqula/test
 import {DataFactory} from "rdf-data-factory";
 import {BaseQuad} from "@rdfjs/types";
 
-describe('a SPARQL 1.1 parser', () => {
+describe('a SPARQL 1.2 parser', () => {
   const parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
   beforeEach(() => {
     parser._resetBlanks();
@@ -35,6 +35,7 @@ describe('a SPARQL 1.1 parser', () => {
   }
 
   for (const { name, statics } of [...negativeTest('sparql-1-2-invalid')]) {
+    const parser = new Sparql12Parser({ prefixes: { ex: 'http://example.org/' }});
     it(`should NOT parse ${name}`, async({expect}) => {
       const { query } = await statics();
       parser._resetBlanks();

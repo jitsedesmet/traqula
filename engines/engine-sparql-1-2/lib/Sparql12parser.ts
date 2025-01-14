@@ -69,7 +69,7 @@ export class Sparql12Parser implements ISparqlParser {
     this.parser = sparql12ParserBuilder.consumeToParser({
       tokenVocabulary: l12.sparql12Tokens.build(),
     }, {
-      parseMode: new Set([ S11.canParseVars, S11.canCreateBlankNodes, S12.canParseReifier ]),
+      parseMode: new Set([ S11.canParseVars, S11.canCreateBlankNodes ]),
       ...context,
       dataFactory: this.dataFactory,
     });
