@@ -1,6 +1,6 @@
 {
   "name": "@traqula/rules-sparql-1-1",
-  "version": "0.0.1",
+  "version": "0.0.0-1",
   "description": "Core components of Traqula",
   "lsd:module": true,
   "license": "MIT",
