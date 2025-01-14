@@ -4,7 +4,7 @@ import {positiveTest, importSparql11NoteTests} from "@traqula/test-utils";
 import {DataFactory} from "rdf-data-factory";
 import {BaseQuad} from "@rdfjs/types";
 
-describe('a SPARQL 1.1 parser', () => {
+describe('a SPARQL 1.1 + adjust parser', () => {
   const parser = new Sparql11AdjustParser({ prefixes: { ex: 'http://example.org/' }});
   beforeEach(() => {
     parser._resetBlanks();
@@ -27,4 +27,14 @@ describe('a SPARQL 1.1 parser', () => {
   }
 
   importSparql11NoteTests(parser, new DataFactory<BaseQuad>());
+
+  it('parses ADJUST function', ({expect}) => {
+    const query =  `
+SELECT ?s ?p (ADJUST(?o, "-PT10H"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration>) as ?adjusted) WHERE {
+  ?s ?p ?o
+}
+`;
+    const res: unknown = parser.parse(query);
+    expect(res).toMatchObject({});
+  })
 });

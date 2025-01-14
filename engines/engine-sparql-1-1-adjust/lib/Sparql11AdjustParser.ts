@@ -1,14 +1,15 @@
 import {Builder, type ImplArgs} from '@traqula/core';
-import { gram } from '@traqula/rules-sparql-1-1-adjust';
+import {gram, lex} from '@traqula/rules-sparql-1-1-adjust';
 import {
   Expression,
-  IriTerm, lex as l,
+  gram as g11,
+  lex as l11,
+  IriTerm,
   PropertyPath,
   SparqlParser as ISparqlParser,
   SparqlQuery
 } from '@traqula/rules-sparql-1-1';
-import { gram as g11 } from '@traqula/rules-sparql-1-1';
-import { sparql11ParserBuilder } from '@traqula/engine-sparql-1-1';
+import {sparql11ParserBuilder} from '@traqula/engine-sparql-1-1';
 import {DataFactory} from "rdf-data-factory";
 import type * as RDF from "@rdfjs/types";
 
@@ -35,8 +36,8 @@ export class Sparql11AdjustParser implements ISparqlParser {
 
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
-    this.parser = sparql11ParserBuilder.consumeToParser({
-      tokenVocabulary: l.sparql11Tokens.build(),
+    this.parser = adjustBuilder.consumeToParser({
+      tokenVocabulary: l11.sparql11Tokens.addBefore(l11.a, lex.BuiltInAdjust).build(),
     }, {
       parseMode: new Set([ g11.canParseVars, g11.canCreateBlankNodes ]),
       ...context,
