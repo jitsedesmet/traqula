@@ -1,4 +1,4 @@
-import {Builder, type ImplArgs} from '@traqula/core';
+import {Builder, type ImplArgs, LexerBuilder} from '@traqula/core';
 import {gram, lex} from '@traqula/rules-sparql-1-1-adjust';
 import {
   Expression,
@@ -37,7 +37,7 @@ export class Sparql11AdjustParser implements ISparqlParser {
   public constructor(context: Partial<ImplArgs['context']> = {}) {
     this.dataFactory = context.dataFactory ?? new DataFactory({ blankNodePrefix: 'g_' });
     this.parser = adjustBuilder.consumeToParser({
-      tokenVocabulary: l11.sparql11Tokens.addBefore(l11.a, lex.BuiltInAdjust).build(),
+      tokenVocabulary: LexerBuilder.create(l11.sparql11Tokens).addBefore(l11.a, lex.BuiltInAdjust).build(),
     }, {
       parseMode: new Set([ g11.canParseVars, g11.canCreateBlankNodes ]),
       ...context,

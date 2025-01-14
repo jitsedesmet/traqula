@@ -34,7 +34,7 @@ SELECT ?s ?p (ADJUST(?o, "-PT10H"^^<http://www.w3.org/2001/XMLSchema#dayTimeDura
   ?s ?p ?o
 }
 `;
-    const res: unknown = parser.parse(query);
+    const res: unknown = new Sparql11AdjustParser().parse(query);
     expect(res).toMatchObject({});
   })
 });

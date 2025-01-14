@@ -1,6 +1,6 @@
 {
   "name": "@traqula/engine-sparql-1-1",
-  "version": "0.0.0-1",
+  "version": "0.0.0",
   "description": "Core components of Traqula",
   "lsd:module": true,
   "license": "MIT",
@@ -30,25 +30,25 @@
   },
   "typings": "lib/index",
   "scripts": {
-    "build": "yarn build:ts && yarn build:transpile && yarn build:transpile-spec",
+    "build": "npm run build:ts && npm run build:transpile && npm run build:transpile-spec",
     "build:ts": "node \"../../node_modules/typescript/bin/tsc\"",
     "build:transpile": " node \"../../node_modules/esbuild/bin/esbuild\" --format=cjs --bundle --log-level=error --outfile=lib/index.cjs lib/index.ts",
     "build:transpile-spec": " node \"../../node_modules/esbuild/bin/esbuild\" --format=cjs --platform=node --bundle --log-level=error --outfile=spec/parser.cjs spec/parser.ts",
     "spec:base": "rdf-test-suite spec/parser.cjs http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl -c ../../.rdf-test-suite-cache/",
-    "spec:query": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-query/",
-    "spec:update": "yarn spec:base -- -s http://www.w3.org/TR/sparql11-update/",
-    "spec:earl:query": "yarn spec:query --silent -- -o earl -p spec/earl-meta.json > spec/earl-query.ttl",
-    "spec:earl:update": "yarn spec:update --silent -- -o earl -p spec/earl-meta.json > spec/earl-update.ttl",
-    "spec:all": "yarn spec:base && yarn spec:query && yarn spec:update",
-    "spec:earl": "yarn spec:earl:query && yarn spec:earl:update"
+    "spec:query": "npm run spec:base -- -s http://www.w3.org/TR/sparql11-query/",
+    "spec:update": "npm run spec:base -- -s http://www.w3.org/TR/sparql11-update/",
+    "spec:earl:query": "npm run spec:query --silent -- -o earl -p spec/earl-meta.json > spec/earl-query.ttl",
+    "spec:earl:update": "npm run spec:update --silent -- -o earl -p spec/earl-meta.json > spec/earl-update.ttl",
+    "spec:all": "npm run spec:base && npm run spec:query && npm run spec:update",
+    "spec:earl": "npm run spec:earl:query && npm run spec:earl:update"
   },
   "dependencies": {
-    "@traqula/core": "workspace:^",
-    "@traqula/rules-sparql-1-1": "workspace:^",
+    "@traqula/core": "^0.0.0",
+    "@traqula/rules-sparql-1-1": "^0.0.0",
     "chevrotain": "^11.0.3",
     "rdf-data-factory": "^2.0.1"
   },
   "devDependencies": {
-    "@traqula/test-utils": "workspace:^"
+    "@traqula/test-utils": "^0.0.0"
   }
 }
