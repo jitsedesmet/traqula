@@ -1,16 +1,16 @@
 {
   "name": "@traqula/rules-sparql-1-1",
   "version": "0.0.0",
-  "description": "Core components of Traqula",
+  "description": "TRAQULA Lexer and Grammar Rules for sparql 1.1",
   "lsd:module": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jitsedesmet/traqula",
-    "directory": "packages/core"
+    "url": "https://github.com/comunica/traqula",
+    "directory": "packages/rules-sparql-1-1"
   },
   "bugs": {
-    "url": "https://github.com/jitsedesmet/traqula/issues"
+    "url": "https://github.com/comunica/traqula/issues"
   },
   "sideEffects": false,
   "files": [
@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "@traqula/core": "^0.0.0",
-    "chevrotain": "^11.0.3",
     "rdf-data-factory": "^2.0.1"
   }
 }

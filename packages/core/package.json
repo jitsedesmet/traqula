@@ -1,16 +1,16 @@
 {
   "name": "@traqula/core",
   "version": "0.0.0",
-  "description": "Core components of Traqula",
+  "description": "Core components of TRAQULA",
   "lsd:module": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jitsedesmet/traqula",
+    "url": "https://github.com/comunica/traqula",
     "directory": "packages/core"
   },
   "bugs": {
-    "url": "https://github.com/jitsedesmet/traqula/issues"
+    "url": "https://github.com/comunica/traqula/issues"
   },
   "sideEffects": false,
   "type": "module",

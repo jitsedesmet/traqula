@@ -1,16 +1,16 @@
 {
   "name": "@traqula/test-utils",
   "version": "0.0.0",
-  "description": "Core components of Traqula",
+  "description": "Test utils used by the TRAQULA monorepo",
   "lsd:module": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jitsedesmet/traqula",
-    "directory": "packages/core"
+    "url": "https://github.com/comunica/traqula",
+    "directory": "packages/test-utils"
   },
   "bugs": {
-    "url": "https://github.com/jitsedesmet/traqula/issues"
+    "url": "https://github.com/comunica/traqula/issues"
   },
   "sideEffects": false,
   "files": [
