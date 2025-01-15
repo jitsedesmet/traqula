@@ -1,6 +1,6 @@
 # TRAQULA parser engine for SPARQL 1.1
 
-TRAQULA Sparql 1.1 is a SPARQL 1.1 query parser for TypeScript.
+TRAQULA Sparql 1.1 is a [SPARQL 1.1](https://www.w3.org/TR/sparql11-query/#grammar) query parser for TypeScript.
 
 
 ## Installation

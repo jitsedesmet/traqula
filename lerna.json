@@ -4,5 +4,11 @@
   "packages": [
     "packages/*",
     "engines/*"
+  ],
+  "loglevel": "error",
+  "registry": "https://registry.npmjs.org/",
+  "npmClient": "yarn",
+  "npmClientArgs": [
+    "--pure-lockfile"
   ]
 }
