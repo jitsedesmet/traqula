@@ -16,8 +16,8 @@
     "clean": "git clean -dfx",
     "test": "yarn build && vitest test --run",
     "bench": "yarn build && vitest bench --run",
-    "spec:all": "lerna run spec:all",
-    "spec:earl": "lerna run spec:earl"
+    "spec:all": "lerna run spec:all --concurrency 1",
+    "spec:earl": "lerna run spec:earl --concurrency 1"
   },
   "devDependencies": {
     "@rdfjs/types": "^2.0.0",
