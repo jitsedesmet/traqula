@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/comunica/traqula",
+    "url": "git+https://github.com/comunica/traqula.git",
     "directory": "packages/rules-sparql-1-1"
   },
   "bugs": {
