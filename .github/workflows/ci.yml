@@ -19,12 +19,12 @@ jobs:
           - 20.x
           - 22.x
     steps:
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/checkout@v4
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn build
       - run: yarn test
 
@@ -36,13 +36,21 @@ jobs:
           - spec:all
           - spec:earl
         node-version:
+          - 18.x
+          - 20.x
           - 22.x
     steps:
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/checkout@v4
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn build
+      - name: Load RDF test suite cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .rdf-test-suite-cache
+          key: rdftestsuite-${{ hashFiles('yarn.lock') }}
       - run: yarn ${{ matrix.spec }}
